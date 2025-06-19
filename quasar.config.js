@@ -11,7 +11,7 @@ export default defineConfig((/* ctx */) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['axios'],
+    boot: ['axios', 'components'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.css'],
@@ -105,6 +105,28 @@ export default defineConfig((/* ctx */) => {
             deep: true,
             //프로젝트의 Vue 버전
             version: 3,
+          },
+        ],
+        /**
+         * @install : npm i -D unplugin-auto-import
+         */
+        [
+          'unplugin-auto-import/vite',
+          {
+            imports: ['vue', 'vue-router', 'quasar', 'pinia'],
+            dts: 'src/auto-imports.d.ts',
+            eslintrc: {
+              enabled: true,
+              filepath: './.eslintrc-auto-import.json',
+              globalsPropValue: 'readonly',
+            },
+            dirs: [
+              // 'src/service/**',
+              // 'src/stores/**',
+              // 'src/utils/**',
+              // 'src/boot/**',
+              // 'src/options/**',
+            ],
           },
         ],
       ],
