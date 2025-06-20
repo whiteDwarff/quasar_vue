@@ -32,6 +32,6 @@ defineProps({
   border: 1px solid #000;
 }
 .dp__input_focus {
-  border: 2px solid #4f82f8 !important;
+  border: 2px solid var(--q-primary) !important;
 }
 </style>

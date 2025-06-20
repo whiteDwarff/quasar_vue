@@ -1,6 +1,16 @@
 <template>
   <q-page padding>
     <q-card flat>
+      <q-card-section class="q-pt-none">
+        <div class="flex items-center location-wrap">
+          <span class="title">시험정보</span>
+          <q-space />
+          <span class="bar">Home</span>
+          <span class="bar">시험정보</span>
+          <span class="current">시험정보등록</span>
+        </div>
+      </q-card-section>
+
       <q-card-section class="search-wrap">
         <div class="row q-col-gutter-md">
           <div class="col-xs-12 col-sm-6 col-md-3">
@@ -60,15 +70,15 @@
     </div>
 
     <q-card flat>
-      <q-table :rows="[1, 2, 3]" flat bordered>
+      <q-table :rows="[1, 2, 3]" flat bordered hide-bottom>
         <template #header>
           <q-tr>
-            <q-th>번호</q-th>
-            <q-th>회사명</q-th>
-            <q-th>시험명</q-th>
-            <q-th>등록자</q-th>
-            <q-th>등록일(년/월/일)</q-th>
-            <q-th>관리</q-th>
+            <q-th style="width: 5%">번호</q-th>
+            <q-th style="width: 20%">회사명</q-th>
+            <q-th style="width: 20%">시험명</q-th>
+            <q-th style="width: 15%">등록자</q-th>
+            <q-th style="width: 20%">등록일(년/월/일)</q-th>
+            <q-th style="width: 20%">관리</q-th>
           </q-tr>
         </template>
         <template #body>
@@ -78,10 +88,17 @@
             <q-td></q-td>
             <q-td></q-td>
             <q-td></q-td>
-            <q-td></q-td>
+            <q-td>
+              <div class="row q-col-gutter-sm">
+                <RowEditButton label="삭제" icon="delete" class="col-xs-12 col-md-6" />
+                <RowEditButton label="수정" icon="edit" class="col-xs-12 col-md-6" />
+              </div>
+            </q-td>
           </q-tr>
         </template>
       </q-table>
+
+      <PaginationTemp v-model:page="param" />
     </q-card>
   </q-page>
 </template>
@@ -94,6 +111,9 @@ const param = ref({
   regDay: [],
   regStDt: null,
   regEnDt: null,
+  current: 1,
+  min: 1,
+  max: 1,
 })
 </script>
 

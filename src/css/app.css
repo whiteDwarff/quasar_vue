@@ -1,1 +1,54 @@
 /* app global css */
+body {
+  font-size: 13px;
+}
+
+.location-wrap {
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #999;
+}
+.location-wrap .title {
+  font-size: 26px;
+  color: #141824;
+  font-weight: 700;
+}
+.location-wrap .bar {
+  color: #999;
+  font-size: 12px;
+  font-weight: 400;
+}
+.location-wrap .current {
+  color: #343434;
+  font-size: 12px;
+  font-weight: 450;
+}
+.location-wrap .bar:after {
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin: 0 5px;
+  background: #fff url('src/assets/image/icon/bar.png');
+}
+
+.search-wrap {
+  background-color: #fafafa;
+  padding: 25px 20px;
+}
+.search-wrap span.label {
+  width: 15%;
+  display: block;
+}
+.search-wrap .content {
+  width: 80%;
+  margin-left: 5%;
+}
+.edit-btn-wrap {
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.btn {
+  padding: 8px 24px;
+}
