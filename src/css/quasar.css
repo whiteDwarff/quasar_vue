@@ -1,6 +1,11 @@
 :root {
   --q-primary: #4f82f8;
 }
+
+body.desktop .q-manual-focusable--focused > .q-focus-helper {
+  background: #8cb6f0 !important;
+}
+
 .q-btn {
   font-weight: 350 !important;
   border-radius: 6px;

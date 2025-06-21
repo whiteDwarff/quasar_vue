@@ -2,7 +2,7 @@
   <q-page padding>
     <q-card flat>
       <q-card-section class="q-pt-none">
-        <div class="flex items-center location-wrap">
+        <div class="flex items-baseline location-wrap">
           <span class="title">시험정보</span>
           <q-space />
           <span class="bar">Home</span>
@@ -49,24 +49,15 @@
 
         <div class="flex q-mt-lg">
           <q-space />
-          <q-btn
-            unelevated
-            color="primary"
-            label="초기화"
-            dense
-            outline
-            :ripple="false"
-            no-caps
-            class="btn q-mr-md"
-          />
-          <q-btn unelevated color="primary" label="검색" dense :ripple="false" class="btn" />
+          <PrimaryButton label="초기화" :outline="true" class="q-mr-md" />
+          <PrimaryButton label="검색" />
         </div>
       </q-card-section>
     </q-card>
 
     <div class="flex edit-btn-wrap">
       <q-space />
-      <q-btn unelevated color="primary" label="시험정보등록" dense :ripple="false" class="btn" />
+      <PrimaryButton @click="$router.push('/examInfo/edit')" label="시험정보등록" />
     </div>
 
     <q-card flat>

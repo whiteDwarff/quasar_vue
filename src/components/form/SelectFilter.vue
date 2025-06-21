@@ -3,6 +3,7 @@
     ref="selectRef"
     @input="filter"
     @click="options = props.options"
+    @keyup.enter="console.log('11')"
     v-model="select"
     :options
     outlined
@@ -32,7 +33,7 @@ const select = defineModel()
 const props = defineProps({
   options: {
     type: Array,
-    default: () => [{ value: '', label: '전체' }],
+    default: () => [{ value: '', label: '선택안함' }],
     // required: true,
   },
 })
