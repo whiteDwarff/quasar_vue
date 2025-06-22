@@ -1,13 +1,13 @@
-import { defineRouter } from '#q-app/wrappers'
+import { defineRouter } from '#q-app/wrappers';
 import {
   createRouter,
   //createMemoryHistory,
   createWebHistory,
   //createWebHashHistory,
-} from 'vue-router'
+} from 'vue-router';
 // import routes from './routes'
-import { routes } from 'vue-router/auto-routes'
-import { setupLayouts } from 'virtual:generated-layouts'
+import { routes } from 'vue-router/auto-routes';
+import { setupLayouts } from 'virtual:generated-layouts';
 
 /*
  * If not building with SSR mode, you can
@@ -25,14 +25,14 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   //     ? createWebHistory
   //     : createWebHashHistory
 
-  const Router = createRouter({
+  const router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes: setupLayouts(routes),
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createWebHistory(),
-  })
+  });
 
-  return Router
-})
+  return router;
+});

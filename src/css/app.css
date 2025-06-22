@@ -8,6 +8,10 @@ body {
 p {
   margin-bottom: 0;
 }
+
+.none {
+  display: none;
+}
 /* page nav */
 .location-wrap {
   padding-bottom: 10px;
@@ -43,11 +47,11 @@ p {
   padding: 25px 20px;
 }
 .search-wrap span.label {
-  width: 15%;
+  width: 20%;
   display: block;
 }
 .search-wrap .content {
-  width: 80%;
+  width: 75%;
   margin-left: 5%;
 }
 .edit-btn-wrap {
@@ -56,6 +60,9 @@ p {
 }
 
 /* table */
+.list-count {
+  color: var(--q-primary);
+}
 .markup-table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -83,10 +90,17 @@ p {
 
 /* button */
 .btn {
-  padding: 8px 24px;
+  padding: 8px 17px;
 }
-
+.w-100 {
+  width: 100px;
+}
 /* form */
+.form-wrap {
+  border-radius: 10px;
+  background-color: #fafafa;
+  padding: 40px;
+}
 .form-label {
   display: block;
   margin-bottom: 8px;

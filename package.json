@@ -21,6 +21,8 @@
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
     "unplugin-auto-import": "^19.3.0",
+    "v-viewer": "^3.0.21",
+    "viewerjs": "^1.11.7",
     "vue": "^3.4.18",
     "vue-router": "^4.0.0"
   },

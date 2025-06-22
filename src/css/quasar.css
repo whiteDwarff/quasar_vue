@@ -1,5 +1,6 @@
 :root {
   --q-primary: #4f82f8;
+  --q-positive: #52a973;
 }
 
 body.desktop .q-manual-focusable--focused > .q-focus-helper {

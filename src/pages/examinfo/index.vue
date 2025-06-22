@@ -49,15 +49,21 @@
 
         <div class="flex q-mt-lg">
           <q-space />
-          <PrimaryButton label="초기화" :outline="true" class="q-mr-md" />
-          <PrimaryButton label="검색" />
+          <CustomButton
+            @click="param = resetParam()"
+            label="초기화"
+            :outline="true"
+            class="q-mr-md"
+          />
+          <CustomButton label="검색" />
         </div>
       </q-card-section>
     </q-card>
 
-    <div class="flex edit-btn-wrap">
+    <div class="flex items-baseline edit-btn-wrap">
+      <p class="q-mt-auto">총 <span class="list-count">3</span>개</p>
       <q-space />
-      <PrimaryButton @click="$router.push('/examInfo/edit')" label="시험정보등록" />
+      <CustomButton @click="$router.push('/examInfo/edit')" label="시험정보등록" />
     </div>
 
     <q-card flat>
@@ -95,17 +101,20 @@
 </template>
 
 <script setup>
-const param = ref({
-  companySeq: '',
-  examName: '',
-  regId: '',
-  regDay: [],
-  regStDt: null,
-  regEnDt: null,
-  current: 1,
-  min: 1,
-  max: 1,
-})
+const resetParam = () => {
+  return {
+    companySeq: '',
+    examName: '',
+    regId: '',
+    regDay: [],
+    regStDt: null,
+    regEnDt: null,
+    current: 1,
+    min: 1,
+    max: 1,
+  };
+};
+const param = ref({ ...resetParam() });
 </script>
 
 <route lang="yaml">

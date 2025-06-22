@@ -141,18 +141,20 @@
         </q-scroll-area>
         <!-- 추가 -->
         <div class="flex justify-center q-mt-md">
-          <PrimaryButton @click="addExamItem()" label="상세정보 추가" icon="bi-plus" />
+          <CustomButton @click="addExamItem()" label="상세정보 추가" icon="bi-plus" />
         </div>
       </q-card-section>
       <q-card-section class="flex justify-between">
-        <PrimaryButton label="취소" outline />
-        <PrimaryButton @click="submit()" label="저장" />
+        <CustomButton @click="cancle()" label="취소" outline class="w-100" />
+        <CustomButton @click="submit()" label="저장" class="w-100" />
       </q-card-section>
     </q-card>
   </q-page>
 </template>
 
 <script setup>
+const router = useRouter();
+
 const form = ref({
   companySeq: '',
   examName: '',
@@ -171,7 +173,7 @@ const scrollTargetRef = ref(null);
 
 // 세부정보 삭제
 const exceptExamItem = (targetIndex) => {
-  if (form.value.list.length == 1) return showAlert('하나의 상세정보는 등록되어야합니다.');
+  if (form.value.list.length == 1) return $showAlert('하나의 상세정보는 등록되어야합니다.');
 
   form.value.list = form.value.list.filter((item, i) => i != targetIndex);
 };
@@ -191,16 +193,25 @@ const addExamItem = () => {
   });
 };
 // 저장
-const submit = () => {
-  if (!form.value.companySeq) return showAlert('회사를 선택해주세요.');
-  if (!form.value.examName) return showAlert('시험명을 입력해주세요.');
+const submit = async () => {
+  const status = await $showConfirm('저장하시겠습니까?');
 
-  for (let item of form.value.list) {
-    if (!item.examFormName) return showAlert('시험 세부 설명을 입력해주세요.');
-    if (!item.examTime) return showAlert('시험시간을 입력해주세요.');
-    if (item.messageFlag == 'Y' && !item.message)
-      return showAlert('안내문동의 메시지를 입력해주세요.');
+  if (status) {
+    if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
+    if (!form.value.examName) return $showAlert('시험명을 입력해주세요.');
+
+    for (let item of form.value.list) {
+      if (!item.examFormName) return $showAlert('시험 세부 설명을 입력해주세요.');
+      if (!item.examTime) return $showAlert('시험시간을 입력해주세요.');
+      if (item.messageFlag == 'Y' && !item.message)
+        return $showAlert('안내문동의 메시지를 입력해주세요.');
+    }
   }
+};
+// 취소 후 목록으로 이동
+const cancle = async () => {
+  const status = await $showConfirm('취소하시겠습니까?');
+  if (status) router.push('/examInfo');
 };
 </script>
 
