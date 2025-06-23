@@ -21,8 +21,8 @@
   </div>
 </template>
 <script setup>
-const page = defineModel('page')
-const emit = defineEmits(['update:modelValue'])
+const page = defineModel('page');
+const emit = defineEmits(['update:modelValue']);
 
 /**
     @doc      https://quasar.dev/vue-components/pagination#qpagination-api

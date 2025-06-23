@@ -1,10 +1,18 @@
 :root {
   --q-primary: #4f82f8;
   --q-positive: #52a973;
+  --q-negative: #ff6363;
 }
 
 body.desktop .q-manual-focusable--focused > .q-focus-helper {
   background: #8cb6f0 !important;
+}
+
+.disabled,
+.disabled *,
+[disabled],
+[disabled] * {
+  cursor: unset !important;
 }
 
 .q-btn {

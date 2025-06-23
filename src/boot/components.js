@@ -1,4 +1,5 @@
 import { defineBoot } from '#q-app/wrappers';
+import { setCssVar } from 'quasar';
 
 // DatePicker
 import '@vuepic/vue-datepicker/dist/main.css';
@@ -15,4 +16,6 @@ export default defineBoot(({ app }) => {
   VueViewer.setDefaults({
     zIndex: 5000,
   });
+
+  setCssVar('warning', '#ff6363');
 });

@@ -72,21 +72,30 @@
       </q-card-section>
     </q-card>
 
-    <div class="flex edit-btn-wrap">
-      <p class="q-mt-auto">
+    <div class="row q-col-gutter-y-sm edit-btn-wrap">
+      <p class="q-mt-auto col-xs-12 col-md-1">
         총 <span class="list-count">{{ rows.length }}</span
         >개
       </p>
-      <q-space />
-      <CustomButton @click="$router.push('/assign/edit')" label="응시자등록" />
-      <CustomButton
-        label="엑셀양식 다운로드"
-        icon="bi-cloud-download"
-        color="grey-6"
-        outline
-        class="q-mx-sm"
-      />
-      <CustomButton label="엑셀로 업로드" icon="bi-filetype-xlsx" color="positive" outline />
+      <!-- <q-space /> -->
+      <div class="col-xs-12 col-md-11 row justify-end">
+        <CustomButton @click="$router.push('/assign/edit')" label="응시자등록" />
+        <CustomButton
+          @click="examineeDelete()"
+          label="삭제"
+          color="warning"
+          outline
+          class="q-mx-sm"
+        />
+        <CustomButton
+          label="엑셀양식 다운로드"
+          icon="bi-cloud-download"
+          color="grey-6"
+          outline
+          class="q-mr-sm"
+        />
+        <CustomButton label="엑셀로 업로드" icon="bi-filetype-xlsx" color="positive" outline />
+      </div>
     </div>
 
     <q-card flat>
@@ -113,19 +122,19 @@
           </q-tr>
         </template>
 
-        <template #body="{ row, selected }">
-          <q-tr :props="{ row, selected }" class="cursor-pointer">
-            <!-- <q-td> <q-checkbox v-model="selected" /></q-td> -->
-            <q-td>{{ row.no }}</q-td>
-            <q-td>{{ row.examineeId }}</q-td>
-            <q-td>{{ row.examineeName }}</q-td>
-            <q-td>{{ row.examineeNameEn }}</q-td>
-            <q-td>{{ row.companyName }}</q-td>
-            <q-td>{{ row.imageYn }}</q-td>
+        <template #body="props">
+          <q-tr :props="props" class="cursor-pointer">
+            <q-td> <q-checkbox v-model="props.selected" /></q-td>
+            <q-td>{{ props.row.no }}</q-td>
+            <q-td>{{ props.row.examineeId }}</q-td>
+            <q-td>{{ props.row.examineeName }}</q-td>
+            <q-td>{{ props.row.examineeNameEn }}</q-td>
+            <q-td>{{ props.row.companyName }}</q-td>
+            <q-td>{{ props.row.imageYn }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="examineeDelete()"
+                  @click="examineeDelete(props.row)"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
@@ -182,8 +191,16 @@ const rows = ref([
   },
 ]);
 
-const examineeDelete = (examineeSeq = null) => {
-  if (!selected.value.length && !examineeSeq) return $showAlert('삭제할 응시자를 선택해주세요.');
+const examineeDelete = async (examinee = null) => {
+  if (!selected.value.length && !examinee) return $showAlert('삭제할 응시자를 선택해주세요.');
+
+  const status = await $showConfirm('응시자를 삭제하시겠습니까?');
+
+  if (status) {
+    // axios
+    const arr = examinee ? [examinee] : selected.value;
+    console.log(arr);
+  }
 };
 </script>
 
