@@ -194,18 +194,20 @@ const addExamItem = () => {
 };
 // 저장
 const submit = async () => {
+  if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
+  if (!form.value.examName) return $showAlert('시험명을 입력해주세요.');
+
+  for (let item of form.value.list) {
+    if (!item.examFormName) return $showAlert('시험 세부 설명을 입력해주세요.');
+    if (!item.examTime) return $showAlert('시험시간을 입력해주세요.');
+    if (item.messageFlag == 'Y' && !item.message)
+      return $showAlert('안내문동의 메시지를 입력해주세요.');
+  }
+
   const status = await $showConfirm('저장하시겠습니까?');
 
   if (status) {
-    if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
-    if (!form.value.examName) return $showAlert('시험명을 입력해주세요.');
-
-    for (let item of form.value.list) {
-      if (!item.examFormName) return $showAlert('시험 세부 설명을 입력해주세요.');
-      if (!item.examTime) return $showAlert('시험시간을 입력해주세요.');
-      if (item.messageFlag == 'Y' && !item.message)
-        return $showAlert('안내문동의 메시지를 입력해주세요.');
-    }
+    // axios
   }
 };
 // 취소 후 목록으로 이동

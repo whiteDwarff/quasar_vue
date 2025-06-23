@@ -53,9 +53,9 @@
             @click="param = resetParam()"
             label="초기화"
             :outline="true"
-            class="q-mr-md"
+            class="q-mr-md w-100"
           />
-          <CustomButton label="검색" />
+          <CustomButton label="검색" class="w-100" />
         </div>
       </q-card-section>
     </q-card>

@@ -14,7 +14,7 @@ body.desktop .q-manual-focusable--focused > .q-focus-helper {
 
 .q-table {
   border-top: 2px solid rgba(0, 0, 0, 0.12);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.12); */
 }
 .q-table thead tr.q-tr {
   height: 35px;
@@ -28,6 +28,7 @@ body.desktop .q-manual-focusable--focused > .q-focus-helper {
 .q-table tbody td {
   height: 35px;
   padding: 5px 10px !important;
+  text-align: center;
 }
 
 .q-pagination__content button {

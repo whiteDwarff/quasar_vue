@@ -73,7 +73,10 @@
     </q-card>
 
     <div class="flex edit-btn-wrap">
-      <p class="q-mt-auto">총 <span class="list-count">3</span>개</p>
+      <p class="q-mt-auto">
+        총 <span class="list-count">{{ rows.length }}</span
+        >개
+      </p>
       <q-space />
       <CustomButton @click="$router.push('/assign/edit')" label="응시자등록" />
       <CustomButton
@@ -87,33 +90,54 @@
     </div>
 
     <q-card flat>
-      <q-table :rows="[1, 2, 3]" flat bordered hide-bottom>
-        <template #header>
+      <q-table
+        v-model:selected="selected"
+        :rows="rows"
+        flat
+        bordered
+        selection="multiple"
+        row-key="examineeSeq"
+        hide-pagination
+        hide-selected-banner
+      >
+        <template #header="props">
           <q-tr>
+            <q-th><q-checkbox v-model="props.selected" /></q-th>
             <q-th style="width: 5%">번호</q-th>
             <q-th style="width: 10%">사번(등록번호)</q-th>
             <q-th style="width: 20%">성명(국문)</q-th>
-            <q-th style="width: 20%">성명(영문)</q-th>
+            <q-th style="width: 17%">성명(영문)</q-th>
             <q-th style="width: 20%">회사명</q-th>
-            <q-th style="width: 5%">사진유무</q-th>
+            <q-th style="width: 7%">사진유무</q-th>
             <q-th style="width: 20%">관리</q-th>
           </q-tr>
         </template>
-        <template #body>
-          <q-tr>
-            <q-td></q-td>
-            <q-td></q-td>
-            <q-td></q-td>
-            <q-td></q-td>
-            <q-td></q-td>
-            <q-td></q-td>
+
+        <template #body="{ row, selected }">
+          <q-tr :props="{ row, selected }" class="cursor-pointer">
+            <!-- <q-td> <q-checkbox v-model="selected" /></q-td> -->
+            <q-td>{{ row.no }}</q-td>
+            <q-td>{{ row.examineeId }}</q-td>
+            <q-td>{{ row.examineeName }}</q-td>
+            <q-td>{{ row.examineeNameEn }}</q-td>
+            <q-td>{{ row.companyName }}</q-td>
+            <q-td>{{ row.imageYn }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
-                <RowEditButton label="삭제" icon="delete" class="col-xs-12 col-md-6" />
+                <RowEditButton
+                  @click="examineeDelete()"
+                  label="삭제"
+                  icon="delete"
+                  class="col-xs-12 col-md-6"
+                />
                 <RowEditButton label="수정" icon="edit" class="col-xs-12 col-md-6" />
               </div>
             </q-td>
           </q-tr>
+        </template>
+
+        <template #no-data>
+          <div class="full-width text-center">데이터가 없습니다.</div>
         </template>
       </q-table>
 
@@ -135,6 +159,32 @@ const resetParam = () => {
   };
 };
 const param = ref({ ...resetParam() });
+
+const selected = ref([]);
+const rows = ref([
+  {
+    no: 1,
+    examineeSeq: 100,
+    examineeId: 'rkdans113',
+    examineeName: '강문호',
+    examineeNameEn: 'Kang Mun ho',
+    companyName: '토스',
+    imageYn: '미사용',
+  },
+  {
+    no: 2,
+    examineeSeq: 101,
+    examineeId: 'an6684',
+    examineeName: '안민덩',
+    examineeNameEn: 'An dung',
+    companyName: '카카오',
+    imageYn: '사용',
+  },
+]);
+
+const examineeDelete = (examineeSeq = null) => {
+  if (!selected.value.length && !examineeSeq) return $showAlert('삭제할 응시자를 선택해주세요.');
+};
 </script>
 
 <route lang="yaml">
