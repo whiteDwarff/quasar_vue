@@ -38,6 +38,16 @@ body.desktop .q-manual-focusable--focused > .q-focus-helper {
   padding: 5px 10px !important;
   text-align: center;
 }
+.q-table tbody tr.current td {
+  border-top: 1px solid #69a5fe !important;
+  border-bottom: 1px solid #69a5fe !important;
+}
+.q-table tbody tr.current td:first-child {
+  border-left: 1px solid #69a5fe;
+}
+.q-table tbody tr.current td:last-child {
+  border-right: 1px solid #69a5fe;
+}
 
 .q-pagination__content button {
   margin: 0 5px;
