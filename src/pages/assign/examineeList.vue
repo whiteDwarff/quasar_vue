@@ -82,7 +82,13 @@
         <CustomButton @click="$router.push('/assign/examineeEdit')" label="응시자등록" />
         <CustomButton @click="examineeDelete()" label="삭제" color="warning" outline />
         <CustomButton label="엑셀양식 다운로드" icon="bi-cloud-download" color="grey-6" outline />
-        <CustomButton label="엑셀로 업로드" icon="bi-filetype-xlsx" color="positive" outline />
+        <CustomButton
+          @click="visible = true"
+          label="엑셀로 업로드"
+          icon="bi-filetype-xlsx"
+          color="positive"
+          outline
+        />
       </div>
     </div>
 
@@ -146,29 +152,7 @@
       <PaginationTemp v-model:page="param" />
     </q-card>
 
-    <div>
-      <p class="mb20">
-        엑셀을 업로드 하여 다수의 정보를 한번에 입력할 수 있습니다.<br />
-        정해진 엑셀 양식에 입력하여 업로드 하세요.
-      </p>
-
-      <p class="q-my-md">
-        <b>등록 가능한 파일 : <span class="text-negative underline">.xlsx</span></b>
-      </p>
-      <div
-        @click="$refs.modalExcelFile.click()"
-        @dragenter.stop.prevent="$event.target.classList.add('active')"
-        @dragleave.stop.prevent="$event.target.classList.remove('active')"
-        ondragover="event.preventDefault()"
-        class="dropzone q-py-lg q-mb-md cursor-pointer"
-      >
-        <div class="text-grey-14 text-center">
-          <q-icon name="bi-cloud-upload" size="lg" class="block q-mx-auto q-mb-sm" />
-          클릭 또는 드래그해서 파일을 선택해 주세요.
-        </div>
-        <input ref="modalExcelFile" type="file" accept=".xlsx" style="display: none" />
-      </div>
-    </div>
+    <FileUploadDialog v-model="visible" url="test" />
   </q-page>
 </template>
 
@@ -188,6 +172,8 @@ const param = ref({ ...resetParam() });
 
 const selected = ref([]);
 const currentRow = ref(null);
+
+const visible = ref(false);
 
 const rows = ref([
   {

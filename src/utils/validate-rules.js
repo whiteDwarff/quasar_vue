@@ -46,15 +46,17 @@ export function validOnlyEN(value) {
 }
 /**
  * 날짜 형식(YYYY-MM-DD)이 맞는지 검사
- * @param {string} value
- * @returns {boolean}
+ * @param {string} value - 날짜형식
+ * @returns {boolean}    - 참/거짓
  */
 export function validDate(value) {
   const reg = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
   return reg.test(value);
 }
 /**
- *
+ * 이미지 형식의 파일을 등록 시 미리보기 지원
+ * @param {Event} target   - 파일 input 이벤트 객체
+ * @returns {null | Object} - 미리보기용 파일 객체 혹은 null
  */
 export function imageRender(target) {
   if (target.files.length) {
@@ -74,6 +76,20 @@ export function imageRender(target) {
       file,
     };
   }
-
   return null;
+}
+/**
+ * 파일명에서 확장자를 추출하여 등록가능한 파일인지 확인
+ * @param {file} file  - 등록된 파일
+ * @param {array} exts - 등록가능한 파일목록
+ * @returns {boolean}
+ */
+export function validFileExt(file, exts) {
+  if (!file || !exts || !exts.length) return false;
+
+  const fileName = file.name;
+  const dotIndex = fileName.lastIndexOf('.');
+  const ext = dotIndex !== -1 ? fileName.slice(dotIndex).toLowerCase() : '';
+
+  return exts.map((ext) => ext.toLowerCase()).includes(ext) ? true : false;
 }

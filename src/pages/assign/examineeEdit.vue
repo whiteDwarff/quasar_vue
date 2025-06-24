@@ -199,8 +199,7 @@ const submit = async () => {
 };
 // 취소 후 목록으로 이동
 const cancle = async () => {
-  const status = await $showConfirm('취소하시겠습니까?');
-  if (status) router.push('/assign');
+  if (await $showConfirm('취소하시겠습니까?')) router.push('/assign/examineeList');
 };
 </script>
 

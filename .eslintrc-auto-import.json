@@ -96,6 +96,7 @@
     "useTemplateRef": "readonly",
     "validDate": "readonly",
     "validEmail": "readonly",
+    "validFileExt": "readonly",
     "validOnlyEN": "readonly",
     "validOnlyKR": "readonly",
     "validPassword": "readonly",
