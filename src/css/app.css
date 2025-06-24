@@ -13,6 +13,10 @@ p {
 .none {
   display: none;
 }
+.underline {
+  text-decoration: underline;
+}
+
 /* page nav */
 .location-wrap {
   padding-bottom: 10px;
@@ -125,4 +129,16 @@ p {
 }
 .dashed-line:last-child {
   border-bottom: none;
+}
+
+.dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px dashed #4f82f8;
+  background: #fff;
+}
+.dropzone.active {
+  background: #eef5ff;
 }
