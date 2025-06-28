@@ -7,8 +7,16 @@
 export {}
 declare global {
   const $cancle: typeof import('./utils/globals.js')['$cancle']
+  const $imageRender: typeof import('./utils/validate-rules.js')['$imageRender']
   const $showAlert: typeof import('./utils/globals.js')['$showAlert']
   const $showConfirm: typeof import('./utils/globals.js')['$showConfirm']
+  const $validDate: typeof import('./utils/validate-rules.js')['$validDate']
+  const $validEmail: typeof import('./utils/validate-rules.js')['$validEmail']
+  const $validFileExt: typeof import('./utils/validate-rules.js')['$validFileExt']
+  const $validOnlyEN: typeof import('./utils/validate-rules.js')['$validOnlyEN']
+  const $validOnlyKR: typeof import('./utils/validate-rules.js')['$validOnlyKR']
+  const $validPassword: typeof import('./utils/validate-rules.js')['$validPassword']
+  const $validTel: typeof import('./utils/validate-rules.js')['$validTel']
   const EffectScope: typeof import('vue')['EffectScope']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const computed: typeof import('vue')['computed']

@@ -153,6 +153,13 @@
 </template>
 
 <script setup>
+/*
+https://ko.vuejs.org/api/sfc-script-setup.html#definemodel
+// "count" prop 선언, 부모에 의해 v-model:count를 통해 사용됨
+const count = defineModel('count')
+// 또는: 옵션을 포함한 "count" prop 선언
+const count = defineModel('count', { type: Number, default: 0 })
+*/
 const router = useRouter();
 
 const form = ref({

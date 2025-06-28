@@ -112,7 +112,7 @@ const dropFile = (event) => {
 const fileChangeHandler = (files) => {
   if (!files.length) return;
 
-  if (!validFileExt(files[0], props.exts))
+  if (!$validFileExt(files[0], props.exts))
     return $showAlert(`[${props.exts.join(', ')}] 파일만 등록할 수 있습니다.`);
 
   file.value = files[0];

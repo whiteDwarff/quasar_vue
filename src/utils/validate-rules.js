@@ -3,7 +3,7 @@
  * @param {string} value
  * @returns {boolean}
  */
-export function validEmail(value) {
+export function $validEmail(value) {
   const reg =
     /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
   return reg.test(value);
@@ -13,7 +13,7 @@ export function validEmail(value) {
  * @param {string} value
  * @returns {boolean}
  */
-export function validTel(value) {
+export function $validTel(value) {
   const reg = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
   return reg.test(value);
 }
@@ -22,7 +22,7 @@ export function validTel(value) {
  * @param {string} value
  * @returns {boolean}
  */
-export function validPassword(value) {
+export function $validPassword(value) {
   const reg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
   return reg.test(value);
 }
@@ -31,7 +31,7 @@ export function validPassword(value) {
  * @param {string} value
  * @returns {boolean}
  */
-export function validOnlyKR(value) {
+export function $validOnlyKR(value) {
   const reg = /^[가-힣\s]+$/;
   return reg.test(value);
 }
@@ -40,7 +40,7 @@ export function validOnlyKR(value) {
  * @param {string} value
  * @returns {boolean}
  */
-export function validOnlyEN(value) {
+export function $validOnlyEN(value) {
   const reg = /^[a-zA-Z\s]+$/;
   return reg.test(value);
 }
@@ -49,7 +49,7 @@ export function validOnlyEN(value) {
  * @param {string} value - 날짜형식
  * @returns {boolean}    - 참/거짓
  */
-export function validDate(value) {
+export function $validDate(value) {
   const reg = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
   return reg.test(value);
 }
@@ -58,7 +58,7 @@ export function validDate(value) {
  * @param {Event} target   - 파일 input 이벤트 객체
  * @returns {null | Object} - 미리보기용 파일 객체 혹은 null
  */
-export function imageRender(target) {
+export function $imageRender(target) {
   if (target.files.length) {
     const file = target.files[0];
 
@@ -84,7 +84,7 @@ export function imageRender(target) {
  * @param {array} exts - 등록가능한 파일목록
  * @returns {boolean}
  */
-export function validFileExt(file, exts) {
+export function $validFileExt(file, exts) {
   if (!file || !exts || !exts.length) return false;
 
   const fileName = file.name;
