@@ -1,23 +1,147 @@
 <template>
-  <q-card flat dense>
-    <!--
-      <div class="row q-col-gutter-lg">
-        <q-form @submit.prevent="examRoomSubmit" class="col-12 col-md-6">
-          <ExamRoom v-model="form" :options="companyOptions" />
-        </q-form>
-        <q-form @submit.prevent="examRoomNumSubmit" class="col-12 col-md-6">
-          <ExamRoomNum
-          v-model="form"
-          @update:examRoomNum="updateExamRoomNum"
-          @delete:examRoomNum="deleteExamRoomNum"
-          />
-        </q-form>
-      </div>
-      -->
-  </q-card>
+  <q-page padding>
+    <q-card flat>
+      <q-card-section class="q-pt-none">
+        <div class="flex items-baseline location-wrap">
+          <span class="title">시험정보등록</span>
+          <q-space />
+          <span class="bar">Home</span>
+          <span class="bar">시험정보</span>
+          <span class="current">시험정보등록</span>
+        </div>
+      </q-card-section>
+
+      <q-card-section>
+        <div class="row q-col-gutter-md">
+          <div class="col-xs-12 col-md-6">
+            <table class="markup-table">
+              <colgroup>
+                <col width="20%" />
+                <col width="80%" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th class="star">시험장</th>
+                  <td><q-input outlined dense fill class="full-width" /></td>
+                </tr>
+                <tr>
+                  <th>시험지역</th>
+                  <td><q-input outlined dense fill class="full-width" /></td>
+                </tr>
+                <tr>
+                  <th class="star">시험장소</th>
+                  <td><q-input outlined dense fill class="full-width" /></td>
+                </tr>
+                <tr>
+                  <th>시험정보</th>
+                  <td>
+                    <q-input v-model="form.examRoomInfo" dense outlined type="textarea" rows="3">
+                      <template v-if="form.examRoomInfo" v-slot:append>
+                        <q-icon
+                          name="cancel"
+                          color="grey-5"
+                          @click="form.examRoomInfo = ''"
+                          class="cursor-pointer full-height"
+                        />
+                      </template>
+                    </q-input>
+                  </td>
+                </tr>
+                <tr>
+                  <th>담당자</th>
+                  <td><q-input outlined dense fill class="full-width" /></td>
+                </tr>
+                <tr>
+                  <th>담당자<br />전화번호</th>
+                  <td><q-input outlined dense fill mask="###-####-####" class="full-width" /></td>
+                </tr>
+                <tr>
+                  <th>담당자 정보</th>
+                  <td>
+                    <q-input v-model="form.examRoomInfo" dense outlined type="textarea" rows="3">
+                      <template v-if="form.examRoomInfo" v-slot:append>
+                        <q-icon
+                          name="cancel"
+                          color="grey-5"
+                          @click="form.examRoomInfo = ''"
+                          class="cursor-pointer full-height"
+                        />
+                      </template>
+                    </q-input>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="col-xs-12 col-md-6">
+            <table class="markup-table">
+              <colgroup>
+                <col width="20%" />
+                <col width="30%" />
+                <col width="20%" />
+                <col width="30%" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th class="star">호실</th>
+                  <td>
+                    <q-input
+                      outlined
+                      dense
+                      fill
+                      suffix="호"
+                      input-class="text-right"
+                      class="full-width"
+                    />
+                  </td>
+                  <th>정원</th>
+                  <td>
+                    <q-input outlined dense fill readonly class="full-width" />
+                  </td>
+                </tr>
+                <tr>
+                  <th class="star">자리<br />배치구성</th>
+                  <td colspan="3">
+                    <div class="flex items-center">
+                      <div style="width: 46%">
+                        <q-input
+                          input-class="text-right"
+                          prefix="가로 :"
+                          suffix="명"
+                          dense
+                          outlined
+                          mask="####"
+                        />
+                      </div>
+                      <span class="q-mx-sm input-label block text-center" style="width: 4%">X</span>
+                      <div style="width: 46%">
+                        <q-input
+                          input-class="text-right"
+                          prefix="세로 :"
+                          suffix="명"
+                          dense
+                          outlined
+                          mask="####"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-page>
 </template>
 
 <script setup>
+const form = ref({
+  examRoomInfo: '',
+});
+
 /*
 const router = useRouter();
 
@@ -124,3 +248,7 @@ const updateExamRoomNum = async (row) => {
 };
 */
 </script>
+<route lang="yaml">
+meta:
+  layout: default
+</route>
