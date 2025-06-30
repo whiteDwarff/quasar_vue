@@ -72,6 +72,7 @@
           <q-tr
             @click="currentRow = props.rowIndex"
             :props="props"
+            no-hover
             :class="{ current: currentRow == props.rowIndex }"
             class="cursor-pointer"
           >

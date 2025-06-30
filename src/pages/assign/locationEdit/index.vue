@@ -35,7 +35,7 @@
                 <tr>
                   <th>시험정보</th>
                   <td>
-                    <q-input v-model="form.examRoomInfo" dense outlined type="textarea" rows="3">
+                    <q-input v-model="form.examRoomInfo" dense outlined type="textarea" rows="5">
                       <template v-if="form.examRoomInfo" v-slot:append>
                         <q-icon
                           name="cancel"
@@ -58,7 +58,7 @@
                 <tr>
                   <th>담당자 정보</th>
                   <td>
-                    <q-input v-model="form.examRoomInfo" dense outlined type="textarea" rows="3">
+                    <q-input v-model="form.examRoomInfo" dense outlined type="textarea" rows="5">
                       <template v-if="form.examRoomInfo" v-slot:append>
                         <q-icon
                           name="cancel"
@@ -87,6 +87,7 @@
                   <th class="star">호실</th>
                   <td>
                     <q-input
+                      v-model="form.roomNumber"
                       outlined
                       dense
                       fill
@@ -97,7 +98,16 @@
                   </td>
                   <th>정원</th>
                   <td>
-                    <q-input outlined dense fill readonly class="full-width" />
+                    <q-input
+                      :model-value="updateExamineeCount(form.colCount, form.rowCount)"
+                      input-class="text-right"
+                      suffix="명"
+                      outlined
+                      dense
+                      fill
+                      readonly
+                      class="full-width"
+                    />
                   </td>
                 </tr>
                 <tr>
@@ -106,6 +116,7 @@
                     <div class="flex items-center">
                       <div style="width: 46%">
                         <q-input
+                          v-model="form.colCount"
                           input-class="text-right"
                           prefix="가로 :"
                           suffix="명"
@@ -114,9 +125,10 @@
                           mask="####"
                         />
                       </div>
-                      <span class="q-mx-sm input-label block text-center" style="width: 4%">X</span>
+                      <span class="input-label block text-center" style="width: 8%">×</span>
                       <div style="width: 46%">
                         <q-input
+                          v-model="form.rowCount"
                           input-class="text-right"
                           prefix="세로 :"
                           suffix="명"
@@ -130,6 +142,157 @@
                 </tr>
               </tbody>
             </table>
+
+            <div class="flex q-my-sm">
+              <q-space />
+              <CustomButton
+                @click="resetExamRoomNum"
+                label="초기화"
+                :outline="true"
+                class="q-mr-md"
+              />
+              <CustomButton @click="addExamRoomNum" label="추가" />
+            </div>
+
+            <q-table
+              :rows="form.examRoomNum"
+              row-key="roomNumberOri"
+              flat
+              hide-pagination
+              :class="{ 'table-height': form.examRoomNum.length }"
+            >
+              <template #header>
+                <q-tr>
+                  <q-th auto-width />
+                  <q-th>호실</q-th>
+                  <q-th>정원</q-th>
+                  <q-th>자리배치구성</q-th>
+                  <q-th>관리</q-th>
+                </q-tr>
+              </template>
+              <!-- body -->
+              <template v-slot:body="props">
+                <q-tr :props="props" no-hover>
+                  <q-td style="width: 5%">
+                    <q-btn
+                      @click="props.expand = !props.expand"
+                      :icon="
+                        props.expand ? 'sym_o_keyboard_arrow_down' : 'sym_o_keyboard_arrow_right'
+                      "
+                      :ripple="false"
+                      round
+                      size="sm"
+                      color="grey-7"
+                      outline
+                      unelevated
+                      class="rounded-50"
+                    />
+                  </q-td>
+                  <q-td style="width: 20%"> {{ props.row.roomNumberOri }}호</q-td>
+                  <q-td style="width: 20%"
+                    >{{ props.row.rowCountOri * props.row.colCountOri }}명</q-td
+                  >
+                  <q-td style="width: 40%">
+                    {{ props.row.colCountOri }} × {{ props.row.rowCountOri }}명<br />
+                    <small>(가로 × 세로)</small>
+                  </q-td>
+                  <q-td style="width: 15%">
+                    <q-btn
+                      @click="exceptExamItem(i)"
+                      icon="bi-trash3"
+                      round
+                      flat
+                      :ripple="false"
+                      color="grey-14"
+                      size="sm"
+                      class="fit"
+                    />
+                  </q-td>
+                </q-tr>
+                <!-- expand -->
+                <q-tr
+                  v-show="props.expand"
+                  :props="props"
+                  style="background-color: #f2f7ff"
+                  no-hover
+                >
+                  <q-td class="border-bottom-none"> </q-td>
+                  <q-td class="border-bottom-none">
+                    <q-input
+                      @input.prevent="props.expand = true"
+                      v-model="props.row.roomNumber"
+                      label="호실"
+                      bg-color="white"
+                      dense
+                      outlined
+                    />
+                  </q-td>
+                  <q-td class="border-bottom-none">
+                    <q-input
+                      :modelValue="updateExamineeCount(props.row.colCount, props.row.rowCount)"
+                      label="정원"
+                      bg-color="white"
+                      dense
+                      outlined
+                      mask="####"
+                      readonly
+                    />
+                  </q-td>
+                  <q-td class="border-bottom-none">
+                    <div class="row q-col-gutter-xs">
+                      <q-input
+                        v-model="props.row.colCount"
+                        class="col-6"
+                        label="가로"
+                        bg-color="white"
+                        dense
+                        outlined
+                        mask="####"
+                      />
+                      <q-input
+                        v-model="props.row.rowCount"
+                        class="col-6"
+                        label="세로"
+                        bg-color="white"
+                        dense
+                        outlined
+                        mask="####"
+                      />
+                    </div>
+                  </q-td>
+                  <q-td class="border-bottom-none">
+                    <q-btn
+                      @click="updateRoomNumInfo($event, props, true)"
+                      label="수정"
+                      color="primary"
+                      outline
+                      class="bg-white"
+                    />
+                  </q-td>
+                </q-tr>
+                <q-tr
+                  v-show="props.expand"
+                  :props="props"
+                  style="background-color: #f2f7ff"
+                  no-hover
+                >
+                  <q-td />
+                  <q-td colspan="4">
+                    <q-input
+                      v-model="props.row.examRoomInfo"
+                      label="호실정보"
+                      bg-color="white"
+                      dense
+                      outlined
+                    />
+                  </q-td>
+                </q-tr>
+              </template>
+              <!-- empty  -->
+              <template v-slot:no-data>
+                <div class="full-width text-center">데이터가 없습니다.</div>
+              </template>
+            </q-table>
           </div>
         </div>
       </q-card-section>
@@ -140,114 +303,72 @@
 <script setup>
 const form = ref({
   examRoomInfo: '',
-});
 
-/*
-const router = useRouter();
-
-const form = ref({
-  examRoomCode: 1,
-  companySeq: 10,
-  addr: '',
-  detailAddr: '',
-  extraAddr: '',
-  examRoomName: '우리집',
-  examRoomAddr: '2412호',
-  examRoomInfo: '',
-  manager: '강문호',
-  managerTel: '010-8637-1685',
-  managerInfo: 'ㅎㅇ',
   roomNumber: '',
-  personnelCount: '',
-  rowCount: '',
   colCount: '',
-  examRoomNumInfo: '',
+  rowCount: '',
+
+  //
   examRoomNum: [
     {
-      examRoomCode: 1001,
       roomNumber: '2412',
-      personnelCount: 14,
-      rowCount: 2,
-      colCount: 7,
-      examRoomNumInfo: '우리집',
-    },
-    {
-      examRoomCode: 1002,
-      roomNumber: '1301',
-      personnelCount: 6,
-      rowCount: 3,
-      colCount: 2,
-      examRoomNumInfo: '',
+      colCount: 3,
+      rowCount: 4,
+      examRoomNumInfo: '집임',
+      roomNumberOri: '2412',
+      colCountOri: 3,
+      rowCountOri: 4,
     },
   ],
-  min: 1,
-  max: 1,
-  maxPages: 1,
-  current: 1,
 });
 
-const examRoomSubmit = async () => {
-  if (!confirm('저장하시겠습니까?')) return;
+// 자리 배치구성 입력 시
+const updateExamineeCount = (value1, value2) => {
+  const colCount = parseInt(value1);
+  const rowCount = parseInt(value2);
 
-  // api.post('...');
-
-  alert('저장되었습니다.');
-  router.push('/examinee/examRoomList');
+  return !isNaN(colCount) && !isNaN(rowCount) ? colCount * rowCount : null;
 };
+// 호실정보 추가
+const addExamRoomNum = async () => {
+  const { roomNumber, colCount, rowCount } = form.value;
+  if (!roomNumber) return $showAlert('호실을 입력하세요.');
 
-const examRoomNumSubmit = async () => {
-  const personnelCount = form.value.personnelCount;
-  const totalCount = form.value.rowCount * form.value.colCount;
+  for (let item of form.value.examRoomNum) {
+    if (item.roomNumberOri == roomNumber) return $showAlert('동일한 호실이 존재합니다.');
+  }
 
-  if (totalCount > personnelCount) return alert('배치한 인원의 수가 정원 수보다 큽니다.');
+  if (!colCount) return $showAlert('가로 인원을 입력하세요.');
+  if (!rowCount) return $showAlert('새로 인원을 입력하세요.');
 
-  if (confirm('저장하시겠습니까?')) {
-    try {
-      // const res =  await api.post('...');
-
-      form.value.examRoomNum.unshift({
-        examRoomCode: Math.floor(Math.random() * 100),
-        roomNumber: form.value.roomNumber,
-        personnelCount: form.value.personnelCount,
-        rowCount: form.value.rowCount,
-        colCount: form.value.colCount,
-        examRoomNumInfo: form.value.examRoomNumInfo,
-      });
-
-      form.value.roomNumber = '';
-      form.value.personnelCount = '';
-      form.value.rowCount = '';
-      form.value.colCount = '';
-      form.value.examRoomNumInfo = '';
-    } catch (err) {
-      console.log(err);
-    }
+  if (await $showConfirm('호실정보를 추가하시겠습니까?')) {
+    form.value.examRoomNum.push({
+      roomNumber,
+      colCount,
+      rowCount,
+      examRoomInfo: '',
+      roomNumberOri: roomNumber,
+      colCountOri: colCount,
+      rowCountOri: rowCount,
+    });
+    resetExamRoomNum();
   }
 };
-
-// 선택한 호실 삭제
-const deleteExamRoomNum = async (row) => {
-  try {
-    // const res =  await api.post('...');
-    form.value.examRoomNum = form.value.examRoomNum.filter(
-      ({ examRoomCode }) => examRoomCode != row.examRoomCode,
-    );
-    alert('삭제되었습니다.');
-  } catch (err) {
-    console.log(err);
-  }
+// 호실정보 초기화
+const resetExamRoomNum = () => {
+  form.value.roomNumber = '';
+  form.value.exmaineeCount = null;
+  form.value.colCount = '';
+  form.value.rowCount = '';
 };
-// 선택한 호실 수정
-const updateExamRoomNum = async (row) => {
-  try {
-    // const res =  await api.post('...');
-    alert('수정되었습니다.');
-  } catch (err) {
-    console.log(err);
-  }
-};
-*/
 </script>
+
+<style scoped>
+.table-height {
+  height: 337px;
+}
+</style>
+
 <route lang="yaml">
 meta:
   layout: default

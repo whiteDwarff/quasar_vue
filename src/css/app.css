@@ -16,7 +16,15 @@ p {
 .underline {
   text-decoration: underline;
 }
-
+.border-bottom-none {
+  border-bottom: none !important;
+}
+.border-all {
+  border: 1px solid var(--border);
+}
+.rounded-50 {
+  border-radius: 50% !important;
+}
 /* page nav */
 .location-wrap {
   padding-bottom: 10px;
