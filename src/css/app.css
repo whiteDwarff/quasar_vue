@@ -9,6 +9,21 @@ body {
 p {
   margin-bottom: 0;
 }
+/* title 가상요소 */
+.before-line {
+  position: relative;
+  padding-left: 10px;
+}
+.before-line::before {
+  content: '';
+  position: absolute;
+  top: 5.5px;
+  left: 0;
+  width: 2px;
+  height: 12px;
+  border-radius: 5px;
+  background: var(--q-primary);
+}
 
 .none {
   display: none;

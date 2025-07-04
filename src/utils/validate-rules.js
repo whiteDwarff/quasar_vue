@@ -28,7 +28,7 @@ export function $validPassword(value) {
 }
 /**
  * 입력값이 한글로만 구성되어 있는지 검사
- * @param {string} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function $validOnlyKR(value) {
@@ -37,12 +37,20 @@ export function $validOnlyKR(value) {
 }
 /**
  * 영어 알파벳으로만 구성되어 있는지 검사
- * @param {string} value
+ * @param {any} value
  * @returns {boolean}
  */
 export function $validOnlyEN(value) {
   const reg = /^[a-zA-Z\s]+$/;
   return reg.test(value);
+}
+/**
+ * 숫자로만 구성되어 있는지 검사
+ * @param {any} value
+ * @returns {boolean}
+ */
+export function $validNumber(value) {
+  return !isNaN(value);
 }
 /**
  * 날짜 형식(YYYY-MM-DD)이 맞는지 검사

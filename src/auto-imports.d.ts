@@ -13,6 +13,7 @@ declare global {
   const $validDate: typeof import('./utils/validate-rules.js')['$validDate']
   const $validEmail: typeof import('./utils/validate-rules.js')['$validEmail']
   const $validFileExt: typeof import('./utils/validate-rules.js')['$validFileExt']
+  const $validNumber: typeof import('./utils/validate-rules.js')['$validNumber']
   const $validOnlyEN: typeof import('./utils/validate-rules.js')['$validOnlyEN']
   const $validOnlyKR: typeof import('./utils/validate-rules.js')['$validOnlyKR']
   const $validPassword: typeof import('./utils/validate-rules.js')['$validPassword']

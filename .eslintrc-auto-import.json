@@ -6,6 +6,7 @@
     "$validDate": "readonly",
     "$validEmail": "readonly",
     "$validFileExt": "readonly",
+    "$validNumber": "readonly",
     "$validOnlyEN": "readonly",
     "$validOnlyKR": "readonly",
     "$validPassword": "readonly",
