@@ -183,6 +183,7 @@
               flat
               hide-pagination
               :class="{ 'table-height': form.examRoomNum.length }"
+              style="min-height: 86px"
             >
               <template #header>
                 <q-tr>

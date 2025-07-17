@@ -17,13 +17,13 @@
           <div class="col-xs-12 col-md-6">
             <span class="form-label star">설문제목</span>
             <div>
-              <q-input outlined dense />
+              <q-input v-model="form.title" outlined dense />
             </div>
           </div>
           <div class="col-xs-12 col-md-6">
             <span class="form-label">설문설명</span>
             <div>
-              <q-input outlined dense />
+              <q-input v-model="form.memo" outlined dense />
             </div>
           </div>
         </div>
@@ -31,97 +31,188 @@
 
       <q-card-section>
         <p class="text-subtitle2 text-weight-bold q-mb-md before-line">설문문항 등록</p>
-        <table class="markup-table">
-          <colgroup>
-            <col width="20%" />
-            <col width="80%" />
-          </colgroup>
-          <tbody>
-            <tr>
-              <th class="star">문제</th>
-              <td>
-                <div>
-                  <q-input v-model="form.surveyQuizTitle" outlined dense fill class="full-width" />
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th class="star">설문유형</th>
-              <td>
-                <q-radio
-                  v-model="form.serveyType"
-                  name="surveyType"
-                  :val="1"
-                  label="객관식"
-                  size="sm"
-                />
-                <q-radio
-                  v-model="form.serveyType"
-                  name="surveyType"
-                  :val="3"
-                  label="주관식"
-                  size="sm"
-                />
-              </td>
-            </tr>
-            <template v-if="form.serveyType == 1">
-              <tr v-for="(item, i) of form.example" :key="i">
-                <th>보기 {{ item.order }}</th>
+        <!-- 설문 문항 선택 -->
+        <div id="survey-order-wrap" class="q-mb-sm">
+          <q-btn
+            v-for="item of form.survey"
+            :key="item.order"
+            @click="form.currentOrder = item.order"
+            :label="item.order"
+            :outline="form.currentOrder != item.order"
+            paddng="xs"
+            color="primary"
+            unelevated
+            class="q-ml-xs q-mb-xs"
+            style="width: 36px; height: 36px"
+          >
+            <q-tooltip class="text-center">
+              <span>{{ item.title ? item.title : '문제를 입력해주세요.' }}</span>
+              <p v-if="item.title">
+                <span>{{ item.type == 1 ? '객관식' : '주관식' }}</span>
+                <span>{{ item.type == 1 ? ` / ${item.example.length}` : '' }}</span>
+              </p>
+            </q-tooltip>
+          </q-btn>
+        </div>
+
+        <template v-for="item of form.survey" :key="item.order">
+          <table v-if="item.order == form.currentOrder" class="markup-table">
+            <colgroup>
+              <col width="20%" />
+              <col width="80%" />
+            </colgroup>
+            <tbody>
+              <tr>
+                <th class="star">문제</th>
                 <td>
-                  <div class="flex items-center example-row">
+                  <div class="flex">
                     <q-input
-                      v-model="item.value"
+                      v-model="item.title"
                       outlined
                       dense
                       fill
-                      :class="{ last: i + 1 == form.example.length }"
+                      style="width: calc(100% - 48px)"
                     />
                     <q-btn
-                      icon="bi-dash"
-                      rounded
-                      dense
-                      outline
-                      unelevated
-                      color="grey-7"
-                      class="rounded-50"
-                    />
-                    <q-btn
-                      v-if="i + 1 == form.example.length"
-                      @click="addExample"
-                      icon="bi-plus"
-                      rounded
-                      dense
-                      outline
-                      unelevated
-                      color="grey-7"
-                      class="rounded-50 plus"
+                      @click="deleteSurveyItem(item.order)"
+                      icon="bi-trash3"
+                      flat
+                      :ripple="false"
+                      round
+                      color="grey-14"
+                      size="sm"
+                      class="q-ml-sm"
+                      style="width: 40px; height: 40px"
                     />
                   </div>
                 </td>
               </tr>
-            </template>
-          </tbody>
-        </table>
+              <tr>
+                <th class="star">설문유형</th>
+                <td>
+                  <q-radio
+                    v-model="item.type"
+                    name="surveyType"
+                    :val="1"
+                    label="객관식"
+                    size="sm"
+                  />
+                  <q-radio
+                    v-model="item.type"
+                    name="surveyType"
+                    :val="3"
+                    label="주관식"
+                    size="sm"
+                  />
+                </td>
+              </tr>
+              <template v-if="item.type == 1">
+                <tr v-for="(exampe, i) of item.example" :key="i">
+                  <th>보기 {{ exampe.order }}</th>
+                  <td>
+                    <div class="flex items-center example-row">
+                      <q-input
+                        v-model="exampe.value"
+                        outlined
+                        dense
+                        fill
+                        :class="{ last: i + 1 == item.example.length }"
+                      />
+                      <q-btn
+                        icon="bi-dash"
+                        rounded
+                        dense
+                        outline
+                        unelevated
+                        color="grey-7"
+                        class="rounded-50"
+                      />
+                      <q-btn
+                        v-if="i + 1 == item.example.length"
+                        @click="addExample(item.example)"
+                        icon="bi-plus"
+                        rounded
+                        dense
+                        outline
+                        unelevated
+                        color="grey-7"
+                        class="rounded-50 plus"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+
+        <q-card-section class="flex justify-between q-px-none">
+          <CustomButton label="취소" outline class="w-100" />
+          <div class="flex">
+            <CustomButton label="삭제" color="warning" outline class="w-100" />
+            <CustomButton @click="addSurvey" label="설문추가" outline class="q-mx-md w-100" />
+            <CustomButton label="저장" class="w-100" />
+          </div>
+        </q-card-section>
       </q-card-section>
     </q-card>
   </q-page>
 </template>
 
 <script setup>
-const form = reactive({
-  surveyQuizTitle: '',
-  serveyType: 1,
-  example: [
+const form = ref({
+  title: '',
+  memo: '',
+  survey: [
     {
-      value: '',
+      title: '',
+      type: 1,
       order: 1,
+      example: [
+        {
+          value: '',
+          order: 1,
+        },
+      ],
     },
   ],
+  currentOrder: 1,
 });
 
-const addExample = () => {
-  if (form.example.length > 9) return $showAlert('보기는 10개를 초과할 수 없습니다.');
-  form.example.push({ value: '', order: form.example.length + 1 });
+// 설문삭제
+const deleteSurveyItem = (order) => {
+  if (form.value.survey.length == 1) return $showAlert('하나의 문항은 등록되어야합니다.');
+
+  let newOrder = 1;
+  form.value.survey = form.value.survey.filter((item) => {
+    if (item.order != order) {
+      item.order = newOrder;
+      newOrder++;
+      return item;
+    }
+  });
+  form.value.currentOrder = order != 1 ? order - 1 : 1;
+};
+// 설문추가
+const addSurvey = async () => {
+  const current = form.value.survey.length + 1;
+  form.value.survey.push({
+    title: '',
+    type: 1,
+    order: current,
+    example: [
+      {
+        value: '',
+        order: 1,
+      },
+    ],
+  });
+  form.value.currentOrder = current;
+};
+// 설문 보기항목 추가
+const addExample = (data) => {
+  if (data.length > 9) return $showAlert('보기는 10개를 초과할 수 없습니다.');
+  data.push({ value: '', order: data.length + 1 });
 };
 </script>
 
@@ -141,3 +232,8 @@ const addExample = () => {
   margin-left: 8px;
 }
 </style>
+
+<route lang="yaml">
+meta:
+  layout: default
+</route>
