@@ -208,8 +208,3 @@ const examineeDelete = async (examinee = null) => {
   }
 };
 </script>
-
-<route lang="yaml">
-meta:
-  layout: default
-</route>

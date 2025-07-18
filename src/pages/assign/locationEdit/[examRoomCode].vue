@@ -5,10 +5,9 @@
 <script setup>
 const route = useRoute();
 const router = useRouter();
-console.log($validNumber(route.params?.examRoomCode));
 
 if (!$validNumber(route.params?.examRoomCode)) {
-  router.push('/notFound');
+  router.push('/error');
 }
 
 const form = reactive({
@@ -23,8 +22,3 @@ const form = reactive({
   examRoomNum: [],
 });
 </script>
-
-<route lang="yaml">
-meta:
-  layout: default
-</route>

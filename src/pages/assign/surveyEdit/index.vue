@@ -68,13 +68,14 @@
                   <div class="flex">
                     <q-input
                       v-model="item.title"
+                      :autofocus
                       outlined
                       dense
                       fill
                       style="width: calc(100% - 48px)"
                     />
                     <q-btn
-                      @click="deleteSurveyItem(item.order)"
+                      @click="exceptSurveyItem(item.order)"
                       icon="bi-trash3"
                       flat
                       :ripple="false"
@@ -107,18 +108,19 @@
                 </td>
               </tr>
               <template v-if="item.type == 1">
-                <tr v-for="(exampe, i) of item.example" :key="i">
-                  <th>보기 {{ exampe.order }}</th>
+                <tr v-for="(example, i) of item.example" :key="i">
+                  <th>보기 {{ example.order }}</th>
                   <td>
                     <div class="flex items-center example-row">
                       <q-input
-                        v-model="exampe.value"
+                        v-model="example.value"
                         outlined
                         dense
                         fill
                         :class="{ last: i + 1 == item.example.length }"
                       />
                       <q-btn
+                        @click="exceptExample(example.order, item.example)"
                         icon="bi-dash"
                         rounded
                         dense
@@ -147,11 +149,17 @@
         </template>
 
         <q-card-section class="flex justify-between q-px-none">
-          <CustomButton label="취소" outline class="w-100" />
+          <CustomButton @click="cancle" label="취소" outline class="w-100" />
           <div class="flex">
-            <CustomButton label="삭제" color="warning" outline class="w-100" />
+            <CustomButton
+              @click="deleteSurvey"
+              label="삭제"
+              color="warning"
+              outline
+              class="w-100"
+            />
             <CustomButton @click="addSurvey" label="설문추가" outline class="q-mx-md w-100" />
-            <CustomButton label="저장" class="w-100" />
+            <CustomButton @click="saveSurveyInfo" label="저장" class="w-100" />
           </div>
         </q-card-section>
       </q-card-section>
@@ -160,6 +168,8 @@
 </template>
 
 <script setup>
+const router = useRouter();
+
 const form = ref({
   title: '',
   memo: '',
@@ -173,14 +183,63 @@ const form = ref({
           value: '',
           order: 1,
         },
+        {
+          value: '',
+          order: 2,
+        },
       ],
     },
   ],
   currentOrder: 1,
 });
 
+const autofocus = ref(false);
+
 // 설문삭제
-const deleteSurveyItem = (order) => {
+const deleteSurvey = async () => {
+  if ((await $showConfirm('설문을 삭제하시겠습니까?')) == false) return;
+
+  router.push('/assign/survey');
+  /*
+  try {
+    const res = $axios_loading.post('', form.value);
+
+    if(res.data.status == 200) {
+      $showAlert('삭제되었습니다.');
+      return router.push('/assign/survey');
+    }  
+    $showAlert('삭제 실패하였습니다.');
+  } catch(err) {
+    console.log(err);
+  }
+    */
+};
+// 설문정보 저장
+const saveSurveyInfo = async () => {
+  if (!form.value.title) return $showAlert('설문제목을 입력해주세요.');
+
+  for (let survey of form.value.survey) {
+    if (!survey.title) return $showAlert(`${survey.order}번 문항의 문제를 입력해주세요.`);
+
+    if (survey.type == 1 && survey.example.some(({ value }) => !value))
+      return $showAlert(`${survey.order}번 문항의 보기를 모두 입력해주세요.`);
+  }
+  /*
+  try {
+    const res = $axios_loading.post('', form.value);
+
+    if(res.data.status == 200) {
+      $showAlert('저장되었습니다.');
+      return router.push('/assign/survey');
+    }  
+    $showAlert('저장 실패하였습니다.');
+  } catch(err) {
+    console.log(err);
+  }
+  */
+};
+// 설문삭제
+const exceptSurveyItem = (order) => {
   if (form.value.survey.length == 1) return $showAlert('하나의 문항은 등록되어야합니다.');
 
   let newOrder = 1;
@@ -201,18 +260,38 @@ const addSurvey = async () => {
     type: 1,
     order: current,
     example: [
-      {
-        value: '',
-        order: 1,
-      },
+      { value: '', order: 1 },
+      { value: '', order: 2 },
     ],
   });
   form.value.currentOrder = current;
+  autofocus.value = true;
+};
+// 설문 보기항목 삭제
+const exceptExample = (order, example) => {
+  if (example.length <= 2) return $showAlert('두개의 보기는 등록되어야합니다.');
+  for (let survey of form.value.survey) {
+    if (survey.order == form.value.currentOrder) {
+      let newOrder = 1;
+      survey.example = survey.example.filter((item) => {
+        if (item.order != order) {
+          item.order = newOrder;
+          newOrder++;
+          return item;
+        }
+      });
+      break;
+    }
+  }
 };
 // 설문 보기항목 추가
-const addExample = (data) => {
-  if (data.length > 9) return $showAlert('보기는 10개를 초과할 수 없습니다.');
-  data.push({ value: '', order: data.length + 1 });
+const addExample = (example) => {
+  if (example.length > 9) return $showAlert('보기는 10개를 초과할 수 없습니다.');
+  example.push({ value: '', order: example.length + 1 });
+};
+// 취소 후 목록으로 이동
+const cancle = async () => {
+  if (await $showConfirm('취소하시겠습니까?')) router.push('/assign/survey');
 };
 </script>
 
@@ -232,8 +311,3 @@ const addExample = (data) => {
   margin-left: 8px;
 }
 </style>
-
-<route lang="yaml">
-meta:
-  layout: default
-</route>

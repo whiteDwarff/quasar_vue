@@ -15,8 +15,3 @@ const form = reactive({
   examRoomNum: [],
 });
 </script>
-
-<route lang="yaml">
-meta:
-  layout: default
-</route>

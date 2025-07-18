@@ -12,7 +12,7 @@ body.desktop .q-manual-focusable--focused > .q-focus-helper {
 .disabled *,
 [disabled],
 [disabled] * {
-  cursor: unset !important;
+  cursor: default !important;
 }
 
 .q-btn {

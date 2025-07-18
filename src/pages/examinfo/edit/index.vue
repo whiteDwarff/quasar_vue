@@ -223,8 +223,3 @@ const cancle = async () => {
   if (status) router.push('/examInfo');
 };
 </script>
-
-<route lang="yaml">
-meta:
-  layout: default
-</route>

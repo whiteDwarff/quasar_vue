@@ -3,11 +3,11 @@
     <q-card flat>
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
-          <span class="title">장소관리</span>
+          <span class="title">설문관리</span>
           <q-space />
           <span class="bar">Home</span>
           <span class="bar">배정관리</span>
-          <span class="current">장소관리</span>
+          <span class="current">설문관리</span>
         </div>
       </q-card-section>
 
@@ -15,17 +15,17 @@
         <div class="row q-col-gutter-md">
           <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
-              <span class="label">시험장</span>
+              <span class="label">제목</span>
               <div class="content">
-                <q-input v-model="param.examRoomLocation" outlined dense class="bg-white" />
+                <q-input v-model="param.title" outlined dense class="bg-white" />
               </div>
             </div>
           </div>
           <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
-              <span class="label">시험지역</span>
+              <span class="label">내용</span>
               <div class="content">
-                <q-input v-model="param.examRoomName" outlined dense class="bg-white" />
+                <q-input v-model="param.memo" outlined dense class="bg-white" />
               </div>
             </div>
           </div>
@@ -51,8 +51,9 @@
         >개
       </p>
       <q-space />
-      <div class="justify-end">
-        <CustomButton @click="$router.push('/assign/locationEdit')" label="장소등록" />
+      <div class="flex justify-end">
+        <CustomButton label="삭제" color="warning" outline class="q-mr-sm w-100" />
+        <CustomButton @click="$router.push('/assign/surveyEdit')" label="설문등록" />
       </div>
     </div>
 
@@ -60,10 +61,13 @@
       <q-table :rows="rows" flat bordered hide-pagination>
         <template #header="props">
           <q-tr :props="props">
+            <q-th style="width: 5%">
+              <q-checkbox @update:model-value="toggleSelected" v-model="isAll" />
+            </q-th>
             <q-th style="width: 5%">번호</q-th>
-            <q-th style="width: 20%">시험장</q-th>
-            <q-th style="width: 20%">시험지역</q-th>
-            <q-th style="width: 35%">시험장소</q-th>
+            <q-th style="width: 25%">제목</q-th>
+            <q-th style="width: 30%">내용</q-th>
+            <q-th style="width: 5%">문항수</q-th>
             <q-th style="width: 20%">관리</q-th>
           </q-tr>
         </template>
@@ -76,10 +80,18 @@
             :class="{ current: currentRow == props.rowIndex }"
             class="cursor-pointer"
           >
-            <q-td>{{ props.row.no }}</q-td>
-            <q-td>{{ props.row.examRoomLocation }}</q-td>
-            <q-td>{{ props.row.examRoomName }}</q-td>
-            <q-td>{{ props.row.examRoomAddr }}</q-td>
+            <q-td>
+              <q-checkbox
+                @update:modelValue="selectSurveyItem"
+                v-model="selected"
+                :val="props.row"
+                :disable="!props.row.delState"
+              />
+            </q-td>
+            <q-td>{{ props.rowIndex + 1 }}</q-td>
+            <q-td>{{ props.row.title }}</q-td>
+            <q-td>{{ props.row.memo }}</q-td>
+            <q-td>{{ props.row.surveyCount }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
@@ -101,16 +113,14 @@
 
       <PaginationTemp v-model:page="param" />
     </q-card>
-
-    <FileUploadDialog v-model="visible" url="test" />
   </q-page>
 </template>
 
 <script setup>
 const resetParam = () => {
   return {
-    examRoomLocation: '',
-    examRoomName: '',
+    title: '',
+    memo: '',
     current: 1,
     min: 1,
     max: 1,
@@ -118,24 +128,37 @@ const resetParam = () => {
 };
 const param = ref({ ...resetParam() });
 
+const selected = ref([]);
+const isAll = ref(false);
 const currentRow = ref(null);
-
-const visible = ref(false);
 
 const rows = ref([
   {
-    no: 1,
-    examRoomCode: 100,
-    examRoomLocation: '교육용 CBT실',
-    examRoomName: '401호',
-    examRoomAddr: '교육동 4층',
+    surveyCode: 100,
+    title: '오늘은 칼퇴를 할 것인가요?',
+    memo: '칼퇴위원회',
+    surveyCount: 4,
+    delState: false,
   },
   {
-    no: 2,
-    examRoomCode: 101,
-    examRoomLocation: 'ㄴㅇㄴ',
-    examRoomName: '201호',
-    examRoomAddr: '진리관 2층',
+    surveyCode: 101,
+    title: 'TMS 시스템에 만족하시나요',
+    memo: '아니오',
+    surveyCount: 1,
+    delState: true,
   },
 ]);
+// 테이블 row의 checkbox 선택
+const selectSurveyItem = (event) => {
+  isAll.value = rows.value.filter((row) => row.delState).length == event.length;
+};
+// 삭제 가능한 항목 제외 전체 선택
+const toggleSelected = (event) => {
+  if (event) {
+    selected.value = rows.value.filter((row) => row.delState);
+    return;
+  }
+  isAll.value = false;
+  selected.value = [];
+};
 </script>

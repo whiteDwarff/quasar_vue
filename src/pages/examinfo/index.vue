@@ -116,8 +116,3 @@ const resetParam = () => {
 };
 const param = ref({ ...resetParam() });
 </script>
-
-<route lang="yaml">
-meta:
-  layout: default
-</route>
