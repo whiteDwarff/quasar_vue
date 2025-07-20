@@ -17,6 +17,7 @@ declare global {
   const $validOnlyEN: typeof import('./utils/validate-rules.js')['$validOnlyEN']
   const $validOnlyKR: typeof import('./utils/validate-rules.js')['$validOnlyKR']
   const $validPassword: typeof import('./utils/validate-rules.js')['$validPassword']
+  const $validString: typeof import('./utils/validate-rules.js')['$validString']
   const $validTel: typeof import('./utils/validate-rules.js')['$validTel']
   const EffectScope: typeof import('vue')['EffectScope']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']

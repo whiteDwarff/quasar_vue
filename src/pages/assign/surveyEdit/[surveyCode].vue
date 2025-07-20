@@ -3,8 +3,11 @@
 </template>
 
 <script setup>
+const route = useRoute();
+const router = useRouter();
+
 const form = ref({
-  surveyCode: '',
+  surveyCode: route.params.surveyCode,
   title: '',
   memo: '',
   survey: [
@@ -26,4 +29,8 @@ const form = ref({
   ],
   currentOrder: 1,
 });
+
+if (!$validNumber(route.params?.surveyCode)) {
+  router.push('/error');
+}
 </script>

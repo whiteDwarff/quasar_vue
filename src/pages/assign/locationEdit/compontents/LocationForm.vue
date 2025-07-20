@@ -14,7 +14,7 @@
       <q-card-section>
         <div class="row q-col-gutter-md">
           <div class="col-xs-12 col-md-6">
-            <p class="bf-line text-subtitle1 q-mb-md">시험장 등록</p>
+            <p class="text-subtitle2 text-weight-bold q-mb-md before-line">시험장 등록</p>
             <table class="markup-table">
               <colgroup>
                 <col width="20%" />
@@ -97,7 +97,7 @@
           </div>
 
           <div class="col-xs-12 col-md-6">
-            <p class="bf-line text-subtitle1 q-mb-md">호실 등록</p>
+            <p class="text-subtitle2 text-weight-bold q-mb-md before-line">호실 등록</p>
             <table class="markup-table">
               <colgroup>
                 <col width="20%" />
@@ -331,18 +331,7 @@
 <script setup>
 const router = useRouter();
 
-const form = defineModel({
-  default: {
-    examRoomName: '', // 시험장
-    examRoomLocation: '', // 시험지역
-    examRoomAddr: '', // 시험장소
-    examRoomInfo: '', // 시험정보
-    mngr: '', // 담당자
-    mngrTel: '', // 담당자 전화번호
-    mngrInfo: '', // 담당자 정보
-    examRoomNum: [],
-  },
-});
+const form = defineModel();
 
 // 호실 정보
 const roomInfo = ref({

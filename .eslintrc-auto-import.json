@@ -10,6 +10,7 @@
     "$validOnlyEN": "readonly",
     "$validOnlyKR": "readonly",
     "$validPassword": "readonly",
+    "$validString": "readonly",
     "$validTel": "readonly",
     "Component": "readonly",
     "ComponentPublicInstance": "readonly",

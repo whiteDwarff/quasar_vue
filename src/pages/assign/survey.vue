@@ -52,17 +52,33 @@
       </p>
       <q-space />
       <div class="flex justify-end">
-        <CustomButton label="삭제" color="warning" outline class="q-mr-sm w-100" />
+        <CustomButton
+          @click="surveyDelete(null)"
+          label="삭제"
+          color="warning"
+          outline
+          class="q-mr-sm w-100"
+        />
         <CustomButton @click="$router.push('/assign/surveyEdit')" label="설문등록" />
       </div>
     </div>
 
     <q-card flat>
-      <q-table :rows="rows" flat bordered hide-pagination>
+      <q-table
+        v-model:selected="selected"
+        :rows="rows"
+        selection="multiple"
+        row-key="surveyCode"
+        flat
+        bordered
+        hide-pagination
+        hide-selected-banner
+      >
         <template #header="props">
           <q-tr :props="props">
             <q-th style="width: 5%">
-              <q-checkbox @update:model-value="toggleSelected" v-model="isAll" />
+              <!-- <q-checkbox v-model="isAll" /> -->
+              <q-checkbox v-model="props.selected" />
             </q-th>
             <q-th style="width: 5%">번호</q-th>
             <q-th style="width: 25%">제목</q-th>
@@ -81,12 +97,15 @@
             class="cursor-pointer"
           >
             <q-td>
-              <q-checkbox
-                @update:modelValue="selectSurveyItem"
+              <q-checkbox v-model="props.selected" />
+              <!-- 
+                <q-checkbox
+                v-if="!props.row.usedCount"
+                @update:modelValue="changeCheckedVal"
                 v-model="selected"
                 :val="props.row"
-                :disable="!props.row.delState"
-              />
+                />
+              -->
             </q-td>
             <q-td>{{ props.rowIndex + 1 }}</q-td>
             <q-td>{{ props.row.title }}</q-td>
@@ -95,12 +114,17 @@
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="examineeDelete(props.row)"
+                  @click="surveyDelete(props.row)"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
-                <RowEditButton label="수정" icon="edit" class="col-xs-12 col-md-6" />
+                <RowEditButton
+                  @click="$router.push(`/assign/surveyEdit/${props.row.surveyCode}`)"
+                  label="수정"
+                  icon="edit"
+                  class="col-xs-12 col-md-6"
+                />
               </div>
             </q-td>
           </q-tr>
@@ -129,7 +153,7 @@ const resetParam = () => {
 const param = ref({ ...resetParam() });
 
 const selected = ref([]);
-const isAll = ref(false);
+// const isAll = ref(false);
 const currentRow = ref(null);
 
 const rows = ref([
@@ -138,27 +162,52 @@ const rows = ref([
     title: '오늘은 칼퇴를 할 것인가요?',
     memo: '칼퇴위원회',
     surveyCount: 4,
-    delState: false,
+    usedCount: 0,
   },
   {
     surveyCode: 101,
     title: 'TMS 시스템에 만족하시나요',
     memo: '아니오',
     surveyCount: 1,
-    delState: true,
+    usedCount: 2,
   },
 ]);
+/*
 // 테이블 row의 checkbox 선택
-const selectSurveyItem = (event) => {
-  isAll.value = rows.value.filter((row) => row.delState).length == event.length;
+const changeCheckedVal = (event) => {
+  isAll.value = rows.value.filter((row) => !row.usedCount).length == event.length;
 };
 // 삭제 가능한 항목 제외 전체 선택
 const toggleSelected = (event) => {
   if (event) {
-    selected.value = rows.value.filter((row) => row.delState);
+    selected.value = rows.value.filter((row) => !row.usedCount);
     return;
   }
   isAll.value = false;
   selected.value = [];
+};
+*/
+// 설문삭제
+const surveyDelete = async (survey) => {
+  if (!survey && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
+
+  if (await $showConfirm('삭제하시겠습니까?')) {
+    $showAlert('삭제되었습니다.');
+    /*
+    try {
+      const res = $axios_loading.post('', {
+        selected: [ survey ? survey : ...selected.value ]
+      });
+
+      if(res.data.status == 200) {
+        $showAlert('삭제되었습니다.');
+        return router.push('/assign/survey');
+      }  
+      $showAlert('삭제 실패하였습니다.');
+    } catch(err) {
+      console.log(err);
+    }
+    */
+  }
 };
 </script>

@@ -53,6 +53,15 @@ export function $validNumber(value) {
   return !isNaN(value);
 }
 /**
+ * 특수문자를 제외하고 영문자와 숫자로만 구성된 문자열인지 검사
+ * @param {any} value
+ * @returns {boolean}
+ */
+export function $validString(value) {
+  if (typeof value !== 'string') return false;
+  return /^[a-zA-Z0-9]+$/.test(value) && /[a-zA-Z]/.test(value);
+}
+/**
  * 날짜 형식(YYYY-MM-DD)이 맞는지 검사
  * @param {string} value - 날짜형식
  * @returns {boolean}    - 참/거짓

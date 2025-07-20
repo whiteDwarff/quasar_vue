@@ -29,14 +29,16 @@
               </div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-6 col-md-3">
-            <div class="flex items-center">
-              <span class="label">회사명</span>
-              <div class="content">
-                <SelectFilter v-model="param.companySeq" />
+          <!-- 
+            <div class="col-xs-12 col-sm-6 col-md-3">
+              <div class="flex items-center">
+                <span class="label">회사명</span>
+                <div class="content">
+                  <SelectFilter v-model="param.companySeq" />
+                </div>
               </div>
             </div>
-          </div>
+            -->
           <div class="col-xs-12 col-sm-6 col-md-3">
             <div class="flex items-center">
               <span class="label">사진유무</span>
@@ -53,6 +55,7 @@
                   options-dense
                   emit-value
                   map-options
+                  class="bg-white"
                 />
               </div>
             </div>
@@ -99,7 +102,7 @@
         flat
         bordered
         selection="multiple"
-        row-key="examineeSeq"
+        row-key="examineeId"
         hide-pagination
         hide-selected-banner
       >
@@ -108,9 +111,9 @@
             <q-th><q-checkbox v-model="props.selected" /></q-th>
             <q-th style="width: 5%">번호</q-th>
             <q-th style="width: 10%">사번(등록번호)</q-th>
-            <q-th style="width: 20%">성명(국문)</q-th>
-            <q-th style="width: 17%">성명(영문)</q-th>
-            <q-th style="width: 20%">회사명</q-th>
+            <q-th style="width: 25%">성명(국문)</q-th>
+            <q-th style="width: 25%">성명(영문)</q-th>
+            <!-- <q-th style="width: 20%">회사명</q-th> -->
             <q-th style="width: 7%">사진유무</q-th>
             <q-th style="width: 20%">관리</q-th>
           </q-tr>
@@ -128,7 +131,7 @@
             <q-td>{{ props.row.examineeId }}</q-td>
             <q-td>{{ props.row.examineeName }}</q-td>
             <q-td>{{ props.row.examineeNameEn }}</q-td>
-            <q-td>{{ props.row.companyName }}</q-td>
+            <!-- <q-td>{{ props.row.companyName }}</q-td> -->
             <q-td>{{ props.row.imageYn }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
@@ -138,7 +141,12 @@
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
-                <RowEditButton label="수정" icon="edit" class="col-xs-12 col-md-6" />
+                <RowEditButton
+                  @click="$router.push(`/assign/examineeEdit/${props.row.examineeId}`)"
+                  label="수정"
+                  icon="edit"
+                  class="col-xs-12 col-md-6"
+                />
               </div>
             </q-td>
           </q-tr>

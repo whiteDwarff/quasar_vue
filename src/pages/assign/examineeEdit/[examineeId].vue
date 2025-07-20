@@ -3,8 +3,14 @@
 </template>
 
 <script setup>
+const route = useRoute();
+const router = useRouter();
+
+if (!$validString(route.params.examineeId)) {
+  router.push('/error');
+}
 const form = ref({
-  examineeId: '',
+  examineeId: route.params?.examineeId,
   examineeNameEn: '',
   examineeName: '',
   companySeq: '',
