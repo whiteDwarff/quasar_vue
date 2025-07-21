@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-btn unelevated :color :outline :flat dense :ripple="false" class="btn fit">
+    <q-btn unelevated :disabled :color :outline :flat dense :ripple="false" class="btn fit">
       <q-icon v-if="icon" left size="sm" :name="icon" class="gt-xs" />
       <span>{{ label }}</span>
     </q-btn>
@@ -28,6 +28,10 @@ defineProps({
   icon: {
     type: String,
     default: () => '',
+  },
+  disabled: {
+    type: Boolean,
+    default: () => false,
   },
 });
 </script>
