@@ -19,6 +19,7 @@
     "@vuepic/vue-datepicker": "^10.0.0",
     "axios": "^1.2.1",
     "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.4.1",
     "quasar": "^2.16.0",
     "unplugin-auto-import": "^19.3.0",
     "v-viewer": "^3.0.21",

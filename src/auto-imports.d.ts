@@ -89,6 +89,7 @@ declare global {
   const useFormChild: typeof import('quasar')['useFormChild']
   const useId: typeof import('vue')['useId']
   const useLink: typeof import('vue-router')['useLink']
+  const useMenuStore: typeof import('./stores/menuStore.js')['useMenuStore']
   const useMeta: typeof import('quasar')['useMeta']
   const useModel: typeof import('vue')['useModel']
   const useQuasar: typeof import('quasar')['useQuasar']

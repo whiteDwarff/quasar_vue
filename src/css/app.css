@@ -9,6 +9,24 @@ body {
 p {
   margin-bottom: 0;
 }
+a {
+  text-decoration: none;
+}
+/* aside */
+#aside-wrap .top-menu:hover {
+  color: var(--q-primary) !important;
+}
+#aside-wrap .top-menu.on {
+  color: var(--q-primary) !important;
+}
+#aside-wrap .top-menu .child:hover {
+  color: var(--q-primary) !important;
+  background-color: #f2f7ff;
+}
+#aside-wrap .top-menu .child.on {
+  color: var(--q-primary) !important;
+  background-color: #f2f7ff;
+}
 /* title 가상요소 */
 .before-line {
   position: relative;
@@ -30,6 +48,12 @@ p {
 }
 .underline {
   text-decoration: underline;
+}
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.border-top {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 .border-bottom-none {
   border-bottom: none !important;

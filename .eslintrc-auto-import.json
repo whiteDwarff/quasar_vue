@@ -95,6 +95,7 @@
     "useFormChild": "readonly",
     "useId": "readonly",
     "useLink": "readonly",
+    "useMenuStore": "readonly",
     "useMeta": "readonly",
     "useModel": "readonly",
     "useQuasar": "readonly",

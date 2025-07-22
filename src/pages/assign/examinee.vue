@@ -83,7 +83,13 @@
       <!-- <q-space /> -->
       <div class="col-xs-12 col-md-11 row q-col-gutter-sm justify-end">
         <CustomButton @click="$router.push('/assign/examineeEdit')" label="응시자등록" />
-        <CustomButton @click="examineeDelete()" label="삭제" color="warning" outline />
+        <CustomButton
+          @click="examineeDelete()"
+          label="삭제"
+          color="warning"
+          outline
+          class="w-100"
+        />
         <CustomButton label="엑셀양식 다운로드" icon="bi-cloud-download" color="grey-6" outline />
         <CustomButton
           @click="visible = true"
