@@ -209,8 +209,12 @@ const submit = async () => {
 
   if (await $showConfirm('저장하시겠습니까?')) {
     const { status } = await addExamInfo(form.value);
-    console.log(status);
-    // axios
+
+    if (status) {
+      $showAlert('저장되었습니다.');
+      return await router.push('/examInfo');
+    }
+    $showAlert('저장 실패하였습니다.');
   }
 };
 // 취소 후 목록으로 이동

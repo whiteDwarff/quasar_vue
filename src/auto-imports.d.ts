@@ -6,126 +6,145 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const $cancle: typeof import('./utils/globals.js')['$cancle']
-  const $imageRender: typeof import('./utils/validate-rules.js')['$imageRender']
-  const $showAlert: typeof import('./utils/globals.js')['$showAlert']
-  const $showConfirm: typeof import('./utils/globals.js')['$showConfirm']
-  const $validDate: typeof import('./utils/validate-rules.js')['$validDate']
-  const $validEmail: typeof import('./utils/validate-rules.js')['$validEmail']
-  const $validFileExt: typeof import('./utils/validate-rules.js')['$validFileExt']
-  const $validNumber: typeof import('./utils/validate-rules.js')['$validNumber']
-  const $validOnlyEN: typeof import('./utils/validate-rules.js')['$validOnlyEN']
-  const $validOnlyKR: typeof import('./utils/validate-rules.js')['$validOnlyKR']
-  const $validPassword: typeof import('./utils/validate-rules.js')['$validPassword']
-  const $validString: typeof import('./utils/validate-rules.js')['$validString']
-  const $validTel: typeof import('./utils/validate-rules.js')['$validTel']
-  const CamelToSnakeByObj: typeof import('./utils/convert-to-fields.js')['CamelToSnakeByObj']
-  const EffectScope: typeof import('vue')['EffectScope']
-  const SnakeToCamelByObj: typeof import('./utils/convert-to-fields.js')['SnakeToCamelByObj']
-  const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
-  const addExamInfo: typeof import('./api/examInfo/index.js')['addExamInfo']
-  const api: typeof import('./boot/axios.js')['api']
-  const axios: typeof import('./boot/axios.js')['default']
-  const camelToSnakeByObj: typeof import('./utils/convert-to-fields.js')['camelToSnakeByObj']
-  const camelToSnakeByStr: typeof import('./utils/convert-to-fields.js')['camelToSnakeByStr']
-  const components: typeof import('./boot/components.js')['default']
-  const computed: typeof import('vue')['computed']
-  const createApp: typeof import('vue')['createApp']
-  const createPinia: typeof import('pinia')['createPinia']
-  const customRef: typeof import('vue')['customRef']
-  const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
-  const defineComponent: typeof import('vue')['defineComponent']
-  const defineStore: typeof import('pinia')['defineStore']
-  const effectScope: typeof import('vue')['effectScope']
-  const fileExtValid: typeof import('./utils/validate-rules.js')['fileExtValid']
-  const getActivePinia: typeof import('pinia')['getActivePinia']
-  const getCurrentInstance: typeof import('vue')['getCurrentInstance']
-  const getCurrentScope: typeof import('vue')['getCurrentScope']
-  const getExamInfo: typeof import('./api/examInfo/index.js')['getExamInfo']
-  const h: typeof import('vue')['h']
-  const imageRender: typeof import('./utils/validate-rules.js')['imageRender']
-  const inject: typeof import('vue')['inject']
-  const isProxy: typeof import('vue')['isProxy']
-  const isReactive: typeof import('vue')['isReactive']
-  const isReadonly: typeof import('vue')['isReadonly']
-  const isRef: typeof import('vue')['isRef']
-  const mapActions: typeof import('pinia')['mapActions']
-  const mapGetters: typeof import('pinia')['mapGetters']
-  const mapState: typeof import('pinia')['mapState']
-  const mapStores: typeof import('pinia')['mapStores']
-  const mapWritableState: typeof import('pinia')['mapWritableState']
-  const markRaw: typeof import('vue')['markRaw']
-  const nextTick: typeof import('vue')['nextTick']
-  const onActivated: typeof import('vue')['onActivated']
-  const onBeforeMount: typeof import('vue')['onBeforeMount']
-  const onBeforeRouteLeave: typeof import('vue-router')['onBeforeRouteLeave']
-  const onBeforeRouteUpdate: typeof import('vue-router')['onBeforeRouteUpdate']
-  const onBeforeUnmount: typeof import('vue')['onBeforeUnmount']
-  const onBeforeUpdate: typeof import('vue')['onBeforeUpdate']
-  const onDeactivated: typeof import('vue')['onDeactivated']
-  const onErrorCaptured: typeof import('vue')['onErrorCaptured']
-  const onMounted: typeof import('vue')['onMounted']
-  const onRenderTracked: typeof import('vue')['onRenderTracked']
-  const onRenderTriggered: typeof import('vue')['onRenderTriggered']
-  const onScopeDispose: typeof import('vue')['onScopeDispose']
-  const onServerPrefetch: typeof import('vue')['onServerPrefetch']
-  const onUnmounted: typeof import('vue')['onUnmounted']
-  const onUpdated: typeof import('vue')['onUpdated']
-  const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
-  const provide: typeof import('vue')['provide']
-  const reactive: typeof import('vue')['reactive']
-  const readonly: typeof import('vue')['readonly']
-  const ref: typeof import('vue')['ref']
-  const resolveComponent: typeof import('vue')['resolveComponent']
-  const setActivePinia: typeof import('pinia')['setActivePinia']
-  const setMapStoreSuffix: typeof import('pinia')['setMapStoreSuffix']
-  const shallowReactive: typeof import('vue')['shallowReactive']
-  const shallowReadonly: typeof import('vue')['shallowReadonly']
-  const shallowRef: typeof import('vue')['shallowRef']
-  const showAlert: (typeof import('./utils/globals.js'))['showAlert']
-  const snakeToCamel: typeof import('./utils/convert-to-fields.js')['snakeToCamel']
-  const storeToRefs: typeof import('pinia')['storeToRefs']
-  const stores: typeof import('./stores/index.js')['default']
-  const supabase: typeof import('./boot/supabase.js')['default']
-  const toRaw: typeof import('vue')['toRaw']
-  const toRef: typeof import('vue')['toRef']
-  const toRefs: typeof import('vue')['toRefs']
-  const toValue: typeof import('vue')['toValue']
-  const triggerRef: typeof import('vue')['triggerRef']
-  const unref: typeof import('vue')['unref']
-  const useAttrs: typeof import('vue')['useAttrs']
-  const useCssModule: typeof import('vue')['useCssModule']
-  const useCssVars: typeof import('vue')['useCssVars']
-  const useDialogPluginComponent: typeof import('quasar')['useDialogPluginComponent']
-  const useFormChild: typeof import('quasar')['useFormChild']
-  const useId: typeof import('vue')['useId']
-  const useLink: typeof import('vue-router')['useLink']
-  const useMenuStore: typeof import('./stores/menuStore.js')['useMenuStore']
-  const useMeta: typeof import('quasar')['useMeta']
-  const useModel: typeof import('vue')['useModel']
-  const useQuasar: typeof import('quasar')['useQuasar']
-  const useRoute: typeof import('vue-router')['useRoute']
-  const useRouter: typeof import('vue-router')['useRouter']
-  const useSlots: typeof import('vue')['useSlots']
-  const useSystemStore: typeof import('./stores/systemStore.js')['useSystemStore']
-  const useTemplateRef: typeof import('vue')['useTemplateRef']
-  const validDate: typeof import('./utils/validate-rules.js')['validDate']
-  const validEmail: typeof import('./utils/validate-rules.js')['validEmail']
-  const validFileExt: typeof import('./utils/validate-rules.js')['validFileExt']
-  const validOnlyEN: typeof import('./utils/validate-rules.js')['validOnlyEN']
-  const validOnlyKR: typeof import('./utils/validate-rules.js')['validOnlyKR']
-  const validPassword: typeof import('./utils/validate-rules.js')['validPassword']
-  const validTel: typeof import('./utils/validate-rules.js')['validTel']
-  const validateEmail: typeof import('./utils/validate-rules.js')['validateEmail']
-  const validatePassword: typeof import('./utils/validate-rules.js')['validatePassword']
-  const watch: typeof import('vue')['watch']
-  const watchEffect: typeof import('vue')['watchEffect']
-  const watchPostEffect: typeof import('vue')['watchPostEffect']
-  const watchSyncEffect: typeof import('vue')['watchSyncEffect']
+  const $cancle: (typeof import('./utils/globals.js'))['$cancle'];
+  const $imageRender: (typeof import('./utils/validate-rules.js'))['$imageRender'];
+  const $showAlert: (typeof import('./utils/globals.js'))['$showAlert'];
+  const $showConfirm: (typeof import('./utils/globals.js'))['$showConfirm'];
+  const $validDate: (typeof import('./utils/validate-rules.js'))['$validDate'];
+  const $validEmail: (typeof import('./utils/validate-rules.js'))['$validEmail'];
+  const $validFileExt: (typeof import('./utils/validate-rules.js'))['$validFileExt'];
+  const $validNumber: (typeof import('./utils/validate-rules.js'))['$validNumber'];
+  const $validOnlyEN: (typeof import('./utils/validate-rules.js'))['$validOnlyEN'];
+  const $validOnlyKR: (typeof import('./utils/validate-rules.js'))['$validOnlyKR'];
+  const $validPassword: (typeof import('./utils/validate-rules.js'))['$validPassword'];
+  const $validString: (typeof import('./utils/validate-rules.js'))['$validString'];
+  const $validTel: (typeof import('./utils/validate-rules.js'))['$validTel'];
+  const CamelToSnakeByObj: (typeof import('./utils/convert-to-fields.js'))['CamelToSnakeByObj'];
+  const EffectScope: (typeof import('vue'))['EffectScope'];
+  const SnakeToCamelByObj: (typeof import('./utils/convert-to-fields.js'))['SnakeToCamelByObj'];
+  const acceptHMRUpdate: (typeof import('pinia'))['acceptHMRUpdate'];
+  const addExamInfo: (typeof import('./api/examInfo/index.js'))['addExamInfo'];
+  const api: (typeof import('./boot/axios.js'))['api'];
+  const axios: (typeof import('./boot/axios.js'))['default'];
+  const camelToSnakeByObj: (typeof import('./utils/convert-to-fields.js'))['camelToSnakeByObj'];
+  const camelToSnakeByStr: (typeof import('./utils/convert-to-fields.js'))['camelToSnakeByStr'];
+  const components: (typeof import('./boot/components.js'))['default'];
+  const computed: (typeof import('vue'))['computed'];
+  const createApp: (typeof import('vue'))['createApp'];
+  const createPinia: (typeof import('pinia'))['createPinia'];
+  const customRef: (typeof import('vue'))['customRef'];
+  const defineAsyncComponent: (typeof import('vue'))['defineAsyncComponent'];
+  const defineComponent: (typeof import('vue'))['defineComponent'];
+  const defineStore: (typeof import('pinia'))['defineStore'];
+  const effectScope: (typeof import('vue'))['effectScope'];
+  const fileExtValid: (typeof import('./utils/validate-rules.js'))['fileExtValid'];
+  const getActivePinia: (typeof import('pinia'))['getActivePinia'];
+  const getCurrentInstance: (typeof import('vue'))['getCurrentInstance'];
+  const getCurrentScope: (typeof import('vue'))['getCurrentScope'];
+  const getExamInfo: (typeof import('./api/examInfo/index.js'))['getExamInfo'];
+  const getExamList: (typeof import('./api/examInfo/index.js'))['getExamList'];
+  const h: (typeof import('vue'))['h'];
+  const imageRender: (typeof import('./utils/validate-rules.js'))['imageRender'];
+  const inject: (typeof import('vue'))['inject'];
+  const isProxy: (typeof import('vue'))['isProxy'];
+  const isReactive: (typeof import('vue'))['isReactive'];
+  const isReadonly: (typeof import('vue'))['isReadonly'];
+  const isRef: (typeof import('vue'))['isRef'];
+  const mapActions: (typeof import('pinia'))['mapActions'];
+  const mapGetters: (typeof import('pinia'))['mapGetters'];
+  const mapState: (typeof import('pinia'))['mapState'];
+  const mapStores: (typeof import('pinia'))['mapStores'];
+  const mapWritableState: (typeof import('pinia'))['mapWritableState'];
+  const markRaw: (typeof import('vue'))['markRaw'];
+  const nextTick: (typeof import('vue'))['nextTick'];
+  const onActivated: (typeof import('vue'))['onActivated'];
+  const onBeforeMount: (typeof import('vue'))['onBeforeMount'];
+  const onBeforeRouteLeave: (typeof import('vue-router'))['onBeforeRouteLeave'];
+  const onBeforeRouteUpdate: (typeof import('vue-router'))['onBeforeRouteUpdate'];
+  const onBeforeUnmount: (typeof import('vue'))['onBeforeUnmount'];
+  const onBeforeUpdate: (typeof import('vue'))['onBeforeUpdate'];
+  const onDeactivated: (typeof import('vue'))['onDeactivated'];
+  const onErrorCaptured: (typeof import('vue'))['onErrorCaptured'];
+  const onMounted: (typeof import('vue'))['onMounted'];
+  const onRenderTracked: (typeof import('vue'))['onRenderTracked'];
+  const onRenderTriggered: (typeof import('vue'))['onRenderTriggered'];
+  const onScopeDispose: (typeof import('vue'))['onScopeDispose'];
+  const onServerPrefetch: (typeof import('vue'))['onServerPrefetch'];
+  const onUnmounted: (typeof import('vue'))['onUnmounted'];
+  const onUpdated: (typeof import('vue'))['onUpdated'];
+  const onWatcherCleanup: (typeof import('vue'))['onWatcherCleanup'];
+  const provide: (typeof import('vue'))['provide'];
+  const reactive: (typeof import('vue'))['reactive'];
+  const readonly: (typeof import('vue'))['readonly'];
+  const ref: (typeof import('vue'))['ref'];
+  const resolveComponent: (typeof import('vue'))['resolveComponent'];
+  const setActivePinia: (typeof import('pinia'))['setActivePinia'];
+  const setMapStoreSuffix: (typeof import('pinia'))['setMapStoreSuffix'];
+  const shallowReactive: (typeof import('vue'))['shallowReactive'];
+  const shallowReadonly: (typeof import('vue'))['shallowReadonly'];
+  const shallowRef: (typeof import('vue'))['shallowRef'];
+  const showAlert: (typeof import('./utils/globals.js'))['showAlert'];
+  const snakeToCamel: (typeof import('./utils/convert-to-fields.js'))['snakeToCamel'];
+  const snakeToCamelByObj: (typeof import('./utils/convert-to-fields.js'))['snakeToCamelByObj'];
+  const storeToRefs: (typeof import('pinia'))['storeToRefs'];
+  const stores: (typeof import('./stores/index.js'))['default'];
+  const supabase: (typeof import('./boot/supabase.js'))['default'];
+  const toRaw: (typeof import('vue'))['toRaw'];
+  const toRef: (typeof import('vue'))['toRef'];
+  const toRefs: (typeof import('vue'))['toRefs'];
+  const toValue: (typeof import('vue'))['toValue'];
+  const triggerRef: (typeof import('vue'))['triggerRef'];
+  const unref: (typeof import('vue'))['unref'];
+  const useAttrs: (typeof import('vue'))['useAttrs'];
+  const useCssModule: (typeof import('vue'))['useCssModule'];
+  const useCssVars: (typeof import('vue'))['useCssVars'];
+  const useDialogPluginComponent: (typeof import('quasar'))['useDialogPluginComponent'];
+  const useFormChild: (typeof import('quasar'))['useFormChild'];
+  const useId: (typeof import('vue'))['useId'];
+  const useLink: (typeof import('vue-router'))['useLink'];
+  const useMenuStore: (typeof import('./stores/menuStore.js'))['useMenuStore'];
+  const useMeta: (typeof import('quasar'))['useMeta'];
+  const useModel: (typeof import('vue'))['useModel'];
+  const useQuasar: (typeof import('quasar'))['useQuasar'];
+  const useRoute: (typeof import('vue-router'))['useRoute'];
+  const useRouter: (typeof import('vue-router'))['useRouter'];
+  const useSlots: (typeof import('vue'))['useSlots'];
+  const useSystemStore: (typeof import('./stores/systemStore.js'))['useSystemStore'];
+  const useTemplateRef: (typeof import('vue'))['useTemplateRef'];
+  const validDate: (typeof import('./utils/validate-rules.js'))['validDate'];
+  const validEmail: (typeof import('./utils/validate-rules.js'))['validEmail'];
+  const validFileExt: (typeof import('./utils/validate-rules.js'))['validFileExt'];
+  const validOnlyEN: (typeof import('./utils/validate-rules.js'))['validOnlyEN'];
+  const validOnlyKR: (typeof import('./utils/validate-rules.js'))['validOnlyKR'];
+  const validPassword: (typeof import('./utils/validate-rules.js'))['validPassword'];
+  const validTel: (typeof import('./utils/validate-rules.js'))['validTel'];
+  const validateEmail: (typeof import('./utils/validate-rules.js'))['validateEmail'];
+  const validatePassword: (typeof import('./utils/validate-rules.js'))['validatePassword'];
+  const watch: (typeof import('vue'))['watch'];
+  const watchEffect: (typeof import('vue'))['watchEffect'];
+  const watchPostEffect: (typeof import('vue'))['watchPostEffect'];
+  const watchSyncEffect: (typeof import('vue'))['watchSyncEffect'];
 }
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
-  import('vue')
+  export type {
+    Component,
+    Slot,
+    Slots,
+    ComponentPublicInstance,
+    ComputedRef,
+    DirectiveBinding,
+    ExtractDefaultPropTypes,
+    ExtractPropTypes,
+    ExtractPublicPropTypes,
+    InjectionKey,
+    PropType,
+    Ref,
+    MaybeRef,
+    MaybeRefOrGetter,
+    VNode,
+    WritableComputedRef,
+  } from 'vue';
+  import('vue');
 }

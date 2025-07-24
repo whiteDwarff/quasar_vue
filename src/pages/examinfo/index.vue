@@ -73,8 +73,8 @@
         <template #header>
           <q-tr>
             <q-th style="width: 5%">번호</q-th>
-            <q-th style="width: 20%">회사명</q-th>
-            <q-th style="width: 20%">시험명</q-th>
+            <!-- <q-th style="width: 20%">회사명</q-th> -->
+            <q-th style="width: 40%">시험명</q-th>
             <q-th style="width: 15%">등록자</q-th>
             <q-th style="width: 20%">등록일(년/월/일)</q-th>
             <q-th style="width: 20%">관리</q-th>
@@ -83,7 +83,7 @@
         <template #body>
           <q-tr>
             <q-td></q-td>
-            <q-td></q-td>
+            <!-- <q-td></q-td> -->
             <q-td></q-td>
             <q-td></q-td>
             <q-td></q-td>
@@ -103,8 +103,6 @@
 </template>
 
 <script setup>
-// import { supabase } from 'boot/supabase';
-
 const resetParam = () => {
   return {
     // companySeq: '',
@@ -120,5 +118,17 @@ const resetParam = () => {
 };
 const param = ref({ ...resetParam(resetParam.value) });
 
-//getExamInfo();
+const rows = ref([]);
+
+// 시험목록 호출
+const fetchedExamList = async () => {
+  const { data, count, error } = await getExamList(param.value);
+
+  console.log(data, count);
+
+  if (!error) {
+    rows.value = data;
+  } else $showAlert('데이터 조회 실패하였습니다.');
+};
+fetchedExamList();
 </script>
