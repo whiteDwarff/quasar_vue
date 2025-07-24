@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.4",
+    "@supabase/supabase-js": "^2.52.1",
     "@vuepic/vue-datepicker": "^10.0.0",
     "axios": "^1.2.1",
     "pinia": "^3.0.1",

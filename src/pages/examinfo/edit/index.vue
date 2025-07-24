@@ -14,6 +14,7 @@
       <!-- 상세정보 -->
       <q-card-section class="q-pt-none">
         <div class="row q-col-gutter-md">
+          <!-- 
           <div class="col-xs-12 col-md-6">
             <span class="form-label star">회사명</span>
             <div>
@@ -26,8 +27,10 @@
                 ]"
               />
             </div>
-          </div>
+          </div> 
           <div class="col-xs-12 col-md-6">
+          -->
+          <div class="col-12">
             <span class="form-label star">시험명</span>
             <div>
               <q-input v-model="form.examName" outlined dense />
@@ -91,7 +94,7 @@
                   <th class="star">시험시간</th>
                   <td>
                     <q-input
-                      v-model="item.examTime"
+                      v-model="item.examTotalTime"
                       outlined
                       dense
                       fill
@@ -105,26 +108,26 @@
                   <th class="star">안내문 동의</th>
                   <td colspan="3">
                     <q-radio
-                      v-model="item.messageFlag"
-                      name="messageFlag"
+                      v-model="item.personalInfoUseFlag"
+                      name="personalInfoUseFlag"
                       val="Y"
                       label="사용"
                       size="sm"
                     />
                     <q-radio
-                      v-model="item.messageFlag"
-                      name="messageFlag"
+                      v-model="item.personalInfoUseFlag"
+                      name="personalInfoUseFlag"
                       val="N"
                       label="미사용"
                       size="sm"
                     />
-                    <div v-if="item.messageFlag == 'Y'" class="q-pl-xs">
+                    <div v-if="item.personalInfoUseFlag == 'Y'" class="q-pl-xs">
                       <!-- 
                       <small class="block q-mb-sm text-red">
                       • App 로그인 후 확인할 수 있습니다.</small
                       > -->
                       <q-input
-                        v-model="item.message"
+                        v-model="item.personalInfoMessage"
                         label="안내문동의 메시지를 입력해주세요."
                         outlined
                         dense
@@ -153,25 +156,18 @@
 </template>
 
 <script setup>
-/*
-https://ko.vuejs.org/api/sfc-script-setup.html#definemodel
-// "count" prop 선언, 부모에 의해 v-model:count를 통해 사용됨
-const count = defineModel('count')
-// 또는: 옵션을 포함한 "count" prop 선언
-const count = defineModel('count', { type: Number, default: 0 })
-*/
 const router = useRouter();
 
 const form = ref({
-  companySeq: '',
+  // companySeq: '',
   examName: '',
   list: [
     {
       examFormName: '',
       examMethod: 'UBT',
-      examTime: '',
-      messageFlag: 'N',
-      message: '',
+      examTotalTime: '',
+      personalInfoUseFlag: 'N',
+      personalInfoMessage: '',
     },
   ],
 });
@@ -189,9 +185,9 @@ const addExamItem = () => {
   form.value.list.push({
     examFormName: '',
     examMethod: 'UBT',
-    examTime: '',
-    messageFlag: 'N',
-    message: '',
+    examTotalTime: '',
+    personalInfoUseFlag: 'N',
+    personalInfoMessage: '',
   });
   // 스크롤을 하단으로 이동
   nextTick(() => {
@@ -201,19 +197,19 @@ const addExamItem = () => {
 };
 // 저장
 const submit = async () => {
-  if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
+  // if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
   if (!form.value.examName) return $showAlert('시험명을 입력해주세요.');
 
   for (let item of form.value.list) {
     if (!item.examFormName) return $showAlert('시험 세부 설명을 입력해주세요.');
-    if (!item.examTime) return $showAlert('시험시간을 입력해주세요.');
-    if (item.messageFlag == 'Y' && !item.message)
+    if (!item.examTotalTime) return $showAlert('시험시간을 입력해주세요.');
+    if (item.personalInfoUseFlag == 'Y' && !item.personalInfoMessage)
       return $showAlert('안내문동의 메시지를 입력해주세요.');
   }
 
-  const status = await $showConfirm('저장하시겠습니까?');
-
-  if (status) {
+  if (await $showConfirm('저장하시겠습니까?')) {
+    const { status } = await addExamInfo(form.value);
+    console.log(status);
     // axios
   }
 };

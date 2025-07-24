@@ -11,7 +11,7 @@ export default defineConfig((/* ctx */) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['axios', 'components'],
+    boot: ['axios', 'components', 'supabase'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.css', 'quasar.css'],
@@ -38,6 +38,11 @@ export default defineConfig((/* ctx */) => {
         browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',
       },
+      env: {
+        SUPABASE_URL: 'https://gnkjzbqpyweuerrxdnbm.supabase.co',
+        SUPABASE_KEY:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdua2p6YnFweXdldWVycnhkbmJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMjAzMzksImV4cCI6MjA2ODg5NjMzOX0.YqnJKdpIwfZbD97lUF4WgGilUVTuDURE7OxgwusUOGk',
+      },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
@@ -48,7 +53,6 @@ export default defineConfig((/* ctx */) => {
 
       // publicPath: '/',
       // analyze: true,
-      // env: {},
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -126,7 +130,9 @@ export default defineConfig((/* ctx */) => {
               // 'src/service/**',
               'src/stores/**',
               'src/utils/**',
-              // 'src/boot/**',
+              'src/boot/**',
+              'src/api/**',
+              'src/api/**/**',
               // 'src/options/**',
             ],
           },
