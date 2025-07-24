@@ -68,6 +68,7 @@
       <CustomButton @click="$router.push('/examInfo/edit')" label="시험정보등록" />
     </div>
 
+    {{ rows }}
     <q-card flat>
       <q-table :rows="[1, 2, 3]" flat bordered hide-bottom>
         <template #header>
@@ -80,11 +81,11 @@
             <q-th style="width: 20%">관리</q-th>
           </q-tr>
         </template>
-        <template #body>
-          <q-tr>
+        <template #body="props">
+          <q-tr v-for="item of rows" :key="item.examCode" :props>
             <q-td></q-td>
             <!-- <q-td></q-td> -->
-            <q-td></q-td>
+            <q-td>{{ props }}</q-td>
             <q-td></q-td>
             <q-td></q-td>
             <q-td>
@@ -121,14 +122,15 @@ const param = ref({ ...resetParam(resetParam.value) });
 const rows = ref([]);
 
 // 시험목록 호출
-const fetchedExamList = async () => {
-  const { data, count, error } = await getExamList(param.value);
+const getExamList = async () => {
+  const { rows, count, error } = await $fetchedExamList(param.value);
 
-  console.log(data, count);
-
+  console.log(rows, count, error);
   if (!error) {
-    rows.value = data;
+    rows.value = rows;
+    console.log(rows);
   } else $showAlert('데이터 조회 실패하였습니다.');
 };
-fetchedExamList();
+
+getExamList();
 </script>

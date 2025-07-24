@@ -208,7 +208,7 @@ const submit = async () => {
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { status } = await addExamInfo(form.value);
+    const { status } = await $saveExamInfo(form.value);
 
     if (status) {
       $showAlert('저장되었습니다.');

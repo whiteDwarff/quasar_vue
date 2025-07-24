@@ -5,21 +5,23 @@ import { supabase } from 'boot/supabase';
  * @param {object} params
  * @returns object
  */
-export async function getExamList(params) {
-  console.log(params);
-
-  const { data, error, count } = await supabase
+export async function $fetchedExamList(params) {
+  // 페이지네이션 사용 위한 개수 조회
+  const { count } = await supabase
     .from('tb_exam_info')
-    .select('exam_code, exam_name, rgst_dt, rgst_id', {
-      count: 'exact', // 목록 개수 조회
-      head: false, // 데이터 포함
-    })
+    .select('*', { count: 'exact' })
+    .eq('use_flag', 'Y')
+    .ilike('exam_name', `%${params.examName}%`);
+
+  const { data: rows, error } = await supabase
+    .from('tb_exam_info')
+    .select('exam_code, exam_name, rgst_dt, rgst_id')
     .eq('use_flag', 'Y') // where
     .ilike('exam_name', `%${params.examName}%`)
     .order('exam_code', { ascending: false }); // 내림차순 정렬
 
   return {
-    data: snakeToCamelByObj(data),
+    rows: snakeToCamelByObj(rows),
     count,
     error,
   };
@@ -29,7 +31,7 @@ export async function getExamList(params) {
  * @param {object} form
  * @returns boolean
  */
-export async function addExamInfo(form) {
+export async function $saveExamInfo(form) {
   // 시험정보 등록
   const { data, error } = await supabase
     .from('tb_exam_info')

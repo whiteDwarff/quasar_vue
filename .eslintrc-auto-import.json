@@ -1,6 +1,8 @@
 {
   "globals": {
+    "$fetchedExamList": "readonly",
     "$imageRender": "readonly",
+    "$saveExamInfo": "readonly",
     "$showAlert": "readonly",
     "$showConfirm": "readonly",
     "$validDate": "readonly",
@@ -30,7 +32,6 @@
     "VNode": "readonly",
     "WritableComputedRef": "readonly",
     "acceptHMRUpdate": "readonly",
-    "addExamInfo": "readonly",
     "api": "readonly",
     "axios": "readonly",
     "camelToSnakeByObj": "readonly",
@@ -47,7 +48,6 @@
     "getActivePinia": "readonly",
     "getCurrentInstance": "readonly",
     "getCurrentScope": "readonly",
-    "getExamList": "readonly",
     "h": "readonly",
     "inject": "readonly",
     "isProxy": "readonly",
