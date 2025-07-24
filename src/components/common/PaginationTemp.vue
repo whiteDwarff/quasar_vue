@@ -1,10 +1,11 @@
 <template>
   <div class="row justify-center q-mt-lg">
     <q-pagination
+      @update:modelValue="$emit('update:modelValue', $event)"
       v-model="page.current"
       :min="page?.min || 1"
       :max="page?.max || 1"
-      :max-pages="page?.maxPages"
+      :max-pages="page?.maxPages || 20"
       :boundary-numbers="false"
       :ellipses="false"
       outline

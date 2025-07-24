@@ -1,6 +1,10 @@
 {
   "globals": {
+    "$fetchedExamInfo": "readonly",
     "$fetchedExamList": "readonly",
+    "$getPagingCount": "readonly",
+    "$getPagingOffset": "readonly",
+    "$getTimeFormat": "readonly",
     "$imageRender": "readonly",
     "$saveExamInfo": "readonly",
     "$showAlert": "readonly",

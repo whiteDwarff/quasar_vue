@@ -27,7 +27,13 @@
             <div class="flex items-center">
               <span class="label">시험명</span>
               <div class="content">
-                <q-input v-model="param.examName" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getExamList"
+                  v-model="param.examName"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -35,7 +41,13 @@
             <div class="flex items-center">
               <span class="label">등록자</span>
               <div class="content">
-                <q-input v-model="param.regId" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getExamList"
+                  v-model="param.regId"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -57,20 +69,22 @@
             :outline="true"
             class="q-mr-md w-100"
           />
-          <CustomButton label="검색" class="w-100" />
+          <CustomButton @click="getExamList" label="검색" class="w-100" />
         </div>
       </q-card-section>
     </q-card>
 
     <div class="flex items-baseline edit-btn-wrap">
-      <p class="q-mt-auto">총 <span class="list-count">3</span>개</p>
+      <p class="q-mt-auto">
+        총 <span class="list-count">{{ rows.totalCount }}</span
+        >개
+      </p>
       <q-space />
       <CustomButton @click="$router.push('/examInfo/edit')" label="시험정보등록" />
     </div>
 
-    {{ rows }}
     <q-card flat>
-      <q-table :rows="[1, 2, 3]" flat bordered hide-bottom>
+      <q-table :rows="rows.data" flat bordered hide-pagination hide-selected-banner>
         <template #header>
           <q-tr>
             <q-th style="width: 5%">번호</q-th>
@@ -82,23 +96,31 @@
           </q-tr>
         </template>
         <template #body="props">
-          <q-tr v-for="item of rows" :key="item.examCode" :props>
-            <q-td></q-td>
-            <!-- <q-td></q-td> -->
-            <q-td>{{ props }}</q-td>
-            <q-td></q-td>
-            <q-td></q-td>
+          <q-tr :props>
+            <q-td>{{ props.rowIndex + 1 }}</q-td>
+            <q-td>{{ props.row.examName }}</q-td>
+            <q-td>-</q-td>
+            <q-td>{{ getTimeFormat(props.row.rgstDt) }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton label="삭제" icon="delete" class="col-xs-12 col-md-6" />
-                <RowEditButton label="수정" icon="edit" class="col-xs-12 col-md-6" />
+                <RowEditButton
+                  @click="$router.push(`/examInfo/edit/${props.row.examCode}`)"
+                  label="수정"
+                  icon="edit"
+                  class="col-xs-12 col-md-6"
+                />
               </div>
             </q-td>
           </q-tr>
         </template>
+
+        <template #no-data>
+          <div class="full-width text-center">데이터가 없습니다.</div>
+        </template>
       </q-table>
 
-      <PaginationTemp v-model:page="param" />
+      <PaginationTemp @update:modelValue="getExamList($event - 1)" v-model:page="param" />
     </q-card>
   </q-page>
 </template>
@@ -119,18 +141,32 @@ const resetParam = () => {
 };
 const param = ref({ ...resetParam(resetParam.value) });
 
-const rows = ref([]);
+const rows = ref({
+  totalCount: 0,
+  data: [],
+});
 
 // 시험목록 호출
-const getExamList = async () => {
-  const { rows, count, error } = await $fetchedExamList(param.value);
+const getExamList = async (current = null) => {
+  const {
+    data,
+    count: totalCount,
+    error,
+    max,
+  } = await $fetchedExamList({
+    ...param.value,
+    current,
+  });
 
-  console.log(rows, count, error);
   if (!error) {
-    rows.value = rows;
-    console.log(rows);
+    rows.value = { data, totalCount };
+    param.value.max = max;
+
+    console.log(data);
   } else $showAlert('데이터 조회 실패하였습니다.');
 };
+getExamList(1);
 
-getExamList();
+// 등록일 날짜 포맷 반환
+const getTimeFormat = (str) => $getTimeFormat(str);
 </script>

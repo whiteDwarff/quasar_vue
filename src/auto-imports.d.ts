@@ -7,7 +7,12 @@
 export {}
 declare global {
   const $cancle: (typeof import('./utils/globals.js'))['$cancle']
+  const $fetchedExamInfo: typeof import('./api/examInfo/index.js')['$fetchedExamInfo']
   const $fetchedExamList: typeof import('./api/examInfo/index.js')['$fetchedExamList']
+  const $getMaxPage: typeof import('./utils/globals.js')['$getMaxPage']
+  const $getPagingCount: typeof import('./utils/globals.js')['$getPagingCount']
+  const $getPagingOffset: typeof import('./utils/globals.js')['$getPagingOffset']
+  const $getTimeFormat: typeof import('./utils/globals.js')['$getTimeFormat']
   const $imageRender: typeof import('./utils/validate-rules.js')['$imageRender']
   const $saveExamInfo: typeof import('./api/examInfo/index.js')['$saveExamInfo']
   const $showAlert: typeof import('./utils/globals.js')['$showAlert']
