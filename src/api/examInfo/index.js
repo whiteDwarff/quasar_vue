@@ -50,6 +50,22 @@ export async function $saveExamInfo(form) {
     // 시험상세정보 등록
     const examCode = data?.exam_code; // 상위 테이블 seq
 
+    console.log(
+      camelToSnakeByObj(form.tbExamFormInfo).map((item, i) => {
+        item.exam_code = examCode;
+        item.exam_order = i + 1;
+        return item;
+      }),
+    );
+
+    const insertExamForm = [],
+      updateExamForm = [];
+
+    for (let item of form.tbExamFormInfo) {
+      item = camelToSnakeByObj(item);
+      item?.exam_code ? updateExamForm.push(item) : insertExamForm.push(item);
+    }
+
     let { error: formError } = await supabase.from('tb_exam_form_info').upsert(
       camelToSnakeByObj(form.tbExamFormInfo).map((item, i) => {
         item.exam_code = examCode;
