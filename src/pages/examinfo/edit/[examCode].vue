@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
+const router = useRouter();
 const route = useRoute();
 
 const form = ref({
@@ -23,10 +24,11 @@ const form = ref({
 const getExamInfo = async () => {
   const { data, error } = await $fetchedExamInfo(route?.params?.examCode);
 
-  if (!error) {
-    console.log(data);
-    form.value = data;
-  } else $showAlert('데이터 조회 실패하였습니다.');
+  if (error) {
+    await router.push('/examInfo');
+    return $showAlert(error);
+  }
+  form.value = data;
 };
 
 getExamInfo();

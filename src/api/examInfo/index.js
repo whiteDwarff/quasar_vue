@@ -1,4 +1,4 @@
-import { supabase } from 'boot/supabase';
+import { supabase, getErrorMessage } from '../supabase';
 
 /**
  * 시험목록 조회
@@ -50,34 +50,45 @@ export async function $saveExamInfo(form) {
     // 시험상세정보 등록
     const examCode = data?.exam_code; // 상위 테이블 seq
 
-    console.log(
-      camelToSnakeByObj(form.tbExamFormInfo).map((item, i) => {
-        item.exam_code = examCode;
-        item.exam_order = i + 1;
-        return item;
-      }),
-    );
+    const insertArr = [];
+    const updateArr = [];
+    const status = {
+      insert: true,
+      update: true,
+    };
 
-    const insertExamForm = [],
-      updateExamForm = [];
-
-    for (let item of form.tbExamFormInfo) {
+    for (let [i, item] of [...form.tbExamFormInfo].entries()) {
+      item.exam_order = i + 1;
       item = camelToSnakeByObj(item);
-      item?.exam_code ? updateExamForm.push(item) : insertExamForm.push(item);
+      if (item?.exam_code) updateArr.push(item);
+      else {
+        item.exam_code = examCode;
+        insertArr.push(item);
+      }
     }
 
-    let { error: formError } = await supabase.from('tb_exam_form_info').upsert(
-      camelToSnakeByObj(form.tbExamFormInfo).map((item, i) => {
-        item.exam_code = examCode;
-        item.exam_order = i + 1;
-        return item;
-      }),
-      { onConflict: 'exam_form_code' },
-    );
-    return { status: !formError ? true : false };
+    if (insertArr.length) {
+      let { error: insertErr } = await supabase.from('tb_exam_form_info').insert(insertArr);
+      status.insert = !insertErr;
+    }
+
+    if (updateArr.length) {
+      let { error: updateErr } = await supabase
+        .from('tb_exam_form_info')
+        .upsert(updateArr, { onConflict: 'exam_form_code' });
+      status.insert = !updateErr;
+    }
+
+    return {
+      status: status.insert && status.update,
+    };
   } else return { status: false };
 }
-
+/**
+ * 시험정보 상세조회
+ * @param {number} examCode
+ * @returns object
+ */
 export async function $fetchedExamInfo(examCode) {
   const { data, error } = await supabase
     .from('tb_exam_info')
@@ -98,10 +109,29 @@ export async function $fetchedExamInfo(examCode) {
     `,
     )
     .eq('exam_code', examCode)
+    .eq('tb_exam_form_info.use_flag', 'Y')
+    .order('exam_order', { referencedTable: 'tb_exam_form_info', ascending: true })
     .single();
 
   return {
     data: snakeToCamelByObj(data),
-    error,
+    error: error ? getErrorMessage[error.code] : false,
+  };
+}
+/**
+ * 시험정보 사용유무 변경
+ * @param {number} examCode
+ * @returns object
+ */
+export async function $updateExamInfoUsyn(examCode) {
+  const { data, error } = await supabase
+    .from('tb_exam_info')
+    .update({ use_flag: 'N' })
+    .eq('exam_code', examCode)
+    .select();
+
+  return {
+    data: data.length ? snakeToCamelByObj(data[0]) : null,
+    error: error ? getErrorMessage[error.code] || '저장 실패하였습니다.' : null,
   };
 }

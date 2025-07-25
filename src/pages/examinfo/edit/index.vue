@@ -13,6 +13,7 @@ const form = ref({
       examTotalTime: '',
       personalInfoUseFlag: 'N',
       personalInfoMessage: '',
+      useFlag: 'Y',
     },
   ],
 });

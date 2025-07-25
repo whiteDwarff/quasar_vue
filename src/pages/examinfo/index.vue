@@ -23,12 +23,12 @@
             </div>
           </div> 
           -->
-          <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
               <span class="label">시험명</span>
               <div class="content">
                 <q-input
-                  @keyup.enter="getExamList"
+                  @keyup.enter="getExamList(1)"
                   v-model="param.examName"
                   outlined
                   dense
@@ -37,12 +37,12 @@
               </div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
               <span class="label">등록자</span>
               <div class="content">
                 <q-input
-                  @keyup.enter="getExamList"
+                  @keyup.enter="getExamList(1)"
                   v-model="param.regId"
                   outlined
                   dense
@@ -51,7 +51,7 @@
               </div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
               <span class="label">등록일</span>
               <div class="content">
@@ -69,7 +69,7 @@
             :outline="true"
             class="q-mr-md w-100"
           />
-          <CustomButton @click="getExamList" label="검색" class="w-100" />
+          <CustomButton @click="getExamList(1)" label="검색" class="w-100" />
         </div>
       </q-card-section>
     </q-card>
@@ -161,8 +161,6 @@ const getExamList = async (current = null) => {
   if (!error) {
     rows.value = { data, totalCount };
     param.value.max = max;
-
-    console.log(data);
   } else $showAlert('데이터 조회 실패하였습니다.');
 };
 getExamList(1);

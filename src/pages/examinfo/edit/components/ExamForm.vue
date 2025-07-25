@@ -13,8 +13,21 @@
 
       <!-- 상세정보 -->
       <q-card-section class="q-pt-none">
+        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">시험명 등록</p>
+        <table class="markup-table">
+          <colgroup>
+            <col width="20%" />
+            <col width="80%" />
+          </colgroup>
+          <tbody>
+            <tr>
+              <th class="star">시험명</th>
+              <td><q-input v-model="form.examName" outlined dense /></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- 
         <div class="row q-col-gutter-md">
-          <!-- 
           <div class="col-xs-12 col-md-6">
             <span class="form-label star">회사명</span>
             <div>
@@ -29,25 +42,28 @@
             </div>
           </div> 
           <div class="col-xs-12 col-md-6">
-          -->
-          <div class="col-12">
-            <span class="form-label star">시험명</span>
-            <div>
-              <q-input v-model="form.examName" outlined dense />
+            <div class="col-12">
+              <span class="form-label star">시험명</span>
+              <div>
+                <q-input v-model="form.examName" outlined dense />
+              </div>
             </div>
           </div>
-        </div>
+          -->
       </q-card-section>
 
       <!-- 상세 목록 -->
       <q-card-section>
-        <q-scroll-area ref="scrollTargetRef" style="height: 350px">
+        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">상세정보 등록</p>
+        <q-scroll-area
+          ref="scrollTargetRef"
+          :style="{ height: `${form.tbExamFormInfo.length > 1 ? 350 : 280}px` }"
+        >
           <div
-            v-for="(item, i) of form.tbExamFormInfo.sort((a, b) => a.sort - b.sort)"
+            v-for="(item, i) of form.tbExamFormInfo.filter((item) => item.useFlag == 'Y')"
             :key="i"
             class="dashed-line"
           >
-            <p class="text-subtitle2 text-weight-bold q-mb-md">세부정보 등록</p>
             <table class="markup-table">
               <colgroup>
                 <col width="20%" />
@@ -71,7 +87,7 @@
                       </div>
                       <div class="col-1">
                         <q-btn
-                          @click="exceptExamItem(i)"
+                          @click="exceptExamItem(item, i)"
                           icon="bi-trash3"
                           round
                           flat
@@ -153,7 +169,17 @@
       </q-card-section>
       <q-card-section class="flex justify-between">
         <CustomButton @click="cancle()" label="취소" outline class="w-100" />
-        <CustomButton @click="submit()" label="저장" class="w-100" />
+        <div class="flex">
+          <CustomButton
+            v-if="$route?.params?.examCode"
+            @click="updateExamInfoUsyn"
+            label="삭제"
+            color="warning"
+            outline
+            class="w-100 q-mr-sm"
+          />
+          <CustomButton @click="submit()" label="저장" class="w-100" />
+        </div>
       </q-card-section>
     </q-card>
   </q-page>
@@ -161,15 +187,21 @@
 
 <script setup>
 const router = useRouter();
+const route = useRoute();
 
 const form = defineModel();
 
 const scrollTargetRef = ref(null);
 
 // 세부정보 삭제
-const exceptExamItem = (targetIndex) => {
+const exceptExamItem = (target, targetIndex) => {
   if (form.value.tbExamFormInfo.length == 1)
     return $showAlert('하나의 상세정보는 등록되어야합니다.');
+
+  if (target?.examCode) {
+    target.useFlag = 'N';
+    return;
+  }
 
   form.value.tbExamFormInfo = form.value.tbExamFormInfo.filter((item, i) => i != targetIndex);
 };
@@ -181,6 +213,7 @@ const addExamItem = () => {
     examTotalTime: '',
     personalInfoUseFlag: 'N',
     personalInfoMessage: '',
+    useFlag: 'Y',
   });
   // 스크롤을 하단으로 이동
   nextTick(() => {
@@ -214,5 +247,15 @@ const submit = async () => {
 const cancle = async () => {
   const status = await $showConfirm('취소하시겠습니까?');
   if (status) router.push('/examInfo');
+};
+const updateExamInfoUsyn = async () => {
+  if (await $showConfirm('삭제하시겠습니까?')) {
+    const { data, error } = await $updateExamInfoUsyn(route.params.examCode);
+
+    if (!error && data.useFlag == 'N') {
+      await router.push('/examInfo');
+      $showAlert('삭제되었습니다.');
+    } else $showAlert(error);
+  }
 };
 </script>
