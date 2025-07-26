@@ -96,14 +96,24 @@
           </q-tr>
         </template>
         <template #body="props">
-          <q-tr :props>
+          <q-tr
+            @click="currentRow = props.rowIndex"
+            :props
+            :class="{ current: currentRow == props.rowIndex }"
+            class="cursor-pointer"
+          >
             <q-td>{{ props.rowIndex + 1 }}</q-td>
             <q-td>{{ props.row.examName }}</q-td>
             <q-td>-</q-td>
             <q-td>{{ getTimeFormat(props.row.rgstDt) }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
-                <RowEditButton label="삭제" icon="delete" class="col-xs-12 col-md-6" />
+                <RowEditButton
+                  @click="updateExamInfoUsyn(props.row.examCode)"
+                  label="삭제"
+                  icon="delete"
+                  class="col-xs-12 col-md-6"
+                />
                 <RowEditButton
                   @click="$router.push(`/examInfo/edit/${props.row.examCode}`)"
                   label="수정"
@@ -141,6 +151,7 @@ const resetParam = () => {
 };
 const param = ref({ ...resetParam(resetParam.value) });
 
+const currentRow = ref(null);
 const rows = ref({
   totalCount: 0,
   data: [],
@@ -164,6 +175,18 @@ const getExamList = async (current = null) => {
   } else $showAlert('데이터 조회 실패하였습니다.');
 };
 getExamList(1);
+
+// 삭제
+const updateExamInfoUsyn = async (examCode) => {
+  if (await $showConfirm('삭제하시겠습니까?')) {
+    const { data, error } = await $updateExamInfoUsyn(examCode);
+
+    if (!error && data.useFlag == 'N') {
+      await getExamList(1);
+      $showAlert('삭제되었습니다.');
+    } else $showAlert(error);
+  }
+};
 
 // 등록일 날짜 포맷 반환
 const getTimeFormat = (str) => $getTimeFormat(str);

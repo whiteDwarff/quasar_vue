@@ -24,15 +24,15 @@
               />
               <q-icon
                 class="profile-wrap rounded-borders"
-                v-if="!form.imagePath"
+                v-if="!form.examineeImg"
                 name="bi-person-square"
                 size="xl"
                 color="grey"
                 style="opacity: 0.5"
               />
               <template v-else>
-                <div class="profile-wrap rounded-borders">
-                  <ImageViwer :images="[form.imagePath]" :index="0" />
+                <div class="profile-wrap rounded-borders overflow-hidden">
+                  <ImageViwer :images="[form.examineeImg]" :index="0" />
                 </div>
                 <div class="row justify-center q-mt-sm q-mx-auto" style="max-width: 162px">
                   <CustomButton
@@ -59,7 +59,7 @@
           <div class="col-xs-12 col-md-10">
             <div class="row q-col-gutter-md">
               <div class="col-xs-12 col-md-6">
-                <span class="form-label star">사번(등록번호)</span>
+                <span class="form-label star">응시번호</span>
                 <q-input
                   v-model="form.examineeId"
                   :readonly="$route.params?.examineeId ? true : false"
@@ -69,16 +69,45 @@
                   class="full-width bg-white"
                 />
               </div>
+            </div>
+            <div class="row q-col-gutter-md q-my-xs">
               <div class="col-xs-12 col-md-6">
-                <span class="form-label star">생년월일</span>
+                <span class="form-label star">본인확인정보</span>
                 <q-input
-                  v-model="form.birth"
+                  v-model="form.examineePass"
                   outlined
                   dense
                   fill
-                  mask="####-##-##"
                   class="full-width bg-white"
-                />
+                  :type="visible ? 'text' : 'password'"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      @click="visible = !visible"
+                      :name="visible ? 'bi-unlock' : 'bi-lock'"
+                      class="cursor-pointer"
+                    />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <span class="form-label star">본인확인정보 확인</span>
+                <q-input
+                  v-model="examineePassConfirm"
+                  outlined
+                  dense
+                  fill
+                  class="full-width bg-white"
+                  :type="visible ? 'text' : 'password'"
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      @click="visible = !visible"
+                      :name="visible ? 'bi-unlock' : 'bi-lock'"
+                      class="cursor-pointer"
+                    />
+                  </template>
+                </q-input>
               </div>
             </div>
             <div class="row q-col-gutter-md q-my-xs">
@@ -103,24 +132,11 @@
                 />
               </div>
             </div>
-            <!-- <div class="row q-col-gutter-md q-my-xs">
-              <div class="col-xs-12 col-md-6">
-                <span class="form-label star">회사명</span>
-                <div>
-                  <SelectFilter
-                    v-model="form.companySeq"
-                    :options="[
-                      { label: '엔비디아', value: 10 },
-                      { label: '테슬라', value: 11 },
-                      { label: '애플', value: 12 },
-                    ]"
-                  />
-                </div>
-              </div>
+            <div class="row q-col-gutter-md q-my-xs">
               <div class="col-xs-12 col-md-6">
                 <span class="form-label star">생년월일</span>
                 <q-input
-                  v-model="form.birth"
+                  v-model="form.examineeBirth"
                   outlined
                   dense
                   fill
@@ -128,20 +144,64 @@
                   class="full-width bg-white"
                 />
               </div>
-            </div> -->
+              <div class="col-xs-12 col-md-6">
+                <span class="form-label star">성별</span>
+                <q-select
+                  v-model="form.examineeGender"
+                  :options="[
+                    { label: '남자', value: '1' },
+                    { label: '여자', value: '2' },
+                  ]"
+                  outlined
+                  dense
+                  options-dense
+                  emit-value
+                  map-options
+                  class="bg-white"
+                />
+              </div>
+            </div>
             <div class="row q-col-gutter-md q-my-xs">
               <div class="col-xs-12 col-md-6">
                 <span class="form-label">이메일</span>
-                <q-input v-model="form.email" outlined dense fill class="full-width bg-white" />
+                <q-input
+                  v-model="form.examineeEmail"
+                  outlined
+                  dense
+                  fill
+                  class="full-width bg-white"
+                />
               </div>
               <div class="col-xs-12 col-md-6">
                 <span class="form-label">연락처</span>
                 <q-input
-                  v-model="form.tel"
+                  v-model="form.examineePhone"
                   outlined
                   dense
                   fill
                   mask="###-####-####"
+                  class="full-width bg-white"
+                />
+              </div>
+            </div>
+            <div class="row q-col-gutter-md q-my-xs">
+              <div class="col-xs-12 col-md-6">
+                <span class="form-label">대학</span>
+                <q-input
+                  v-model="form.examineeCollege"
+                  outlined
+                  dense
+                  fill
+                  class="full-width bg-white"
+                />
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <span class="form-label">학과</span>
+                <q-input
+                  v-model="form.examineeMajor"
+                  outlined
+                  dense
+                  fill
                   class="full-width bg-white"
                 />
               </div>
@@ -163,6 +223,10 @@ const router = useRouter();
 
 const form = defineModel();
 
+const file = ref(null);
+const visible = ref(false);
+const examineePassConfirm = ref('');
+
 const imageInput = useTemplateRef('imageInput');
 
 // 응시자 사진 선택
@@ -170,24 +234,28 @@ const render = (target) => {
   const result = $imageRender(target);
 
   if (result) {
-    form.value.file = result.file;
-    form.value.imagePath = result.src;
+    file.value = result.file;
+    form.value.examineeImg = result.src;
   }
 };
 // 사진 클릭
 const thumbClick = () => {
-  if (form.value.imagePath) return;
+  if (form.value.examineeImg) return;
   imageInput.value.click();
 };
 // 사진 삭제
 const thumbDelete = () => {
-  form.value.file = null;
-  form.value.imagePath = '';
+  file.value = null;
+  form.value.examineeImg = '';
 
   if (imageInput.value) imageInput.value.value = '';
 };
 // 저장
 const submit = async () => {
+  if (!form.value.examineeId) return $showAlert('응시번호를 입력해주세요.');
+  if (!form.value.examineePass) return $showAlert('본인확인정보를 입력해주세요.');
+  if (form.value.examineePass != examineePassConfirm.value)
+    return $showAlert('본인확인정보가 일치하지 않습니다.');
   if (!form.value.examineeName) return $showAlert('이름(국문)을 입력해주세요.');
   else if (!$validOnlyKR(form.value.examineeName))
     return $showAlert('이름(국문)은 한글로 입력해주세요.');
@@ -198,29 +266,22 @@ const submit = async () => {
 
   // if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
 
-  if (!form.value.birth) return $showAlert('생년월일을 입력해주세요.');
-  else if (!$validDate(form.value.birth)) return $showAlert('정확한 생년월일을 입력해주세요.');
+  if (!form.value.examineeBirth) return $showAlert('생년월일을 입력해주세요.');
+  else if (!$validDate(form.value.examineeBirth))
+    return $showAlert('정확한 생년월일을 입력해주세요.');
 
-  if (form.value.email && $validEmail(form.value.email))
-    return $showAlert('이메일 형식이 아닙니다');
-  if (form.value.tel && $validTel(form.value.tel)) return $showAlert('이메일 형식이 아닙니다');
+  if (form.value.examineeEmail && !$validEmail(form.value.examineeEmail))
+    return $showAlert('이메일 형식이 아닙니다.');
+  if (form.value.examineePhone && !$validTel(form.value.examineePhone))
+    return $showAlert('전화번호 형식이 아닙니다.');
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    $showAlert('저장되었습니다.');
+    const { status } = await $saveExamineeInfo(form.value, file.value);
 
-    /*
-  try {
-      const res = $axios_loading.post('', form.value);
-
-      if(res.data.status == 200) {
-        $showAlert('저장되었습니다.');
-        return router.push('/assign/examinee');
-      }  
-      $showAlert('저장 실패하였습니다.');
-    } catch(err) {
-      console.log(err);
+    if (status) {
+      await router.push('/assign/examinee');
+      $showAlert('저장되었습니다.');
     }
-  */
   }
 };
 // 취소 후 목록으로 이동

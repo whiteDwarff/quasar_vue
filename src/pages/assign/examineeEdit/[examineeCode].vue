@@ -6,18 +6,18 @@
 const route = useRoute();
 const router = useRouter();
 
-if (!$validString(route.params.examineeId)) {
+if (!$validString(route.params.examineeCode)) {
   router.push('/error');
 }
 const form = ref({
-  examineeId: route.params?.examineeId,
+  examineeId: route.params?.examineeCode,
   examineeNameEn: '',
   examineeName: '',
-  companySeq: '',
   birth: '',
   email: '',
   tel: '',
   file: null,
   imagePath: '',
+  //companySeq: '',
 });
 </script>

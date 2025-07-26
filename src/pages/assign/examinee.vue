@@ -128,7 +128,7 @@
         <template #body="props">
           <q-tr
             @click="currentRow = props.rowIndex"
-            :props="props"
+            :props
             :class="{ current: currentRow == props.rowIndex }"
             class="cursor-pointer"
           >

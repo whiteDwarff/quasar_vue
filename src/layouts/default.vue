@@ -9,11 +9,16 @@
         <q-btn icon="exit_to_app" :ripple="false" flat dense rounded />
       </q-toolbar>
     </q-header>
-
+    <!-- aside -->
     <DefaultAside v-model="leftDrawerOpen" />
 
     <q-page-container>
+      <!-- page rander -->
       <router-view />
+      <!-- scroll button -->
+      <q-page-scroller position="bottom-right" :scroll-offset="10" :offset="[35, 100]">
+        <q-btn fab rounded icon="keyboard_arrow_up" color="grey-12" />
+      </q-page-scroller>
     </q-page-container>
   </q-layout>
 </template>

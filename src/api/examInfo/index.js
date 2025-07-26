@@ -1,11 +1,15 @@
 import { supabase, getErrorMessage } from '../supabase';
 
+const store = useSystemStore();
+
 /**
  * 시험목록 조회
  * @param {object} params
  * @returns object
  */
 export async function $fetchedExamList(params) {
+  store.setLoading(true);
+
   // 페이지네이션 사용 위한 개수 조회
   const { count } = await supabase
     .from('tb_exam_info')
@@ -23,6 +27,8 @@ export async function $fetchedExamList(params) {
     .range(offset, limit)
     .order('exam_code', { ascending: false }); // 내림차순 정렬
 
+  store.setLoading(false);
+
   return {
     data: snakeToCamelByObj(data),
     max: $getPagingCount(count),
@@ -36,6 +42,8 @@ export async function $fetchedExamList(params) {
  * @returns boolean
  */
 export async function $saveExamInfo(form) {
+  store.setLoading(true);
+
   const obj = { exam_name: form.examName };
   if (form?.examCode) obj.exam_code = form.examCode;
 
@@ -79,6 +87,8 @@ export async function $saveExamInfo(form) {
       status.insert = !updateErr;
     }
 
+    store.setLoading(false);
+
     return {
       status: status.insert && status.update,
     };
@@ -90,6 +100,8 @@ export async function $saveExamInfo(form) {
  * @returns object
  */
 export async function $fetchedExamInfo(examCode) {
+  store.setLoading(true);
+
   const { data, error } = await supabase
     .from('tb_exam_info')
     .select(
@@ -113,6 +125,8 @@ export async function $fetchedExamInfo(examCode) {
     .order('exam_order', { referencedTable: 'tb_exam_form_info', ascending: true })
     .single();
 
+  store.setLoading(false);
+
   return {
     data: snakeToCamelByObj(data),
     error: error ? getErrorMessage[error.code] : false,
@@ -124,11 +138,15 @@ export async function $fetchedExamInfo(examCode) {
  * @returns object
  */
 export async function $updateExamInfoUsyn(examCode) {
+  store.setLoading(true);
+
   const { data, error } = await supabase
     .from('tb_exam_info')
     .update({ use_flag: 'N' })
     .eq('exam_code', examCode)
     .select();
+
+  store.setLoading(false);
 
   return {
     data: data.length ? snakeToCamelByObj(data[0]) : null,

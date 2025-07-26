@@ -21,6 +21,9 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   font-weight: 350 !important;
   border-radius: 6px;
 }
+.q-btn--rounded {
+  border-radius: 28px !important;
+}
 .q-table__card {
   border-radius: 0;
 }
@@ -43,16 +46,21 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   text-align: center;
 }
 .q-table tbody tr.current td {
+  background: #f2f7ff !important;
+  color: #69a5fe !important;
+  /*
   border-top: 1px solid #69a5fe !important;
   border-bottom: 1px solid #69a5fe !important;
+  */
 }
+/*
 .q-table tbody tr.current td:first-child {
   border-left: 1px solid #69a5fe;
 }
 .q-table tbody tr.current td:last-child {
   border-right: 1px solid #69a5fe;
 }
-
+*/
 .q-pagination__content button {
   margin: 0 5px;
   border-radius: 4px !important;

@@ -12,11 +12,14 @@ export const useSystemStore = defineStore('system', () => {
     resolve: () => {},
   });
 
+  const loading = ref(false);
+
+  // alert
   function showAlert(contents) {
     alert.value.visible = true;
     alert.value.contents = contents;
   }
-
+  // confirm
   function showConfirm(contents) {
     confirm.value.contents = contents;
     confirm.value.visible = true;
@@ -25,15 +28,17 @@ export const useSystemStore = defineStore('system', () => {
       confirm.value.resolve = resolve;
     });
   }
-
   function resolve() {
     confirm.value.visible = false;
     confirm.value.resolve(true);
   }
-
   function reject() {
     confirm.value.visible = false;
     confirm.value.resolve(false);
+  }
+  // loading
+  function setLoading(status) {
+    loading.value = status;
   }
 
   return {
@@ -43,5 +48,7 @@ export const useSystemStore = defineStore('system', () => {
     showConfirm,
     resolve,
     reject,
+    loading,
+    setLoading,
   };
 });

@@ -5,13 +5,16 @@
 <script setup>
 const form = ref({
   examineeId: '',
-  examineeNameEn: '',
+  examineePass: '',
   examineeName: '',
-  companySeq: '',
-  birth: '',
-  email: '',
-  tel: '',
-  file: null,
-  imagePath: '',
+  examineeNameEn: '',
+  examineeBirth: '',
+  examineeGender: '1',
+  examineePhone: '',
+  examineeEmail: '',
+  examineeCollege: '',
+  examineeMajor: '',
+  examineeImg: '',
+  // companySeq: '',
 });
 </script>

@@ -248,6 +248,7 @@ const cancle = async () => {
   const status = await $showConfirm('취소하시겠습니까?');
   if (status) router.push('/examInfo');
 };
+// 삭제
 const updateExamInfoUsyn = async () => {
   if (await $showConfirm('삭제하시겠습니까?')) {
     const { data, error } = await $updateExamInfoUsyn(route.params.examCode);
