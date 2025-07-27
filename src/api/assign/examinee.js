@@ -55,3 +55,49 @@ export async function $saveExamineeInfo(form, file) {
     };
   }
 }
+
+/**
+ * 응시자 정보 조회
+ * @param {string} examineeCode
+ * @returns object
+ */
+export async function $fetchedExamineeInfo(examineeCode) {
+  store.setLoading(true);
+
+  // 응시자정보 조회
+  const { data, error } = await supabase
+    .from('tb_examinee_info')
+    .select(
+      `
+      examinee_code, 
+      examinee_id, 
+      examinee_pass,
+      examinee_name,
+      examinee_name_en,
+      examinee_birth,
+      examinee_gender,
+      examinee_phone,
+      examinee_email,
+      examinee_college,
+      examinee_major,
+      examinee_img,
+      use_flag,
+      rgst_dt
+    `,
+    )
+    .eq('examinee_code', examineeCode)
+    .single();
+
+  // 프로필 이미지가 등록된 경우 bucket의 public url 조회
+  if (data && !error) {
+    data.examinee_img = await fetchedProfileImg(data.examinee_img);
+    data.rgst_dt = $getTimeFormat(data.rgst_dt);
+  }
+
+  store.setLoading(false);
+
+  return {
+    data: data ? snakeToCamelByObj(data) : null,
+    error: error ? getErrorMessage[error.code] : null,
+  };
+}

@@ -17,7 +17,9 @@
       <router-view />
       <!-- scroll button -->
       <q-page-scroller position="bottom-right" :scroll-offset="10" :offset="[35, 100]">
-        <q-btn fab rounded icon="keyboard_arrow_up" color="grey-12" />
+        <q-btn fab rounded color="grey-12">
+          <q-icon name="keyboard_arrow_up" style="color: #333" />
+        </q-btn>
       </q-page-scroller>
     </q-page-container>
   </q-layout>

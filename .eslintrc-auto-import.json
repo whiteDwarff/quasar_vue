@@ -2,6 +2,7 @@
   "globals": {
     "$fetchedExamInfo": "readonly",
     "$fetchedExamList": "readonly",
+    "$fetchedExamineeInfo": "readonly",
     "$getPagingCount": "readonly",
     "$getPagingOffset": "readonly",
     "$getTimeFormat": "readonly",
@@ -52,6 +53,7 @@
     "defineComponent": "readonly",
     "defineStore": "readonly",
     "effectScope": "readonly",
+    "fetchedProfileImg": "readonly",
     "getActivePinia": "readonly",
     "getCurrentInstance": "readonly",
     "getCurrentScope": "readonly",

@@ -3,21 +3,38 @@
 </template>
 
 <script setup>
-const route = useRoute();
 const router = useRouter();
+const route = useRoute();
 
-if (!$validString(route.params.examineeCode)) {
-  router.push('/error');
-}
 const form = ref({
-  examineeId: route.params?.examineeCode,
-  examineeNameEn: '',
+  examineeId: '',
+  examineePass: '',
   examineeName: '',
-  birth: '',
-  email: '',
-  tel: '',
-  file: null,
-  imagePath: '',
+  examineeNameEn: '',
+  examineeBirth: '',
+  examineeGender: '1',
+  examineePhone: '',
+  examineeEmail: '',
+  examineeCollege: '',
+  examineeMajor: '',
+  examineeImg: '',
   //companySeq: '',
 });
+
+const getExamineeInfo = async () => {
+  const { data, error } = await $fetchedExamineeInfo(route?.params?.examineeCode);
+
+  if (!error) form.value = data;
+  else {
+    await router.push('/assign/examinee');
+    $showAlert(error);
+  }
+};
+getExamineeInfo();
 </script>
+
+<route lang="yaml">
+meta:
+  params:
+    examineeCode: number
+</route>

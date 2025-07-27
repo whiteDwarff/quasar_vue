@@ -53,7 +53,7 @@
                   />
                 </div>
               </template>
-              <small v-if="$route.params?.examineeId" class="reg-date">등록일 ⎮ 2025.05.23</small>
+              <small v-if="form?.examineeCode" class="reg-date">등록일 ⎮ {{ form.rgstDt }}</small>
             </div>
           </div>
           <div class="col-xs-12 col-md-10">
@@ -62,7 +62,7 @@
                 <span class="form-label star">응시번호</span>
                 <q-input
                   v-model="form.examineeId"
-                  :readonly="$route.params?.examineeId ? true : false"
+                  :readonly="form.examineeCode ? true : false"
                   outlined
                   dense
                   fill
@@ -219,11 +219,6 @@
 </template>
 
 <script setup>
-const { data } = supabase.storage
-  .from('Image')
-  .getPublicUrl('profile/d8d9407e-b448-4761-bc10-531d852a6785-xxx1234.png');
-console.log(data);
-
 const router = useRouter();
 
 const form = defineModel();

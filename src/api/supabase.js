@@ -16,7 +16,9 @@ async function addProfleImgByBucket(file, key) {
   const ext = file.name.split('.').pop().toLowerCase();
   fileName = `${crypto.randomUUID()}-${key}.${ext}`;
   // 스토리지에 이미지 저장
-  const { data, error } = await supabase.storage.from('images').upload(`profile/${fileName}`, file);
+  const { data, error } = await supabase.storage
+    .from('images')
+    .upload(`profile/${fileName}`, file, { upsert: true });
 
   if (!error && data.path)
     return {
@@ -27,6 +29,15 @@ async function addProfleImgByBucket(file, key) {
     error;
   }
 }
+/**
+ * 사용자 프로필 url 조회
+ * @param {string} path
+ * @returns string
+ */
+async function fetchedProfileImg(path) {
+  const { data, error } = await supabase.storage.from('images').getPublicUrl(path);
+  return error ? '' : data.publicUrl;
+}
 
 // supabase error message
 const getErrorMessage = {
@@ -34,4 +45,4 @@ const getErrorMessage = {
   PGRST204: '해당 테이블에 일치하는 컬럼이 없습니다.',
 };
 
-export { supabase, addProfleImgByBucket, getErrorMessage };
+export { supabase, addProfleImgByBucket, fetchedProfileImg, getErrorMessage };
