@@ -33,6 +33,8 @@ declare global {
   const SnakeToCamelByObj: (typeof import('./utils/convert-to-fields.js'))['SnakeToCamelByObj']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const addExamInfo: (typeof import('./api/examInfo/index.js'))['addExamInfo']
+  const addProfleImgByBucket: typeof import('./api/supabase.js')['addProfleImgByBucket']
+  const addProfleImgage: typeof import('./api/supabase.js')['addProfleImgage']
   const api: typeof import('./boot/axios.js')['api']
   const axios: typeof import('./boot/axios.js')['default']
   const camelToSnakeByObj: typeof import('./utils/convert-to-fields.js')['camelToSnakeByObj']

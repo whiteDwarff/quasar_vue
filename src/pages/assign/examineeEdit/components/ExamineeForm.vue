@@ -281,12 +281,14 @@ const submit = async () => {
     return $showAlert('전화번호 형식이 아닙니다.');
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { status } = await $saveExamineeInfo(form.value, file.value);
+    const { status, error } = await $saveExamineeInfo(form.value, file.value);
+
+    useSystemStore().setLoading(false);
 
     if (status) {
       await router.push('/assign/examinee');
       $showAlert('저장되었습니다.');
-    }
+    } else $showAlert(error);
   }
 };
 // 취소 후 목록으로 이동

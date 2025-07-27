@@ -38,6 +38,7 @@
     "VNode": "readonly",
     "WritableComputedRef": "readonly",
     "acceptHMRUpdate": "readonly",
+    "addProfleImgByBucket": "readonly",
     "api": "readonly",
     "axios": "readonly",
     "camelToSnakeByObj": "readonly",
