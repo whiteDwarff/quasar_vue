@@ -7,8 +7,22 @@ const store = useSystemStore();
  */
 export async function $saveExamineeInfo(form, file) {
   store.setLoading(true);
-  // 반환할 상태 값
-  let status = true;
+
+  let status = true; // 반환할 상태 값
+  let fileName = ''; // 파일명
+
+  if (file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    fileName = `${crypto.randomUUID()}-${form.examineeId}.${ext}`;
+    // 스토리지에 이미지 저장
+    const { data: examineeImg, error: imgError } = await supabase.storage
+      .from('images')
+      .upload(`profile/${fileName}`, file);
+
+    if (!imgError && examineeImg.path) form.examineeImg = examineeImg.path;
+    else return $showAlert('이미지 저장에 실패하였습니다.');
+    console.log(examineeImg, imgError);
+  }
 
   // 등록
   if (!form?.examineeCode) {
@@ -19,7 +33,7 @@ export async function $saveExamineeInfo(form, file) {
       .from('tb_examinee_info')
       .insert(camelToSnakeByObj(form))
       .select('examinee_code')
-      .single(); // 0 또는 1개의 row 조회
+      .single();
 
     status = !error && data?.examinee_code;
 

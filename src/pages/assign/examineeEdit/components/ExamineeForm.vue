@@ -219,6 +219,11 @@
 </template>
 
 <script setup>
+const { data } = supabase.storage
+  .from('Image')
+  .getPublicUrl('profile/d8d9407e-b448-4761-bc10-531d852a6785-xxx1234.png');
+console.log(data);
+
 const router = useRouter();
 
 const form = defineModel();
