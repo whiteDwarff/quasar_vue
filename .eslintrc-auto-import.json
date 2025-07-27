@@ -3,6 +3,7 @@
     "$fetchedExamInfo": "readonly",
     "$fetchedExamList": "readonly",
     "$fetchedExamineeInfo": "readonly",
+    "$fetchedExamineeList": "readonly",
     "$getPagingCount": "readonly",
     "$getPagingOffset": "readonly",
     "$getTimeFormat": "readonly",

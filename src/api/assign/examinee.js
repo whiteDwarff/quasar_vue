@@ -101,3 +101,41 @@ export async function $fetchedExamineeInfo(examineeCode) {
     error: error ? getErrorMessage[error.code] : null,
   };
 }
+
+export async function $fetchedExamineeList(param) {
+  console.log('fetched');
+
+  let query = supabase
+    .from('tb_examinee_info')
+    .select(
+      `
+    examinee_code,
+    examinee_id,
+    examinee_gender,
+    examinee_name,
+    examinee_major,
+    examinee_college,
+    examinee_phone,
+    examinee_img,
+    use_flag,
+    rgst_dt,
+    updt_dt
+  `,
+    )
+    .order('examinee_code', { ascending: false }); // 내림차순 정렬
+
+  // 응시번호
+  if (param.id) query = query.ilike('examinee_id', `${param.id}`);
+  // 성별
+  if (param.gender) query = query.eq('examinee_gender', param.gender);
+  // 이름
+  if (param.name) query = query.ilike('examinee_name', `${param.name}`);
+  // 대학
+  if (param.major) query = query.ilike('examinee_major', `${param.major}`);
+  // 학과
+  if (param.college) query = query.ilike('examinee_college', `${param.college}`);
+
+  const { data, error } = await query;
+
+  console.log(data, error);
+}

@@ -11,44 +11,26 @@
         </div>
       </q-card-section>
 
-      <q-card-section class="search-wrap">
-        <div class="row q-col-gutter-md">
-          <div class="col-xs-12 col-sm-6 col-md-3">
+      <q-card-section class="row q-col-gutter-md search-wrap">
+        <div class="row col-12 q-col-gutter-md">
+          <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
-              <span class="label">사번</span>
+              <span class="label">응시번호</span>
               <div class="content">
-                <q-input v-model="param.examineeId" outlined dense class="bg-white" />
+                <q-input v-model="param.id" outlined dense class="bg-white" />
               </div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-6 col-md-3">
+          <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
-              <span class="label">성명</span>
-              <div class="content">
-                <q-input v-model="param.examineeName" outlined dense class="bg-white" />
-              </div>
-            </div>
-          </div>
-          <!-- 
-            <div class="col-xs-12 col-sm-6 col-md-3">
-              <div class="flex items-center">
-                <span class="label">회사명</span>
-                <div class="content">
-                  <SelectFilter v-model="param.companySeq" />
-                </div>
-              </div>
-            </div>
-            -->
-          <div class="col-xs-12 col-sm-6 col-md-3">
-            <div class="flex items-center">
-              <span class="label">사진유무</span>
+              <span class="label">성별</span>
               <div class="content">
                 <q-select
-                  v-model="param.imgYn"
+                  v-model="param.gender"
                   :options="[
                     { label: '전체', value: '' },
-                    { label: '사용', value: 'Y' },
-                    { label: '미사용', value: 'N' },
+                    { label: '남', value: '1' },
+                    { label: '여', value: '2' },
                   ]"
                   outlined
                   dense
@@ -60,9 +42,41 @@
               </div>
             </div>
           </div>
+          <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="flex items-center">
+              <span class="label">성명</span>
+              <div class="content">
+                <q-input v-model="param.name" outlined dense class="bg-white" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="flex items-center">
+              <span class="label">대학</span>
+              <div class="content">
+                <q-input v-model="param.major" outlined dense class="bg-white" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="flex items-center">
+              <span class="label">학과</span>
+              <div class="content">
+                <q-input v-model="param.college" outlined dense class="bg-white" />
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-4">
+            <div class="flex items-center">
+              <span class="label">등록일</span>
+              <div class="content">
+                <VueDatePicker v-model="param.regDate" :range="true" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="flex q-mt-lg">
+        <div class="col-12 flex q-pr-md">
           <q-space />
           <CustomButton
             @click="param = resetParam()"
@@ -173,13 +187,17 @@
 <script setup>
 const resetParam = () => {
   return {
-    examineeId: '',
-    examineeName: '',
-    companySeq: '',
-    imgYn: '',
+    id: '',
+    name: '',
+    major: '',
+    college: '',
+    gender: '',
     current: 1,
     min: 1,
     max: 1,
+    regDate: [],
+    // companySeq: '',
+    // imgYn: '',
   };
 };
 const param = ref({ ...resetParam() });
@@ -221,4 +239,6 @@ const examineeDelete = async (examinee = null) => {
     console.log(arr);
   }
 };
+
+$fetchedExamineeList(param.value);
 </script>

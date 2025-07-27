@@ -10,6 +10,7 @@ declare global {
   const $fetchedExamInfo: typeof import('./api/examInfo/index.js')['$fetchedExamInfo']
   const $fetchedExamList: typeof import('./api/examInfo/index.js')['$fetchedExamList']
   const $fetchedExamineeInfo: typeof import('./api/assign/examinee.js')['$fetchedExamineeInfo']
+  const $fetchedExamineeList: typeof import('./api/assign/examinee.js')['$fetchedExamineeList']
   const $getMaxPage: typeof import('./utils/globals.js')['$getMaxPage']
   const $getPagingCount: typeof import('./utils/globals.js')['$getPagingCount']
   const $getPagingOffset: typeof import('./utils/globals.js')['$getPagingOffset']
