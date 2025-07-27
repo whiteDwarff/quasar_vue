@@ -8,6 +8,21 @@ const store = useSystemStore();
 export async function $saveExamineeInfo(form, file) {
   store.setLoading(true);
 
+  // 등록일 경우 응시번호 중복검사
+  if (!form?.examineeCode) {
+    const { count } = await supabase
+      .from('tb_examinee_info')
+      .select('*', { count: 'exact', head: true })
+      .eq('examinee_id', form.examineeId);
+
+    if (count) {
+      return {
+        status: false,
+        error: '등록된 응시번호가 존재합니다.',
+      };
+    }
+  }
+
   let status = true; // 반환할 상태 값
 
   // 파일이 있는 경우 supabase storage에 저장
@@ -25,18 +40,6 @@ export async function $saveExamineeInfo(form, file) {
 
   // 등록
   if (!form?.examineeCode) {
-    const { count } = await supabase
-      .from('tb_examinee_info')
-      .select('*', { count: 'exact', head: true })
-      .eq('examinee_id', form.examineeId);
-
-    if (count) {
-      return {
-        status: false,
-        error: '등록된 응시번호가 존재합니다.',
-      };
-    }
-
     // 응시자정보 등록
     const { data, error } = await supabase
       .from('tb_examinee_info')
@@ -48,7 +51,7 @@ export async function $saveExamineeInfo(form, file) {
 
     return {
       status,
-      error: '저장 실패하였습니다.',
+      error: !status ? '저장 실패하였습니다.' : '',
     };
   }
 }
