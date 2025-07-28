@@ -103,39 +103,47 @@ export async function $fetchedExamineeInfo(examineeCode) {
 }
 
 export async function $fetchedExamineeList(param) {
-  console.log('fetched');
-
   let query = supabase
     .from('tb_examinee_info')
     .select(
       `
-    examinee_code,
-    examinee_id,
-    examinee_gender,
-    examinee_name,
-    examinee_major,
-    examinee_college,
-    examinee_phone,
-    examinee_img,
-    use_flag,
-    rgst_dt,
-    updt_dt
+      examinee_code,
+      examinee_id,
+      examinee_gender,
+      examinee_name,
+      examinee_major,
+      examinee_college,
+      examinee_phone,
+      examinee_img,
+      use_flag,
+      rgst_dt,
+      updt_dt
   `,
     )
+    .eq('use_flag', 'Y')
     .order('examinee_code', { ascending: false }); // 내림차순 정렬
 
   // 응시번호
-  if (param.id) query = query.ilike('examinee_id', `${param.id}`);
+  if (param.id) query = query.ilike('examinee_id', `%${param.id.trim()}%`);
   // 성별
   if (param.gender) query = query.eq('examinee_gender', param.gender);
   // 이름
-  if (param.name) query = query.ilike('examinee_name', `${param.name}`);
+  if (param.name) query = query.ilike('examinee_name', `%${param.name.trim()}%`);
   // 대학
-  if (param.major) query = query.ilike('examinee_major', `${param.major}`);
+  if (param.college) query = query.ilike('examinee_college', `%${param.college.trim()}%`);
   // 학과
-  if (param.college) query = query.ilike('examinee_college', `${param.college}`);
+  if (param.major) query = query.ilike('examinee_major', `%${param.major.trim()}%`);
+  // 등록일
+  if (param.regDate.length) {
+    query = query.gte('rgst_dt', $getTimeFormat(param.regDate[0]));
 
+    if (param.regDate[1])
+      query = query.lte('rgst_dt', $getTimeFormat(param.regDate[1]) + ' 23:59:59');
+  }
   const { data, error } = await query;
 
-  console.log(data, error);
+  return {
+    data: data ? snakeToCamelByObj(data) : null,
+    error: error ? getErrorMessage[error.code] : null,
+  };
 }

@@ -17,7 +17,13 @@
             <div class="flex items-center">
               <span class="label">응시번호</span>
               <div class="content">
-                <q-input v-model="param.id" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getExamineeList(1)"
+                  v-model="param.id"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -46,7 +52,13 @@
             <div class="flex items-center">
               <span class="label">성명</span>
               <div class="content">
-                <q-input v-model="param.name" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getExamineeList(1)"
+                  v-model="param.name"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -54,7 +66,13 @@
             <div class="flex items-center">
               <span class="label">대학</span>
               <div class="content">
-                <q-input v-model="param.major" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getExamineeList(1)"
+                  v-model="param.college"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -62,7 +80,13 @@
             <div class="flex items-center">
               <span class="label">학과</span>
               <div class="content">
-                <q-input v-model="param.college" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getExamineeList(1)"
+                  v-model="param.major"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -70,7 +94,7 @@
             <div class="flex items-center">
               <span class="label">등록일</span>
               <div class="content">
-                <VueDatePicker v-model="param.regDate" :range="true" />
+                <DatePicker v-model="param.regDate" :range="true" />
               </div>
             </div>
           </div>
@@ -84,7 +108,7 @@
             :outline="true"
             class="q-mr-md w-100"
           />
-          <CustomButton label="검색" class="w-100" />
+          <CustomButton @click="getExamineeList(1)" label="검색" class="w-100" />
         </div>
       </q-card-section>
     </q-card>
@@ -207,26 +231,7 @@ const currentRow = ref(null);
 
 const visible = ref(false);
 
-const rows = ref([
-  {
-    no: 1,
-    examineeSeq: 100,
-    examineeId: 'rkdans113',
-    examineeName: '강문호',
-    examineeNameEn: 'Kang Mun ho',
-    companyName: '토스',
-    imageYn: '미사용',
-  },
-  {
-    no: 2,
-    examineeSeq: 101,
-    examineeId: 'an6684',
-    examineeName: '안민덩',
-    examineeNameEn: 'An dung',
-    companyName: '카카오',
-    imageYn: '사용',
-  },
-]);
+const rows = ref([]);
 
 const examineeDelete = async (examinee = null) => {
   if (!selected.value.length && !examinee) return $showAlert('삭제할 응시자를 선택해주세요.');
@@ -240,5 +245,13 @@ const examineeDelete = async (examinee = null) => {
   }
 };
 
-$fetchedExamineeList(param.value);
+const getExamineeList = async (current = null) => {
+  const { data, error } = await $fetchedExamineeList({
+    ...param.value,
+    current,
+  });
+
+  console.log(data, error);
+};
+getExamineeList(1);
 </script>
