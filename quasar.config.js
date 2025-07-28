@@ -121,13 +121,13 @@ export default defineConfig((/* ctx */) => {
           'unplugin-auto-import/vite',
           {
             imports: ['vue', 'vue-router', 'quasar', 'pinia'],
-            // dts: 'src/auto-imports.d.ts',
-            // eslintrc: {
-            //   enabled: true,
-            //   filepath: './.eslintrc-auto-import.json',
-            //   globalsPropValue: 'readonly',
-            // },
-            dirs: ['src/stores/**', 'src/utils/**', 'src/boot/**', 'src/api/**', 'src/api/**/**'],
+            dts: 'src/auto-imports.d.ts',
+            eslintrc: {
+              enabled: true,
+              filepath: './.eslintrc-auto-import.json',
+              globalsPropValue: 'readonly',
+            },
+            dirs: ['src/stores/**', 'src/utils/**', 'src/boot/**', 'src/api/**'],
           },
         ],
       ],

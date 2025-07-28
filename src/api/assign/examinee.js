@@ -90,7 +90,7 @@ export async function $fetchedExamineeInfo(examineeCode) {
 
   // 프로필 이미지가 등록된 경우 bucket의 public url 조회
   if (data && !error) {
-    data.examinee_img = await fetchedProfileImg(data.examinee_img);
+    if (data.examinee_img) data.examinee_img = await fetchedProfileImg(data.examinee_img);
     data.rgst_dt = $getTimeFormat(data.rgst_dt);
   }
 
@@ -101,9 +101,22 @@ export async function $fetchedExamineeInfo(examineeCode) {
     error: error ? getErrorMessage[error.code] : null,
   };
 }
+/**
+ *
+ * @param {object} params
+ * @returns
+ */
+export async function $fetchedExamineeList(params) {
+  store.setLoading(true);
+  // 페이징 개수 조회
+  //  count: 'exact' : 정확한 개수 조회
+  //  head: true     : 데이터를 같이 조회 하지 않고 개수만 조회
+  const countQuery = supabase.from('tb_examinee_info').select('*', { count: 'exact', head: true });
 
-export async function $fetchedExamineeList(param) {
-  let query = supabase
+  const { count } = await fetchedListWhere(countQuery, params);
+
+  // 목록 조회용
+  const dataQuery = supabase
     .from('tb_examinee_info')
     .select(
       `
@@ -120,30 +133,75 @@ export async function $fetchedExamineeList(param) {
       updt_dt
   `,
     )
-    .eq('use_flag', 'Y')
     .order('examinee_code', { ascending: false }); // 내림차순 정렬
 
-  // 응시번호
-  if (param.id) query = query.ilike('examinee_id', `%${param.id.trim()}%`);
-  // 성별
-  if (param.gender) query = query.eq('examinee_gender', param.gender);
-  // 이름
-  if (param.name) query = query.ilike('examinee_name', `%${param.name.trim()}%`);
-  // 대학
-  if (param.college) query = query.ilike('examinee_college', `%${param.college.trim()}%`);
-  // 학과
-  if (param.major) query = query.ilike('examinee_major', `%${param.major.trim()}%`);
-  // 등록일
-  if (param.regDate.length) {
-    query = query.gte('rgst_dt', $getTimeFormat(param.regDate[0]));
+  // 받아올 데이터의 개수 계산
+  const { offset, limit } = $getPagingOffset(params.current);
 
-    if (param.regDate[1])
-      query = query.lte('rgst_dt', $getTimeFormat(param.regDate[1]) + ' 23:59:59');
-  }
-  const { data, error } = await query;
+  const { data, error } = await fetchedListWhere(dataQuery, params).range(offset, limit);
+
+  store.setLoading(false);
 
   return {
     data: data ? snakeToCamelByObj(data) : null,
+    error: error ? getErrorMessage[error.code] : null,
+    max: $getPagingCount(count),
+    count,
+  };
+}
+/**
+ * $fetchedExamineeList의 where 조건 추가
+ * @param {supabase} query
+ * @param {object} params
+ * @returns
+ */
+function fetchedListWhere(query, params) {
+  // 사용여부
+  query.eq('use_flag', 'Y');
+  // 응시번호
+  if (params.id) query = query.ilike('examinee_id', `%${params.id.trim()}%`);
+  // 성별
+  if (params.gender) query = query.eq('examinee_gender', params.gender);
+  // 이름
+  if (params.name) query = query.ilike('examinee_name', `%${params.name.trim()}%`);
+  // 대학
+  if (params.college) query = query.ilike('examinee_college', `%${params.college.trim()}%`);
+  // 학과
+  if (params.major) query = query.ilike('examinee_major', `%${params.major.trim()}%`);
+  // 등록일
+  if (params.regDate.length) {
+    query = query.gte('rgst_dt', $getTimeFormat(params.regDate[0]));
+
+    if (params.regDate[1])
+      query = query.lte('rgst_dt', $getTimeFormat(params.regDate[1]) + ' 23:59:59');
+  }
+
+  return query;
+}
+/**
+ * 응시자정보 사용여부 변경
+ * @param {array | string} value
+ * @returns object
+ */
+export async function $updateExamineeUsyn(value) {
+  store.setLoading(true);
+
+  console.log($getNowString());
+  let query = supabase.from('tb_examinee_info').update({
+    use_flag: 'N',
+    updt_dt: $getNowString(),
+  });
+
+  if (Array.isArray(value)) {
+    value = value.map((item) => item.examineeCode);
+    query = query.in('examinee_code', value);
+  } else query = query.eq('examinee_code', value);
+
+  const { error } = await query;
+
+  store.setLoading(false);
+
+  return {
     error: error ? getErrorMessage[error.code] : null,
   };
 }

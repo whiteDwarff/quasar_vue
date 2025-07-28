@@ -110,12 +110,14 @@
               <div class="row q-col-gutter-sm">
                 <RowEditButton
                   @click="updateExamInfoUsyn(props.row.examCode)"
+                  :on="currentRow == props.rowIndex"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
                   @click="$router.push(`/examInfo/edit/${props.row.examCode}`)"
+                  :on="currentRow == props.rowIndex"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"

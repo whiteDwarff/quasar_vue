@@ -115,14 +115,14 @@
 
     <div class="row q-col-gutter-y-sm edit-btn-wrap">
       <p class="q-mt-auto col-xs-12 col-md-1">
-        총 <span class="list-count">{{ rows.length }}</span
+        총 <span class="list-count">{{ totalCount }}</span
         >개
       </p>
       <!-- <q-space /> -->
       <div class="col-xs-12 col-md-11 row q-col-gutter-sm justify-end">
         <CustomButton @click="$router.push('/assign/examineeEdit')" label="응시자등록" />
         <CustomButton
-          @click="examineeDelete()"
+          @click="updateExamineeUsyn(null)"
           label="삭제"
           color="warning"
           outline
@@ -153,12 +153,13 @@
         <template #header="props">
           <q-tr>
             <q-th><q-checkbox v-model="props.selected" /></q-th>
-            <q-th style="width: 5%">번호</q-th>
-            <q-th style="width: 10%">사번(등록번호)</q-th>
-            <q-th style="width: 25%">성명(국문)</q-th>
-            <q-th style="width: 25%">성명(영문)</q-th>
-            <!-- <q-th style="width: 20%">회사명</q-th> -->
-            <q-th style="width: 7%">사진유무</q-th>
+            <q-th style="width: 10%">응시번호</q-th>
+            <q-th style="width: 5%">성별</q-th>
+            <q-th style="width: 10%">이름</q-th>
+            <q-th style="width: 15%">대학</q-th>
+            <q-th style="width: 15%">학과</q-th>
+            <q-th style="width: 10%">연락처</q-th>
+            <q-th style="width: 10%">수정일</q-th>
             <q-th style="width: 20%">관리</q-th>
           </q-tr>
         </template>
@@ -171,22 +172,25 @@
             class="cursor-pointer"
           >
             <q-td> <q-checkbox v-model="props.selected" /></q-td>
-            <q-td>{{ props.row.no }}</q-td>
             <q-td>{{ props.row.examineeId }}</q-td>
+            <q-td>{{ props.row.examineeGender == '1' ? '남자' : '여자' }}</q-td>
             <q-td>{{ props.row.examineeName }}</q-td>
-            <q-td>{{ props.row.examineeNameEn }}</q-td>
-            <!-- <q-td>{{ props.row.companyName }}</q-td> -->
-            <q-td>{{ props.row.imageYn }}</q-td>
+            <q-td>{{ props.row.examineeCollege }}</q-td>
+            <q-td>{{ props.row.examineeMajor }}</q-td>
+            <q-td>{{ props.row.examineePhone }}</q-td>
+            <q-td>{{ getTimeFormat(props.row.updtDt) }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="examineeDelete(props.row)"
+                  @click.stop="updateExamineeUsyn(props.row.examineeCode)"
+                  :on="currentRow == props.rowIndex"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
-                  @click="$router.push(`/assign/examineeEdit/${props.row.examineeId}`)"
+                  @click="$router.push(`/assign/examineeEdit/${props.row.examineeCode}`)"
+                  :on="currentRow == props.rowIndex"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -200,10 +204,10 @@
           <div class="full-width text-center">데이터가 없습니다.</div>
         </template>
       </q-table>
-
-      <PaginationTemp v-model:page="param" />
+      <!-- paging -->
+      <PaginationTemp @update:modelValue="getExamineeList($event - 1)" v-model:page="param" />
     </q-card>
-
+    <!-- dialog -->
     <FileUploadDialog v-model="visible" url="test" />
   </q-page>
 </template>
@@ -221,37 +225,48 @@ const resetParam = () => {
     max: 1,
     regDate: [],
     // companySeq: '',
-    // imgYn: '',
   };
 };
 const param = ref({ ...resetParam() });
+const rows = ref([]); // table row
+const totalCount = ref(0);
 
 const selected = ref([]);
 const currentRow = ref(null);
 
 const visible = ref(false);
 
-const rows = ref([]);
-
-const examineeDelete = async (examinee = null) => {
-  if (!selected.value.length && !examinee) return $showAlert('삭제할 응시자를 선택해주세요.');
-
-  const status = await $showConfirm('응시자를 삭제하시겠습니까?');
-
-  if (status) {
-    // axios
-    const arr = examinee ? [examinee] : selected.value;
-    console.log(arr);
-  }
-};
-
+// 목록 조회
 const getExamineeList = async (current = null) => {
-  const { data, error } = await $fetchedExamineeList({
+  currentRow.value = null;
+  const { data, error, max, count } = await $fetchedExamineeList({
     ...param.value,
     current,
   });
 
-  console.log(data, error);
+  if (!error) {
+    rows.value = data;
+    param.value.max = max;
+    totalCount.value = count;
+  } else $showAlert('데이터 조회에 실패하였습니다.');
 };
 getExamineeList(1);
+// 응시자 삭제
+const updateExamineeUsyn = async (examineeCode) => {
+  if (!examineeCode) {
+    if (!selected.value.length) return $showAlert('삭제할 응시자를 선택해주세요.');
+    else examineeCode = selected.value;
+  }
+
+  if (await $showConfirm('삭제하시겠습니까?')) {
+    const { error } = await $updateExamineeUsyn(examineeCode);
+
+    if (!error) {
+      await getExamineeList(1);
+      $showAlert('삭제되었습니다.');
+    } else $showAlert(error);
+  }
+};
+// 등록일 날짜 포맷 반환
+const getTimeFormat = (str) => $getTimeFormat(str, true);
 </script>

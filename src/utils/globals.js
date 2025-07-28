@@ -17,7 +17,6 @@ export function $showAlert(value) {
 export function $showConfirm(value) {
   return systemStore.showConfirm(value);
 }
-
 /**
  * 시간 포맷 설정
  * @param {string} contents
@@ -26,6 +25,13 @@ export function $showConfirm(value) {
 export function $getTimeFormat(str, isUltraTime = false) {
   if (!str) return '';
   return dayjs(str).format(!isUltraTime ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss');
+}
+/**
+ * 현재시간 반환
+ * @return {string}
+ */
+export function $getNowString() {
+  return $getTimeFormat(new Date().toString(), true);
 }
 /**
  * 페이징 개수 반환
