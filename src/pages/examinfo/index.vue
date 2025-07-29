@@ -84,7 +84,14 @@
     </div>
 
     <q-card flat>
-      <q-table :rows="rows.data" flat bordered hide-pagination hide-selected-banner>
+      <q-table
+        :rows="rows.data"
+        :rows-per-page-options="[0]"
+        flat
+        bordered
+        hide-pagination
+        hide-selected-banner
+      >
         <template #header>
           <q-tr>
             <q-th style="width: 5%">번호</q-th>

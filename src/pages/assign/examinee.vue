@@ -143,6 +143,7 @@
       <q-table
         v-model:selected="selected"
         :rows="rows"
+        :rows-per-page-options="[0]"
         flat
         bordered
         selection="multiple"

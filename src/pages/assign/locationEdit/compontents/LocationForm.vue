@@ -62,13 +62,15 @@
                 </tr>
                 <tr>
                   <th>담당자</th>
-                  <td><q-input v-model="form.mngr" outlined dense fill class="full-width" /></td>
+                  <td>
+                    <q-input v-model="form.examroomCharge" outlined dense fill class="full-width" />
+                  </td>
                 </tr>
                 <tr>
                   <th>담당자<br />전화번호</th>
                   <td>
                     <q-input
-                      v-model="form.mngrTel"
+                      v-model="form.examroomPhone"
                       outlined
                       dense
                       fill
@@ -80,12 +82,18 @@
                 <tr>
                   <th>담당자 정보</th>
                   <td>
-                    <q-input v-model="form.mngrInfo" dense outlined type="textarea" rows="5">
-                      <template v-if="form.mngrInfo" v-slot:append>
+                    <q-input
+                      v-model="form.examroomChargeInfo"
+                      dense
+                      outlined
+                      type="textarea"
+                      rows="5"
+                    >
+                      <template v-if="form.examroomChargeInfo" v-slot:append>
                         <q-icon
                           name="cancel"
                           color="grey-5"
-                          @click="form.mngrInfo = ''"
+                          @click="form.examroomChargeInfo = ''"
                           class="cursor-pointer full-height"
                         />
                       </template>
@@ -110,7 +118,7 @@
                   <th class="star">호실</th>
                   <td>
                     <q-input
-                      v-model="roomInfo.roomNumber"
+                      v-model="roomInfo.examroomNumName"
                       outlined
                       dense
                       fill
@@ -178,11 +186,11 @@
             </div>
 
             <q-table
-              :rows="form.examRoomNum"
+              :rows="form.tbExamroomInfo"
               row-key="key"
               flat
               hide-pagination
-              :class="{ 'table-height': form.examRoomNum.length }"
+              :class="{ 'table-height': form.tbExamroomInfo.length }"
               style="min-height: 86px"
             >
               <template #header>
@@ -212,7 +220,7 @@
                       class="rounded-50"
                     />
                   </q-td>
-                  <q-td style="width: 20%"> {{ props.row.roomNumberOri }}호</q-td>
+                  <q-td style="width: 20%"> {{ props.row.examroomNumNameOri }}호</q-td>
                   <q-td style="width: 20%"
                     >{{ props.row.rowCountOri * props.row.colCountOri }}명</q-td
                   >
@@ -244,7 +252,7 @@
                   <q-td class="border-bottom-none">
                     <q-input
                       @input.prevent="props.expand = true"
-                      v-model="props.row.roomNumber"
+                      v-model="props.row.examroomNumName"
                       label="호실"
                       bg-color="white"
                       dense
@@ -335,7 +343,7 @@ const form = defineModel();
 
 // 호실 정보
 const roomInfo = ref({
-  roomNumber: '',
+  examroomNumName: '',
   colCount: '',
   rowCount: '',
 });
@@ -353,15 +361,15 @@ const updateExamineeCount = (value1, value2) => {
 };
 // 호실정보 유효성 검사
 const validRoomInfo = (obj, i = null) => {
-  const { roomNumber, colCount, rowCount } = obj;
+  const { examroomNumName, colCount, rowCount } = obj;
 
-  if (!roomNumber) return $showAlert('호실을 입력하세요.');
+  if (!examroomNumName) return $showAlert('호실을 입력하세요.');
 
-  const target = form.value.examRoomNum.find((item, j) => {
+  const target = form.value.tbExamroomInfo.find((item, j) => {
     if (i != null) {
-      if (i != j && item.roomNumberOri == roomNumber) return item;
+      if (i != j && item.examroomNumNameOri == examroomNumName) return item;
     } else {
-      if (item.roomNumberOri == roomNumber) return item;
+      if (item.examroomNumNameOri == examroomNumName) return item;
     }
   });
 
@@ -375,16 +383,16 @@ const validRoomInfo = (obj, i = null) => {
 // 호실정보 추가
 const addExamRoomNum = async (obj) => {
   if (validRoomInfo(obj)) {
-    const { roomNumber, colCount, rowCount } = obj;
+    const { examroomNumName, colCount, rowCount } = obj;
 
     if (await $showConfirm('호실정보를 추가하시겠습니까?')) {
-      form.value.examRoomNum.push({
+      form.value.tbExamroomInfo.push({
         key: crypto.randomUUID(),
-        roomNumber,
+        examroomNumName,
         colCount,
         rowCount,
         examInfo: '',
-        roomNumberOri: roomNumber,
+        examroomNumNameOri: examroomNumName,
         colCountOri: colCount,
         rowCountOri: rowCount,
       });
@@ -395,26 +403,26 @@ const addExamRoomNum = async (obj) => {
 // 호실정보 수정
 const updateExamRoomNum = (obj, i) => {
   if (validRoomInfo(obj, i)) {
-    const { roomNumber, colCount, rowCount } = obj;
+    const { examroomNumName, colCount, rowCount } = obj;
 
-    for (let j in form.value.examRoomNum)
+    for (let j in form.value.tbExamroomInfo)
       if (i == j) {
-        form.value.examRoomNum[j].roomNumberOri = roomNumber;
-        form.value.examRoomNum[j].colCountOri = colCount;
-        form.value.examRoomNum[j].rowCountOri = rowCount;
+        form.value.tbExamroomInfo[j].examroomNumNameOri = examroomNumName;
+        form.value.tbExamroomInfo[j].colCountOri = colCount;
+        form.value.tbExamroomInfo[j].rowCountOri = rowCount;
       }
   }
 };
 // 호실 삭제
 const exceptRoomInfo = (i) => {
-  if (form.value.examRoomNum.length == 1) return $showAlert('하나의 호실은 등록되어야합니다.');
+  if (form.value.tbExamroomInfo.length == 1) return $showAlert('하나의 호실은 등록되어야합니다.');
   else {
-    form.value.examRoomNum = form.value.examRoomNum.filter((item, j) => i != j);
+    form.value.tbExamroomInfo = form.value.tbExamroomInfo.filter((item, j) => i != j);
   }
 };
 // 호실정보 초기화
 const resetExamRoomNum = () => {
-  roomInfo.value.roomNumber = '';
+  roomInfo.value.examroomNumName = '';
   roomInfo.value.colCount = '';
   roomInfo.value.rowCount = '';
 };
@@ -426,7 +434,7 @@ const submit = async () => {
   if (!form.value.examRoomName) return $showAlert('시험장을 입력해주세요.');
   if (!form.value.examRoomAddr) return $showAlert('시험장소를 입력해주세요.');
 
-  if (!form.value.examRoomNum.length) return $showAlert('하나의 호실은 등록되어야합니다.');
+  if (!form.value.tbExamroomInfo.length) return $showAlert('하나의 호실은 등록되어야합니다.');
 
   if ($showConfirm(`${editStr.value}하시겠습니까?`)) {
     //

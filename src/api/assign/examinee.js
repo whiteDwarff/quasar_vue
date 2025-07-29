@@ -21,6 +21,12 @@ export async function $saveExamineeInfo(form, file) {
         error: '등록된 응시번호가 존재합니다.',
       };
     }
+  } else {
+    // 등록된 이미지가 있을 때
+    if (form?.examineeImgOri) {
+      // 파일이 변경되지 않은 경우 원본 파일명 재할당
+      if (!file && form.examineeImg) form.examineeImg = form.examineeImgOri;
+    }
   }
 
   let status = true; // 반환할 상태 값
@@ -38,24 +44,39 @@ export async function $saveExamineeInfo(form, file) {
     }
   }
 
-  // 등록
-  if (!form?.examineeCode) {
-    // 응시자정보 등록
-    const { data, error } = await supabase
-      .from('tb_examinee_info')
-      .insert(camelToSnakeByObj(form))
+  let query = supabase.from('tb_examinee_info');
+
+  // 수정
+  if (form?.examineeCode) {
+    delete form.examineeImgOri;
+    delete form.rgstDt;
+
+    query = query
+      .update(
+        camelToSnakeByObj({
+          ...form,
+          updt_dt: $getNowString(),
+        }),
+      )
+      .eq('examinee_code', form.examineeCode)
       .select('examinee_code')
-      .single();
-
-    status = !error && data?.examinee_code;
-
-    return {
-      status,
-      error: !status ? '저장 실패하였습니다.' : '',
-    };
+      .maybeSingle();
+    // 등록
+  } else {
+    query = query.insert(camelToSnakeByObj(form)).select('examinee_code').single();
   }
-}
 
+  const { data, error } = await query;
+
+  status = !error && data?.examinee_code;
+
+  store.setLoading(false);
+
+  return {
+    status,
+    error: !status ? '저장 실패하였습니다.' : '',
+  };
+}
 /**
  * 응시자 정보 조회
  * @param {string} examineeCode
@@ -90,7 +111,10 @@ export async function $fetchedExamineeInfo(examineeCode) {
 
   // 프로필 이미지가 등록된 경우 bucket의 public url 조회
   if (data && !error) {
-    if (data.examinee_img) data.examinee_img = await fetchedProfileImg(data.examinee_img);
+    if (data.examinee_img) {
+      data.examinee_img_ori = data.examinee_img;
+      data.examinee_img = await fetchedProfileImg(data.examinee_img);
+    }
     data.rgst_dt = $getTimeFormat(data.rgst_dt);
   }
 
@@ -102,7 +126,7 @@ export async function $fetchedExamineeInfo(examineeCode) {
   };
 }
 /**
- *
+ * 응시자 목록 조회
  * @param {object} params
  * @returns
  */
