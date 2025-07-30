@@ -4,11 +4,6 @@
 
 <script setup>
 const route = useRoute();
-const router = useRouter();
-
-if (!$validNumber(route.params?.examRoomCode)) {
-  router.push('/error');
-}
 
 const form = reactive({
   examRoomCode: route.params.examRoomCode,
@@ -22,3 +17,9 @@ const form = reactive({
   tbExamroomInfo: [],
 });
 </script>
+
+<route lang="yaml">
+meta:
+  params:
+    examRoomCode: number
+</route>
