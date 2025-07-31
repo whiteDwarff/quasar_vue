@@ -12,6 +12,7 @@
     "$saveExamInfo": "readonly",
     "$saveExamineeInfo": "readonly",
     "$saveLocationInfo": "readonly",
+    "$saveSurveyInfo": "readonly",
     "$showAlert": "readonly",
     "$showConfirm": "readonly",
     "$updateExamInfoUsyn": "readonly",
