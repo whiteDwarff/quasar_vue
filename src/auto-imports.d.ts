@@ -19,6 +19,7 @@ declare global {
   const $imageRender: typeof import('./utils/validate-rules.js')['$imageRender']
   const $saveExamInfo: typeof import('./api/examInfo/index.js')['$saveExamInfo']
   const $saveExamineeInfo: typeof import('./api/assign/examinee.js')['$saveExamineeInfo']
+  const $saveSurveyInfo: typeof import('./api/assign/survey.js')['$saveSurveyInfo']
   const $showAlert: typeof import('./utils/globals.js')['$showAlert']
   const $showConfirm: typeof import('./utils/globals.js')['$showConfirm']
   const $updateExamInfoUsyn: typeof import('./api/examInfo/index.js')['$updateExamInfoUsyn']

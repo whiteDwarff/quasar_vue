@@ -22,7 +22,7 @@ export const useMenuStore = defineStore(
           {
             menuSeq: 3,
             menuNm: '응시자관리',
-            menuUrl: '/assign/examinee',
+            menuUrl: '/assign',
             menuTy: 'P',
             depth: 2,
           },

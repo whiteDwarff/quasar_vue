@@ -17,13 +17,13 @@
           <div class="col-xs-12 col-md-6">
             <span class="form-label star">설문제목</span>
             <div>
-              <q-input v-model="form.title" outlined dense />
+              <q-input v-model="form.researchTitle" outlined dense />
             </div>
           </div>
           <div class="col-xs-12 col-md-6">
             <span class="form-label">설문설명</span>
             <div>
-              <q-input v-model="form.memo" outlined dense />
+              <q-input v-model="form.researchMemo" outlined dense />
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@
         </div>
 
         <template v-for="item of form.survey" :key="item.order">
-          <table v-if="item.order == form.currentOrder" class="markup-table">
+          <table v-if="item.order == form.currentOrder && item.useFlag == 'Y'" class="markup-table">
             <colgroup>
               <col width="20%" />
               <col width="80%" />
@@ -152,6 +152,7 @@
           <CustomButton @click="cancle" label="취소" outline class="w-100" />
           <div class="flex">
             <CustomButton
+              v-if="form?.researchCode"
               @click="deleteSurvey"
               label="삭제"
               color="warning"
@@ -195,7 +196,7 @@ const deleteSurvey = async () => {
 };
 // 설문정보 저장
 const saveSurveyInfo = async () => {
-  if (!form.value.title) return $showAlert('설문제목을 입력해주세요.');
+  if (!form.value.researchTitle) return $showAlert('설문제목을 입력해주세요.');
 
   for (let survey of form.value.survey) {
     if (!survey.title) return $showAlert(`${survey.order}번 문항의 문제를 입력해주세요.`);
@@ -203,6 +204,12 @@ const saveSurveyInfo = async () => {
     if (survey.type == 1 && survey.example.some(({ value }) => !value))
       return $showAlert(`${survey.order}번 문항의 보기를 모두 입력해주세요.`);
   }
+
+  if (await $showConfirm('저장하시겠습니까?')) {
+    const { data, error } = await $saveSurveyInfo(form.value);
+    console.log(data, error);
+  }
+
   /*
   try {
     const res = $axios_loading.post('', form.value);
@@ -238,6 +245,7 @@ const addSurvey = async () => {
     title: '',
     type: 1,
     order: current,
+    useFlag: 'Y',
     example: [
       { value: '', order: 1 },
       { value: '', order: 2 },

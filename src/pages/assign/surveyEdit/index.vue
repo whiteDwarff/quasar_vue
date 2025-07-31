@@ -4,14 +4,14 @@
 
 <script setup>
 const form = ref({
-  surveyCode: '',
-  title: '',
-  memo: '',
+  researchTitle: '',
+  researchMemo: '',
   survey: [
     {
       title: '',
       type: 1,
       order: 1,
+      useFlag: 'Y',
       example: [
         {
           value: '',

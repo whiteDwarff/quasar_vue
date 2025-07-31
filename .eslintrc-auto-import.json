@@ -11,6 +11,7 @@
     "$imageRender": "readonly",
     "$saveExamInfo": "readonly",
     "$saveExamineeInfo": "readonly",
+    "$saveSurveyInfo": "readonly",
     "$showAlert": "readonly",
     "$showConfirm": "readonly",
     "$updateExamInfoUsyn": "readonly",
