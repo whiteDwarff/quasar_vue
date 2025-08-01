@@ -129,7 +129,7 @@ export async function $fetchedExamInfo(examCode) {
 
   return {
     data: snakeToCamelByObj(data),
-    error: error ? getErrorMessage[error.code] : false,
+    error: error ? getErrorMessage[error.code] || '조회 실패하였습니다.' : '',
   };
 }
 /**

@@ -4,10 +4,9 @@
 
 <script setup>
 const route = useRoute();
-const router = useRouter();
 
 const form = ref({
-  surveyCode: route.params.surveyCode,
+  surveyCode: route.params?.surveyCode,
   title: '',
   memo: '',
   survey: [
@@ -29,8 +28,16 @@ const form = ref({
   ],
   currentOrder: 1,
 });
+const fetchedSurveyInfo = async () => {
+  const { data, error } = await $fetchedSurveyInfo(route.params?.surveyCode);
+  console.log(data, error);
+};
 
-if (!$validNumber(route.params?.surveyCode)) {
-  router.push('/error');
-}
+fetchedSurveyInfo();
 </script>
+
+<route lang="yaml">
+meta:
+  params:
+    surveyCode: number
+</route>

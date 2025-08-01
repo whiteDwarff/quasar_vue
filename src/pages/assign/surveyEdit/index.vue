@@ -8,11 +8,11 @@ const form = ref({
   researchMemo: '',
   survey: [
     {
-      title: '',
-      type: 1,
-      order: 1,
+      reItemTitle: '',
+      reItemNo: 1,
+      reItemType: 1,
       useFlag: 'Y',
-      example: [
+      reItemExample: [
         {
           value: '',
           order: 1,

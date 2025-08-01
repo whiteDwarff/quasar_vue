@@ -4,6 +4,7 @@
     "$fetchedExamList": "readonly",
     "$fetchedExamineeInfo": "readonly",
     "$fetchedExamineeList": "readonly",
+    "$fetchedSurveyInfo": "readonly",
     "$getNowString": "readonly",
     "$getPagingCount": "readonly",
     "$getPagingOffset": "readonly",
