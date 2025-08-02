@@ -25,6 +25,7 @@ export async function $saveSurveyInfo(form) {
             researchCode: form.researchCode,
             researchTitle,
             researchMemo,
+            updtDt: $getNowString(),
           }),
         )
         .eq('research_code', form.researchCode)
@@ -50,6 +51,7 @@ export async function $saveSurveyInfo(form) {
 
         // 수정
         if (item?.reItemCode) {
+          obj.updt_dt = $getNowString();
           updateArr.push(obj);
           // 등록
         } else {
@@ -79,7 +81,7 @@ export async function $saveSurveyInfo(form) {
 export async function $fetchedSurveyInfo(researchCode) {
   try {
     store.setLoading(true);
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('tb_research_info')
       .select(
         `
@@ -92,7 +94,6 @@ export async function $fetchedSurveyInfo(researchCode) {
         re_item_no,
         re_item_title,
         re_item_type,
-        re_item_exam_no,
         re_item_example,
         use_flag
         )
@@ -103,8 +104,25 @@ export async function $fetchedSurveyInfo(researchCode) {
       .order('re_item_no', { referencedTable: 'tb_research_item_info', ascending: true })
       .single();
 
+    if (!error) {
+      data = snakeToCamelByObj(data);
+      data.survey = [...data.tbResearchItemInfo];
+      delete data.tbResearchItemInfo;
+      data.currentOrder = 1;
+
+      // 보기 데이터 재할당
+      for (let item of data.survey) {
+        item.reItemExample = item.reItemExample.split(',').map((example, i) => {
+          return {
+            value: example,
+            order: i + 1,
+          };
+        });
+      }
+    }
+
     return {
-      data: snakeToCamelByObj(data),
+      data,
       error: error ? getErrorMessage[error.code] || '조회 실패하였습니다.' : '',
     };
   } catch (err) {
@@ -112,4 +130,94 @@ export async function $fetchedSurveyInfo(researchCode) {
   } finally {
     store.setLoading(false);
   }
+}
+/**
+ * 설문 목록조회
+ * @param {object} param
+ * @returns object
+ */
+export async function $fetchedSurveyList(param) {
+  try {
+    store.setLoading(true);
+
+    const countQuery = supabase
+      .from('tb_research_info')
+      .select('*', { count: 'exact', head: true });
+
+    const { count } = await fetchedListWhere(countQuery, param);
+    // 받아올 데이터의 개수 계산
+    const { offset, limit } = $getPagingOffset(param.current);
+
+    const dataQuery = supabase
+      .from('tb_research_info')
+      .select(
+        `
+      research_code,
+      research_title,
+      research_memo,
+      tb_research_item_info ( 
+        re_item_code,
+        research_code,
+        re_item_no,
+        re_item_title,
+        re_item_type,
+        re_item_example,
+        use_flag
+        )
+        `,
+      )
+      .eq('tb_research_item_info.use_flag', 'Y');
+
+    let { data, error } = await fetchedListWhere(dataQuery, param).range(offset, limit);
+    data = snakeToCamelByObj(data);
+
+    return {
+      data,
+      error: error ? getErrorMessage[error.code] || '데이터 조회에 실패하였습니다.' : '',
+      max: $getPagingCount(count),
+      count,
+    };
+  } catch (err) {
+    console.log(err);
+  } finally {
+    store.setLoading(false);
+  }
+}
+
+function fetchedListWhere(query, param) {
+  // 사용여부
+  query = query.eq('use_flag', 'Y');
+  // 설문 제목
+  if (param.researchTitle) query = query.ilike('research_title', `%${param.researchTitle.trim()}%`);
+  // 설문 설명
+  if (param.researchMemo) query = query.ilike('research_memo', `%${param.researchMemo.trim()}%`);
+  query.order('research_code', { ascending: false }); // 내림차순 정렬
+
+  return query;
+}
+/**
+ * 응시자정보 사용여부 변경
+ * @param {array | string} value
+ * @returns object
+ */
+export async function $updateSurveyUsyn(value) {
+  store.setLoading(true);
+
+  let query = supabase.from('tb_research_info').update({
+    use_flag: 'N',
+    updt_dt: $getNowString(),
+  });
+
+  if (Array.isArray(value)) {
+    value = value.map((item) => item.researchCode);
+    query = query.in('research_code', value);
+  } else query = query.eq('research_code', value);
+
+  const { error } = await query;
+
+  store.setLoading(false);
+
+  return {
+    error: error ? getErrorMessage[error.code] : null,
+  };
 }

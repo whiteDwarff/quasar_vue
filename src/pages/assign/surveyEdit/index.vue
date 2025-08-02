@@ -10,7 +10,7 @@ const form = ref({
     {
       reItemTitle: '',
       reItemNo: 1,
-      reItemType: 1,
+      reItemType: '1',
       useFlag: 'Y',
       reItemExample: [
         {

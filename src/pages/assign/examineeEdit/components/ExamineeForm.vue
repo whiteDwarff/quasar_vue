@@ -281,14 +281,14 @@ const submit = async () => {
     useSystemStore().setLoading(false);
 
     if (status) {
-      await router.push('/assign/examinee');
+      await router.push('/assign');
       $showAlert('저장되었습니다.');
     } else $showAlert(error);
   }
 };
 // 취소 후 목록으로 이동
 const cancle = async () => {
-  if (await $showConfirm('취소하시겠습니까?')) router.push('/assign/examinee');
+  if (await $showConfirm('취소하시겠습니까?')) router.push('/assign');
 };
 </script>
 

@@ -57,6 +57,7 @@ export default [
 
     // add your custom rules here
     rules: {
+      'no-undef': 'off',
       'prefer-promise-reject-errors': 'off',
       'vue/multi-word-component-names': 'off',
       'no-unused-vars': [

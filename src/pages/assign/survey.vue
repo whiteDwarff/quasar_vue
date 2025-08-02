@@ -17,7 +17,13 @@
             <div class="flex items-center">
               <span class="label">제목</span>
               <div class="content">
-                <q-input v-model="param.title" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="fetchedSurveyList(1)"
+                  v-model="param.researchTitle"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -25,7 +31,13 @@
             <div class="flex items-center">
               <span class="label">내용</span>
               <div class="content">
-                <q-input v-model="param.memo" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="fetchedSurveyList(1)"
+                  v-model="param.researchMemo"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -38,7 +50,7 @@
                 :outline="true"
                 class="q-mr-md w-100"
               />
-              <CustomButton label="검색" class="w-100" />
+              <CustomButton @click="fetchedSurveyList(1)" label="검색" class="w-100" />
             </div>
           </div>
         </div>
@@ -47,7 +59,7 @@
 
     <div class="row items-baseline edit-btn-wrap">
       <p class="q-mt-auto">
-        총 <span class="list-count">{{ rows.length }}</span
+        총 <span class="list-count">{{ totalCount }}</span
         >개
       </p>
       <q-space />
@@ -67,8 +79,9 @@
       <q-table
         v-model:selected="selected"
         :rows="rows"
+        :rows-per-page-options="[0]"
         selection="multiple"
-        row-key="surveyCode"
+        row-key="researchCode"
         flat
         bordered
         hide-pagination
@@ -76,10 +89,7 @@
       >
         <template #header="props">
           <q-tr :props="props">
-            <q-th style="width: 5%">
-              <!-- <q-checkbox v-model="isAll" /> -->
-              <q-checkbox v-model="props.selected" />
-            </q-th>
+            <q-th><q-checkbox v-model="props.selected" /></q-th>
             <q-th style="width: 5%">번호</q-th>
             <q-th style="width: 25%">제목</q-th>
             <q-th style="width: 30%">내용</q-th>
@@ -96,31 +106,23 @@
             :class="{ current: currentRow == props.rowIndex }"
             class="cursor-pointer"
           >
-            <q-td>
-              <q-checkbox v-model="props.selected" />
-              <!-- 
-                <q-checkbox
-                v-if="!props.row.usedCount"
-                @update:modelValue="changeCheckedVal"
-                v-model="selected"
-                :val="props.row"
-                />
-              -->
-            </q-td>
+            <q-td> <q-checkbox v-model="props.selected" /></q-td>
             <q-td>{{ props.rowIndex + 1 }}</q-td>
-            <q-td>{{ props.row.title }}</q-td>
-            <q-td>{{ props.row.memo }}</q-td>
-            <q-td>{{ props.row.surveyCount }}</q-td>
+            <q-td>{{ props.row.researchTitle }}</q-td>
+            <q-td>{{ props.row.researchMemo }}</q-td>
+            <q-td>{{ props.row.tbResearchItemInfo.length }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="surveyDelete(props.row)"
+                  @click="surveyDelete(props.row.researchCode)"
+                  :on="currentRow == props.rowIndex"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
-                  @click="$router.push(`/assign/surveyEdit/${props.row.surveyCode}`)"
+                  @click="$router.push(`/assign/surveyEdit/${props.row.researchCode}`)"
+                  :on="currentRow == props.rowIndex"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -143,71 +145,51 @@
 <script setup>
 const resetParam = () => {
   return {
-    title: '',
-    memo: '',
+    researchTitle: '',
+    researchMemo: '',
     current: 1,
     min: 1,
     max: 1,
   };
 };
 const param = ref({ ...resetParam() });
+const totalCount = ref(0);
 
 const selected = ref([]);
-// const isAll = ref(false);
 const currentRow = ref(null);
 
-const rows = ref([
-  {
-    surveyCode: 100,
-    title: '오늘은 칼퇴를 할 것인가요?',
-    memo: '칼퇴위원회',
-    surveyCount: 4,
-    usedCount: 0,
-  },
-  {
-    surveyCode: 101,
-    title: 'TMS 시스템에 만족하시나요',
-    memo: '아니오',
-    surveyCount: 1,
-    usedCount: 2,
-  },
-]);
-/*
-// 테이블 row의 checkbox 선택
-const changeCheckedVal = (event) => {
-  isAll.value = rows.value.filter((row) => !row.usedCount).length == event.length;
+const rows = ref([]);
+// 설문목록 조회
+const fetchedSurveyList = async (current = null) => {
+  const { data, error, max, count } = await $fetchedSurveyList({
+    ...param.value,
+    current,
+  });
+
+  if (!error) {
+    rows.value = data;
+    currentRow.value = null;
+
+    param.value.max = max;
+    totalCount.value = count;
+  } else $showAlert(error);
 };
-// 삭제 가능한 항목 제외 전체 선택
-const toggleSelected = (event) => {
-  if (event) {
-    selected.value = rows.value.filter((row) => !row.usedCount);
-    return;
-  }
-  isAll.value = false;
-  selected.value = [];
-};
-*/
+fetchedSurveyList(1);
+
 // 설문삭제
-const surveyDelete = async (survey) => {
-  if (!survey && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
+const surveyDelete = async (researchCode) => {
+  if (!researchCode) {
+    if (!selected.value.length) return $showAlert('삭제할 설문을 선택해주세요.');
+    else researchCode = selected.value;
+  }
 
   if (await $showConfirm('삭제하시겠습니까?')) {
-    $showAlert('삭제되었습니다.');
-    /*
-    try {
-      const res = $axios_loading.post('', {
-        selected: [ survey ? survey : ...selected.value ]
-      });
+    const { error } = await $updateSurveyUsyn(researchCode);
 
-      if(res.data.status == 200) {
-        $showAlert('삭제되었습니다.');
-        return router.push('/assign/survey');
-      }  
-      $showAlert('삭제 실패하였습니다.');
-    } catch(err) {
-      console.log(err);
-    }
-    */
+    if (!error) {
+      await fetchedSurveyList(1);
+      $showAlert('삭제되었습니다.');
+    } else $showAlert(error);
   }
 };
 </script>

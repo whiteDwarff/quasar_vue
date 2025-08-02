@@ -210,7 +210,6 @@ function fetchedListWhere(query, params) {
 export async function $updateExamineeUsyn(value) {
   store.setLoading(true);
 
-  console.log($getNowString());
   let query = supabase.from('tb_examinee_info').update({
     use_flag: 'N',
     updt_dt: $getNowString(),

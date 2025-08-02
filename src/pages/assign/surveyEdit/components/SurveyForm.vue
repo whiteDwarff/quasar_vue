@@ -34,7 +34,7 @@
         <!-- 설문 문항 선택 -->
         <div id="survey-order-wrap" class="q-mb-sm">
           <q-btn
-            v-for="item of form.survey"
+            v-for="item of form.survey.filter((survey) => survey.useFlag == 'Y')"
             :key="item.reItemNo"
             @click="form.currentOrder = item.reItemNo"
             :label="item.reItemNo"
@@ -48,8 +48,8 @@
             <q-tooltip class="text-center">
               <span>{{ item.reItemTitle ? item.reItemTitle : '문제를 입력해주세요.' }}</span>
               <p v-if="item.reItemTitle">
-                <span>{{ item.reItemType == 1 ? '객관식' : '주관식' }}</span>
-                <span>{{ item.reItemType == 1 ? ` / ${item.reItemExample.length}` : '' }}</span>
+                <span>{{ item.reItemType == '1' ? '객관식' : '주관식' }}</span>
+                <span>{{ item.reItemType == '1' ? ` / ${item.reItemExample.length}` : '' }}</span>
               </p>
             </q-tooltip>
           </q-btn>
@@ -78,7 +78,7 @@
                       style="width: calc(100% - 48px)"
                     />
                     <q-btn
-                      @click="exceptSurveyItem(item.reItemNo)"
+                      @click="exceptSurveyItem(item)"
                       icon="bi-trash3"
                       flat
                       :ripple="false"
@@ -97,20 +97,20 @@
                   <q-radio
                     v-model="item.reItemType"
                     name="surveyType"
-                    :val="1"
+                    val="1"
                     label="객관식"
                     size="sm"
                   />
                   <q-radio
                     v-model="item.reItemType"
                     name="surveyType"
-                    :val="3"
+                    val="3"
                     label="주관식"
                     size="sm"
                   />
                 </td>
               </tr>
-              <template v-if="item.reItemType == 1">
+              <template v-if="item.reItemType == '1'">
                 <tr v-for="(example, i) of item.reItemExample" :key="i">
                   <th>보기 {{ example.order }}</th>
                   <td>
@@ -156,7 +156,7 @@
           <div class="flex">
             <CustomButton
               v-if="form?.researchCode"
-              @click="deleteSurvey"
+              @click="surveyDelete"
               label="삭제"
               color="warning"
               outline
@@ -175,27 +175,18 @@
 const router = useRouter();
 
 const form = defineModel();
-
 const autofocus = ref(false);
 
 // 설문삭제
-const deleteSurvey = async () => {
-  if ((await $showConfirm('설문을 삭제하시겠습니까?')) == false) return;
+const surveyDelete = async () => {
+  if (await $showConfirm('삭제하시겠습니까?')) {
+    const { error } = await $updateSurveyUsyn(form.value.researchCode);
 
-  router.push('/assign/survey');
-  /*
-  try {
-    const res = $axios_loading.post('', form.value);
-
-    if(res.data.status == 200) {
+    if (!error) {
+      await router.push('/assign/survey');
       $showAlert('삭제되었습니다.');
-      return router.push('/assign/survey');
-    }  
-    $showAlert('삭제 실패하였습니다.');
-  } catch(err) {
-    console.log(err);
+    } else $showAlert(error);
   }
-    */
 };
 // 설문정보 저장
 const saveSurveyInfo = async () => {
@@ -224,7 +215,7 @@ const saveSurveyInfo = async () => {
     if(res.data.status == 200) {
       $showAlert('저장되었습니다.');
       return router.push('/assign/survey');
-    }  
+    }
     $showAlert('저장 실패하였습니다.');
   } catch(err) {
     console.log(err);
@@ -232,25 +223,33 @@ const saveSurveyInfo = async () => {
   */
 };
 // 설문삭제
-const exceptSurveyItem = (reItemNo) => {
+const exceptSurveyItem = (survey) => {
   if (form.value.survey.length == 1) return $showAlert('하나의 문항은 등록되어야합니다.');
+
+  const reItemNo = survey.reItemNo;
 
   let newItemNo = 1;
   form.value.survey = form.value.survey.filter((item) => {
-    if (item.reItemNo != reItemNo) {
+    if (item.reItemNo != reItemNo && item.useFlag == 'Y') {
       item.reItemNo = newItemNo;
       newItemNo++;
       return item;
+    } else {
+      if (item?.reItemCode) {
+        survey.useFlag = 'N';
+        return item;
+      }
     }
   });
+  console.log(form.value.survey);
   form.value.currentOrder = reItemNo != 1 ? reItemNo - 1 : 1;
 };
 // 설문추가
 const addSurvey = async () => {
-  const current = form.value.survey.length + 1;
+  const current = form.value.survey.filter(({ useFlag }) => useFlag == 'Y').length + 1;
   form.value.survey.push({
     reItemTitle: '',
-    reItemType: 1,
+    reItemType: '1',
     reItemNo: current,
     useFlag: 'Y',
     reItemExample: [

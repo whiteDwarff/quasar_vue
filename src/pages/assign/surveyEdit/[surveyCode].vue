@@ -4,6 +4,7 @@
 
 <script setup>
 const route = useRoute();
+const router = useRouter();
 
 const form = ref({
   surveyCode: route.params?.surveyCode,
@@ -30,7 +31,12 @@ const form = ref({
 });
 const fetchedSurveyInfo = async () => {
   const { data, error } = await $fetchedSurveyInfo(route.params?.surveyCode);
-  console.log(data, error);
+  if (data && !error) {
+    form.value = data;
+  } else {
+    await router.push('/assign/survey');
+    $showAlert(error);
+  }
 };
 
 fetchedSurveyInfo();
