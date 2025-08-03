@@ -3,7 +3,6 @@
     ref="selectRef"
     @input="filter"
     @click="options = props.options"
-    @keyup.enter="console.log('11')"
     v-model="select"
     :options
     outlined
@@ -27,7 +26,7 @@
 
 <script setup>
 // v-model value
-const select = defineModel()
+const select = defineModel();
 
 // select options
 const props = defineProps({
@@ -36,28 +35,28 @@ const props = defineProps({
     default: () => [{ value: '', label: '선택안함' }],
     // required: true,
   },
-})
+});
 
 // binding Object
-const options = ref([...props.options])
+const options = ref([...props.options]);
 
-const selectRef = ref(null)
+const selectRef = ref(null);
 
 const filter = (e) => {
-  const target = e.target
-  const value = e.target.value.toLowerCase().replaceAll(' ', '')
+  const target = e.target;
+  const value = e.target.value.toLowerCase().replaceAll(' ', '');
 
   // quasar IME 한글 이슈 해결
-  selectRef.value.updateInputValue(target.value)
+  selectRef.value.updateInputValue(target.value);
 
   if (!value) {
-    options.value = props.options
-    select.value = ''
-    return
+    options.value = props.options;
+    select.value = '';
+    return;
   }
 
   options.value = props.options.filter(
     ({ label }) => label.toLowerCase().replaceAll(' ', '').indexOf(value) > -1,
-  )
-}
+  );
+};
 </script>

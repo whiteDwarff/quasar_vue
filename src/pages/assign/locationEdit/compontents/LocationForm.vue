@@ -187,11 +187,11 @@
             </div>
 
             <q-table
-              :rows="form.tbExamroomInfo"
+              :rows="form.tbExamroomNumInfo"
               row-key="key"
               flat
               hide-pagination
-              :class="{ 'table-height': form.tbExamroomInfo.length }"
+              :class="{ 'table-height': form.tbExamroomNumInfo.length }"
               style="min-height: 86px"
             >
               <template #header>
@@ -364,7 +364,7 @@ const validRoomInfo = (obj, i = null) => {
 
   if (!examroomNumName) return $showAlert('호실을 입력하세요.');
 
-  const target = form.value.tbExamroomInfo.find((item, j) => {
+  const target = form.value.tbExamroomNumInfo.find((item, j) => {
     if (i != null) {
       if (i != j && item.examroomNumNameOri == examroomNumName) return item;
     } else {
@@ -385,7 +385,7 @@ const addExamRoomNum = async (obj) => {
     const { examroomNumName, examroomNumCol, examroomNumRow } = obj;
 
     if (await $showConfirm('호실정보를 추가하시겠습니까?')) {
-      form.value.tbExamroomInfo.push({
+      form.value.tbExamroomNumInfo.push({
         key: crypto.randomUUID(),
         examroomNumName,
         examroomNumCol,
@@ -405,19 +405,20 @@ const updateExamRoomNum = (obj, i) => {
   if (validRoomInfo(obj, i)) {
     const { examroomNumName, examroomNumCol, examroomNumRow } = obj;
 
-    for (let j in form.value.tbExamroomInfo)
+    for (let j in form.value.tbExamroomNumInfo)
       if (i == j) {
-        form.value.tbExamroomInfo[j].examroomNumNameOri = examroomNumName;
-        form.value.tbExamroomInfo[j].examroomNumColOri = examroomNumCol;
-        form.value.tbExamroomInfo[j].examroomNumRowOri = examroomNumRow;
+        form.value.tbExamroomNumInfo[j].examroomNumNameOri = examroomNumName;
+        form.value.tbExamroomNumInfo[j].examroomNumColOri = examroomNumCol;
+        form.value.tbExamroomNumInfo[j].examroomNumRowOri = examroomNumRow;
       }
   }
 };
 // 호실 삭제
 const exceptRoomInfo = (i) => {
-  if (form.value.tbExamroomInfo.length == 1) return $showAlert('하나의 호실은 등록되어야합니다.');
+  if (form.value.tbExamroomNumInfo.length == 1)
+    return $showAlert('하나의 호실은 등록되어야합니다.');
   else {
-    form.value.tbExamroomInfo = form.value.tbExamroomInfo.filter((item, j) => i != j);
+    form.value.tbExamroomNumInfo = form.value.tbExamroomNumInfo.filter((item, j) => i != j);
   }
 };
 // 호실정보 초기화
@@ -435,7 +436,7 @@ const submit = async () => {
   if (!form.value.examroomName) return $showAlert('시험장을 입력해주세요.');
   if (!form.value.examroomAddr) return $showAlert('시험장소를 입력해주세요.');
 
-  if (!form.value.tbExamroomInfo.length) return $showAlert('하나의 호실은 등록되어야합니다.');
+  if (!form.value.tbExamroomNumInfo.length) return $showAlert('하나의 호실은 등록되어야합니다.');
 
   if (await $showConfirm('저장하시겠습니까?')) {
     const { data, error } = await $saveLocationInfo(form.value);

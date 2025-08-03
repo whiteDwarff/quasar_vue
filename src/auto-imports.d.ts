@@ -11,6 +11,7 @@ declare global {
   const $fetchedExamList: typeof import('./api/examInfo/index.js')['$fetchedExamList']
   const $fetchedExamineeInfo: typeof import('./api/assign/examinee.js')['$fetchedExamineeInfo']
   const $fetchedExamineeList: typeof import('./api/assign/examinee.js')['$fetchedExamineeList']
+  const $fetchedLocationInfo: typeof import('./api/assign/location.js')['$fetchedLocationInfo']
   const $fetchedSurveyInfo: typeof import('./api/assign/survey.js')['$fetchedSurveyInfo']
   const $fetchedSurveyList: typeof import('./api/assign/survey.js')['$fetchedSurveyList']
   const $getMaxPage: (typeof import('./utils/globals.js'))['$getMaxPage']
