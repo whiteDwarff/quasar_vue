@@ -21,6 +21,7 @@
     "$showConfirm": "readonly",
     "$updateExamInfoUsyn": "readonly",
     "$updateExamineeUsyn": "readonly",
+    "$updateLocationUsyn": "readonly",
     "$updateSurveyUsyn": "readonly",
     "$validDate": "readonly",
     "$validEmail": "readonly",

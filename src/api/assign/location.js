@@ -1,4 +1,5 @@
 import { supabase, getErrorMessage } from '../supabase';
+import { toRaw } from 'vue';
 
 const store = useSystemStore();
 
@@ -64,7 +65,8 @@ export async function $saveLocationInfo(form) {
       const insertArr = [];
       const updateArr = [];
 
-      for (let roomNum of [...form.tbExamroomNumInfo]) {
+      // proxy 객체를 순수 객체로 변환 후 깊은 복사 (delete 때문)
+      for (let roomNum of structuredClone(toRaw(form.tbExamroomNumInfo))) {
         roomNum.examroomCode = data.examroom_code;
         roomNum.examroomNumMax = roomNum.examroomNumCol * roomNum.examroomNumRow; // 정원
         delete roomNum.key;
@@ -77,11 +79,13 @@ export async function $saveLocationInfo(form) {
         roomNum?.examroom_num_code ? updateArr.push(roomNum) : insertArr.push(roomNum);
       }
 
-      if (insertArr.length) await supabase.from('tb_examroom_num_info').insert(insertArr);
+      if (insertArr.length)
+        await supabase.from('tb_examroom_num_info').insert(insertArr).select('examroom_num_code');
       if (updateArr.length)
         await supabase
           .from('tb_examroom_num_info')
-          .upsert(updateArr, { onConflict: 'examroom_num_code' });
+          .upsert(updateArr, { onConflict: 'examroom_num_code' })
+          .select('examroom_num_code');
     }
 
     return {
@@ -174,7 +178,8 @@ export async function $fetchedLocationList(param) {
         `
           examroom_code,
           examroom_name,
-          examroom_location
+          examroom_location,
+          examroom_addr
         `,
       )
       .order('examroom_code', { ascending: false });
@@ -192,7 +197,12 @@ export async function $fetchedLocationList(param) {
     store.setLoading(false);
   }
 }
-
+/**
+ * 장소 조회 검색조건 반환
+ * @param {supabase} query
+ * @param {object} param
+ * @returns
+ */
 function locationListWhere(query, param) {
   query = query.eq('use_flag', 'Y');
 
@@ -200,4 +210,31 @@ function locationListWhere(query, param) {
   if (param.examRoomLocation)
     query = query.like('examroom_location', `%${param.examRoomLocation}%`);
   return query;
+}
+
+/**
+ * 장소 사용여부 변경
+ * @param {array | number} value
+ * @returns object
+ */
+export async function $updateLocationUsyn(value) {
+  store.setLoading(true);
+
+  let query = supabase.from('tb_examroom_info').update({
+    use_flag: 'N',
+    updt_dt: $getNowString(),
+  });
+
+  if (Array.isArray(value)) {
+    value = value.map((item) => item.examroomCode);
+    query = query.in('examroom_code', value);
+  } else query = query.eq('examroom_code', value);
+
+  const { error } = await query.select();
+
+  store.setLoading(false);
+
+  return {
+    error: error ? getErrorMessage[error.code] : null,
+  };
 }

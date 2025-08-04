@@ -205,7 +205,7 @@
               </template>
               <!-- body -->
               <template v-slot:body="props">
-                <q-tr :props="props" no-hover>
+                <q-tr v-if="props.row.useFlag == 'Y'" :props="props" no-hover>
                   <q-td style="width: 5%">
                     <q-btn
                       @click="props.expand = !props.expand"
@@ -231,7 +231,7 @@
                   </q-td>
                   <q-td style="width: 15%">
                     <q-btn
-                      @click="exceptRoomInfo(props.rowIndex)"
+                      @click="exceptRoomInfo(props.row, props.rowIndex)"
                       icon="bi-trash3"
                       round
                       flat
@@ -332,7 +332,15 @@
         </div>
       </q-card-section>
       <q-card-section class="flex justify-center">
-        <CustomButton @click="cancle()" label="취소" outline class="w-100 q-mr-lg" />
+        <CustomButton @click="cancle()" label="취소" outline class="w-100 q-mr-md" />
+        <CustomButton
+          v-if="form?.examroomCode"
+          @click="locationDelete"
+          label="삭제"
+          color="warning"
+          outline
+          class="q-mr-md w-100"
+        />
         <CustomButton @click="submit()" label="저장" class="w-100" />
       </q-card-section>
     </q-card>
@@ -414,11 +422,12 @@ const updateExamRoomNum = (obj, i) => {
   }
 };
 // 호실 삭제
-const exceptRoomInfo = (i) => {
+const exceptRoomInfo = (data, i) => {
   if (form.value.tbExamroomNumInfo.length == 1)
     return $showAlert('하나의 호실은 등록되어야합니다.');
   else {
-    form.value.tbExamroomNumInfo = form.value.tbExamroomNumInfo.filter((item, j) => i != j);
+    if (data?.examroomNumCode) data.useFlag = 'N';
+    else form.value.tbExamroomNumInfo = form.value.tbExamroomNumInfo.filter((item, j) => i != j);
   }
 };
 // 호실정보 초기화
@@ -440,11 +449,20 @@ const submit = async () => {
 
   if (await $showConfirm('저장하시겠습니까?')) {
     const { data, error } = await $saveLocationInfo(form.value);
-    console.log(data, error);
-    if (!error) {
+    if (!error && data) {
       await router.push('/assign/location');
       $showAlert('저장되었습니다.');
     } else $showAlert(error);
+  }
+};
+// 장소삭제
+const locationDelete = async () => {
+  if (await $showConfirm('삭제하시겠습니까?')) {
+    const { error } = await $updateLocationUsyn(form.value.examroomCode);
+    if (!error) {
+      await router.push('/assign/location');
+      $showAlert('삭제되었습니다.');
+    }
   }
 };
 </script>

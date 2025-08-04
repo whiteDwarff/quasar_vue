@@ -72,3 +72,10 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   color: var(--q-primary);
   opacity: 0.7;
 }
+
+@media all and (min-width: 600px) and (max-width: 1290px) {
+  .q-btn--dense .on-left {
+    margin-right: 6px;
+    margin-left: 6px;
+  }
+}

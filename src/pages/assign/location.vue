@@ -17,7 +17,13 @@
             <div class="flex items-center">
               <span class="label">시험장</span>
               <div class="content">
-                <q-input v-model="param.examRoomLocation" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="fetchedLocationList(1)"
+                  v-model="param.examRoomName"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -25,7 +31,13 @@
             <div class="flex items-center">
               <span class="label">시험지역</span>
               <div class="content">
-                <q-input v-model="param.examRoomName" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="fetchedLocationList(1)"
+                  v-model="param.examRoomLocation"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -38,7 +50,7 @@
                 :outline="true"
                 class="q-mr-md w-100"
               />
-              <CustomButton label="검색" class="w-100" />
+              <CustomButton @click="fetchedLocationList(1)" label="검색" class="w-100" />
             </div>
           </div>
         </div>
@@ -68,7 +80,7 @@
         v-model:selected="selected"
         :rows="rows"
         selection="multiple"
-        row-key="examRoomCode"
+        row-key="examroomCode"
         flat
         bordered
         hide-pagination
@@ -115,12 +127,14 @@
               <div class="row q-col-gutter-sm">
                 <RowEditButton
                   @click="locationDelete(props.row)"
+                  :on="currentRow == props.rowIndex"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
                   @click="$router.push(`/assign/locationEdit/${props.row.examroomCode}`)"
+                  :on="currentRow == props.rowIndex"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -154,42 +168,9 @@ const totalCount = ref(0);
 const param = ref({ ...resetParam() });
 
 const selected = ref([]);
-// const isAll = ref(false);
 const currentRow = ref(null);
 
-const rows = ref([
-  {
-    no: 1,
-    examRoomCode: 100,
-    examRoomLocation: '교육용 CBT실',
-    examRoomName: '401호',
-    examRoomAddr: '교육동 4층',
-    usedCount: 0,
-  },
-  {
-    no: 2,
-    examRoomCode: 101,
-    examRoomLocation: 'ㄴㅇㄴ',
-    examRoomName: '201호',
-    examRoomAddr: '진리관 2층',
-    usedCount: 0,
-  },
-]);
-/*
-// 테이블 row의 checkbox 선택
-const changeCheckedVal = (event) => {
-  isAll.value = rows.value.filter((row) => !row.usedCount).length == event.length;
-};
-// 삭제 가능한 항목 제외 전체 선택
-const toggleSelected = (event) => {
-  if (event) {
-    selected.value = rows.value.filter((row) => !row.usedCount);
-    return;
-  }
-  isAll.value = false;
-  selected.value = [];
-};
-*/
+const rows = ref([]);
 
 const fetchedLocationList = async (current = 0) => {
   const { data, error, max, count } = await $fetchedLocationList({
@@ -207,26 +188,16 @@ const fetchedLocationList = async (current = 0) => {
 };
 fetchedLocationList(1);
 // 장소삭제
-const locationDelete = async (survey) => {
-  if (!survey && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
+const locationDelete = async (examroomCode) => {
+  if (!examroomCode && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
+  else examroomCode = selected.value;
 
   if (await $showConfirm('삭제하시겠습니까?')) {
-    $showAlert('삭제되었습니다.');
-    /*
-    try {
-      const res = $axios_loading.post('', {
-        selected: [ survey ? survey : ...selected.value ]
-      });
-
-      if(res.data.status == 200) {
-        $showAlert('삭제되었습니다.');
-        return router.push('/assign/survey');
-      }  
-      $showAlert('삭제 실패하였습니다.');
-    } catch(err) {
-      console.log(err);
+    const { error } = await $updateLocationUsyn(examroomCode);
+    if (!error) {
+      await fetchedLocationList(param.value.current);
+      $showAlert('삭제되었습니다.');
     }
-    */
   }
 };
 </script>

@@ -14,7 +14,7 @@
         :name="`sym_o_${icon}`"
         :class="{ current: on }"
         size="xs"
-        class="text-grey-7 gt-xs"
+        class="text-grey-7 gt-sm"
       />
       <span :class="{ current: on }" class="text-grey-9">{{ label }}</span>
     </q-btn>
