@@ -5,6 +5,7 @@
     "$fetchedExamineeInfo": "readonly",
     "$fetchedExamineeList": "readonly",
     "$fetchedLocationInfo": "readonly",
+    "$fetchedLocationList": "readonly",
     "$fetchedSurveyInfo": "readonly",
     "$fetchedSurveyList": "readonly",
     "$getNowString": "readonly",

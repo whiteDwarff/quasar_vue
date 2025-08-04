@@ -11,6 +11,6 @@ const form = reactive({
   examroomCharge: '', // 담당자
   examroomPhone: '', // 담당자 전화번호
   examroomChargeInfo: '', // 담당자 정보
-  tbExamroomInfo: [],
+  tbExamroomNumInfo: [],
 });
 </script>

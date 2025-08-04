@@ -91,7 +91,7 @@
                 />
                 <q-input
                   @click.stop
-                  v-model="prop.node.label"
+                  v-model="prop.node.cateName"
                   outlined
                   dense
                   class="bg-white"
@@ -127,7 +127,7 @@
               <div class="flex q-pl-lg">
                 <q-input
                   @click.stop
-                  v-model="prop.node.label"
+                  v-model="prop.node.cateName"
                   outlined
                   dense
                   class="bg-white"
@@ -163,7 +163,7 @@
               <div class="flex q-pl-sm">
                 <q-input
                   @click.stop
-                  v-model="prop.node.label"
+                  v-model="prop.node.cateName"
                   outlined
                   dense
                   class="bg-white"
@@ -211,32 +211,18 @@ const saveCategory = async () => {
   if (!selected.value.length) return $showAlert('항목을 선택해주세요.');
 
   for (let root of nodes.value) {
-    if (!root.label) {
+    if (!root.cateName) {
       return $showAlert('대분류를 모두 입력해주세요.');
     }
     for (let middle of root.children) {
-      if (!middle.label) return $showAlert('중분류를 모두 입력해주세요.');
+      if (!middle.cateName) return $showAlert('중분류를 모두 입력해주세요.');
       for (let last of middle.children)
-        if (!last.label) return $showAlert('소분류를 모두 입력해주세요.');
+        if (!last.cateName) return $showAlert('소분류를 모두 입력해주세요.');
     }
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
     $showAlert('저장되었습니다.');
-    /*
-    try {
-      const res = $axios_loading.post('', {
-        selected: selected.value
-      });
-
-      if(res.data.status == 200) {
-        $showAlert('저장되었습니다.');
-      }  
-      $showAlert('저장 실패하였습니다.');
-    } catch(err) {
-      console.log(err);
-    }
-    */
   }
 };
 
@@ -274,22 +260,23 @@ const exceptCategory = (node, depth) => {
 const appendCategory = (node, depth) => {
   if (depth == 1) {
     nodes.value.unshift({
-      cateCode: '',
       key: crypto.randomUUID(),
-      uppr: '',
+      cateName: '',
+      cateStep: depth,
+      useFlag: 'Y',
       header: 'root',
-      label: '',
       children: [],
     });
   } else if ([2, 3].includes(depth)) {
     const is2depth = depth == 2 ? true : false;
 
     const obj = {
-      cateCode: '',
       key: crypto.randomUUID(),
       uppr: node.key,
+      cateStep: depth,
+      useFlag: 'Y',
       header: is2depth ? 'middle' : 'last',
-      label: '',
+      cateName: '',
     };
     if (is2depth) obj.children = [];
     node.children.push(obj);

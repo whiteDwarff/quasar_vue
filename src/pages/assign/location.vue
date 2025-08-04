@@ -73,6 +73,7 @@
         bordered
         hide-pagination
         hide-selected-banner
+        :rows-per-page-options="[0]"
       >
         <template #header="props">
           <q-tr :props="props">
@@ -107,9 +108,9 @@
               /> -->
             </q-td>
             <q-td>{{ props.row.no }}</q-td>
-            <q-td>{{ props.row.examRoomLocation }}</q-td>
-            <q-td>{{ props.row.examRoomName }}</q-td>
-            <q-td>{{ props.row.examRoomAddr }}</q-td>
+            <q-td>{{ props.row.examroomName }}</q-td>
+            <q-td>{{ props.row.examroomLocation }}</q-td>
+            <q-td>{{ props.row.examroomAddr }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
@@ -119,7 +120,7 @@
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
-                  @click="$router.push(`/assign/locationEdit/${props.row.examRoomCode}`)"
+                  @click="$router.push(`/assign/locationEdit/${props.row.examroomCode}`)"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -149,6 +150,7 @@ const resetParam = () => {
     max: 1,
   };
 };
+const totalCount = ref(0);
 const param = ref({ ...resetParam() });
 
 const selected = ref([]);
@@ -188,6 +190,22 @@ const toggleSelected = (event) => {
   selected.value = [];
 };
 */
+
+const fetchedLocationList = async (current = 0) => {
+  const { data, error, max, count } = await $fetchedLocationList({
+    ...param.value,
+    current,
+  });
+
+  if (!error) {
+    rows.value = data;
+    currentRow.value = null;
+
+    param.value.max = max;
+    totalCount.value = count;
+  } else $showAlert(error);
+};
+fetchedLocationList(1);
 // 장소삭제
 const locationDelete = async (survey) => {
   if (!survey && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');

@@ -38,6 +38,23 @@ export async function $saveLocationInfo(form) {
         )
         .select('examroom_code')
         .single();
+    } else {
+      examRoomQuery = examRoomQuery
+        .update(
+          camelToSnakeByObj({
+            examroomName,
+            examroomLocation,
+            examroomAddr,
+            examroomInfo,
+            examroomCharge,
+            examroomPhone,
+            examroomChargeInfo,
+            updt_dt: $getNowString(),
+          }),
+        )
+        .eq('examroom_code', form.examroomCode)
+        .select('examroom_code')
+        .maybeSingle();
     }
 
     const { data, error } = await examRoomQuery;
@@ -47,7 +64,7 @@ export async function $saveLocationInfo(form) {
       const insertArr = [];
       const updateArr = [];
 
-      for (let roomNum of [...form.tbExamroomInfo]) {
+      for (let roomNum of [...form.tbExamroomNumInfo]) {
         roomNum.examroomCode = data.examroom_code;
         roomNum.examroomNumMax = roomNum.examroomNumCol * roomNum.examroomNumRow; // 정원
         delete roomNum.key;
@@ -135,4 +152,52 @@ export async function $fetchedLocationInfo(examRoomCode) {
   } finally {
     store.setLoading(false);
   }
+}
+/**
+ * 장소 목록조회
+ * @param {object} param
+ * @returns object
+ */
+export async function $fetchedLocationList(param) {
+  try {
+    store.setLoading(true);
+
+    let countQuery = supabase.from('tb_examroom_info').select('*', { count: 'exact', head: true });
+    const { count } = await locationListWhere(countQuery, param);
+
+    // 받아올 데이터의 개수 계산
+    const { offset, limit } = $getPagingOffset(param.current);
+
+    let dataQuery = supabase
+      .from('tb_examroom_info')
+      .select(
+        `
+          examroom_code,
+          examroom_name,
+          examroom_location
+        `,
+      )
+      .order('examroom_code', { ascending: false });
+    const { data, error } = await locationListWhere(dataQuery, param).range(offset, limit);
+
+    return {
+      data: snakeToCamelByObj(data),
+      error: error ? getErrorMessage[error.code] || '데이터 조회에 실패하였습니다.' : '',
+      max: $getPagingCount(count),
+      count,
+    };
+  } catch (err) {
+    console.log(err);
+  } finally {
+    store.setLoading(false);
+  }
+}
+
+function locationListWhere(query, param) {
+  query = query.eq('use_flag', 'Y');
+
+  if (param.examRoomName) query = query.like('examroom_name', `%${param.examRoomName}%`);
+  if (param.examRoomLocation)
+    query = query.like('examroom_location', `%${param.examRoomLocation}%`);
+  return query;
 }
