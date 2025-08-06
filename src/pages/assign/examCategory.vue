@@ -232,7 +232,7 @@ const exceptCategory = (node, depth) => {
     nodes.value = nodes.value.filter(({ key }) => key != node.key);
   } else if (depth == 2) {
     outer: for (let i = 0; i < nodes.value.length; i++) {
-      if (nodes.value[i].key == node.uppr) {
+      if (nodes.value[i].key == node.parentCode) {
         nodes.value[i].children = nodes.value[i].children.filter(({ key }) => key != node.key);
         break outer;
       }
@@ -240,7 +240,7 @@ const exceptCategory = (node, depth) => {
   } else {
     outer: for (let i = 0; i < nodes.value.length; i++) {
       for (let j = 0; j < nodes.value[i].children.length; j++) {
-        if (nodes.value[i].children[j].key == node.uppr) {
+        if (nodes.value[i].children[j].key == node.parentCode) {
           for (let k = 0; k < nodes.value[i].children[j].children.length; k++) {
             nodes.value[i].children[j].children = nodes.value[i].children[j].children.filter(
               ({ key }) => key != node.key,
@@ -272,7 +272,8 @@ const appendCategory = (node, depth) => {
 
     const obj = {
       key: crypto.randomUUID(),
-      uppr: node.key,
+      parentCode: is2depth ? node.key : node.parentCode,
+      sub1Code: is2depth ? null : node.key,
       cateStep: depth,
       useFlag: 'Y',
       header: is2depth ? 'middle' : 'last',
