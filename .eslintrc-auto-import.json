@@ -1,5 +1,6 @@
 {
   "globals": {
+    "$fetchedCateInfo": "readonly",
     "$fetchedExamInfo": "readonly",
     "$fetchedExamList": "readonly",
     "$fetchedExamineeInfo": "readonly",
@@ -13,6 +14,7 @@
     "$getPagingOffset": "readonly",
     "$getTimeFormat": "readonly",
     "$imageRender": "readonly",
+    "$saveCateInfo": "readonly",
     "$saveExamInfo": "readonly",
     "$saveExamineeInfo": "readonly",
     "$saveLocationInfo": "readonly",

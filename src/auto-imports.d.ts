@@ -7,6 +7,7 @@
 export {}
 declare global {
   const $cancle: (typeof import('./utils/globals.js'))['$cancle']
+  const $fetchedCateInfo: typeof import('./api/assign/cateInfo.js')['$fetchedCateInfo']
   const $fetchedExamInfo: typeof import('./api/examInfo/index.js')['$fetchedExamInfo']
   const $fetchedExamList: typeof import('./api/examInfo/index.js')['$fetchedExamList']
   const $fetchedExamineeInfo: typeof import('./api/assign/examinee.js')['$fetchedExamineeInfo']
@@ -22,6 +23,7 @@ declare global {
   const $getSurveyInfo: typeof import('./api/assign/survey.js')['$getSurveyInfo']
   const $getTimeFormat: typeof import('./utils/globals.js')['$getTimeFormat']
   const $imageRender: typeof import('./utils/validate-rules.js')['$imageRender']
+  const $saveCateInfo: typeof import('./api/assign/cateInfo.js')['$saveCateInfo']
   const $saveExamInfo: typeof import('./api/examInfo/index.js')['$saveExamInfo']
   const $saveExamineeInfo: typeof import('./api/assign/examinee.js')['$saveExamineeInfo']
   const $saveLocationInfo: typeof import('./api/assign/location.js')['$saveLocationInfo']

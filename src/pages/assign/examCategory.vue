@@ -1,5 +1,6 @@
 <template>
   <q-page padding>
+    {{ exceptArr }}
     <q-card flat>
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
@@ -198,6 +199,16 @@ const selected = ref([]);
 const isAll = ref(false);
 const nodes = ref([]);
 
+const exceptArr = ref([]);
+
+const fetchedCateInfo = async () => {
+  const { data, expand, error } = await $fetchedCateInfo();
+  if (error) return $showAlert(error);
+  expanded.value = expand;
+  nodes.value = data;
+};
+fetchedCateInfo();
+
 // 전체선택
 const toggleSelectAll = (event) => {
   selected.value = event ? nodes.value : [];
@@ -222,6 +233,7 @@ const saveCategory = async () => {
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
+    await $saveCateInfo(nodes.value);
     $showAlert('저장되었습니다.');
   }
 };
@@ -240,7 +252,7 @@ const exceptCategory = (node, depth) => {
   } else {
     outer: for (let i = 0; i < nodes.value.length; i++) {
       for (let j = 0; j < nodes.value[i].children.length; j++) {
-        if (nodes.value[i].children[j].key == node.parentCode) {
+        if (nodes.value[i].children[j].key == node.sub1Code) {
           for (let k = 0; k < nodes.value[i].children[j].children.length; k++) {
             nodes.value[i].children[j].children = nodes.value[i].children[j].children.filter(
               ({ key }) => key != node.key,
@@ -255,6 +267,8 @@ const exceptCategory = (node, depth) => {
   selected.value = selected.value.filter(({ key }) => node.key != key);
   // 체크상태 재할당
   isAll.value = selected.value.length == nodes.value.length;
+
+  if (node?.cateCode) exceptArr.value.push(node.cateCode);
 };
 // 분류 추가
 const appendCategory = (node, depth) => {
@@ -273,13 +287,13 @@ const appendCategory = (node, depth) => {
     const obj = {
       key: crypto.randomUUID(),
       parentCode: is2depth ? node.key : node.parentCode,
-      sub1Code: is2depth ? null : node.key,
       cateStep: depth,
       useFlag: 'Y',
       header: is2depth ? 'middle' : 'last',
       cateName: '',
     };
     if (is2depth) obj.children = [];
+    else obj.sub1Code = node.key;
     node.children.push(obj);
 
     if (!expanded.value.includes(node.key)) expanded.value.push(node.key);
@@ -291,5 +305,14 @@ const appendCategory = (node, depth) => {
 .action-btn {
   width: 40px;
   height: 40px;
+}
+:deep(.q-tree > .q-tree__node) {
+  padding: 10px 0;
+}
+:deep(.q-tree > .q-tree__node:first-child) {
+  padding-top: 0;
+}
+:deep(.q-tree > .q-tree__node:last-child) {
+  padding-bottom: 0;
 }
 </style>
