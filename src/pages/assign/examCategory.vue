@@ -1,6 +1,5 @@
 <template>
   <q-page padding>
-    {{ exceptArr }}
     <q-card flat>
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
@@ -58,7 +57,7 @@
             class="w-100"
           />
           <CustomButton
-            @click="console.log(1)"
+            @click="updateExamCategoryUsyn"
             :disabled="!nodes.length"
             label="삭제"
             color="warning"
@@ -82,7 +81,7 @@
         >
           <!-- 1 depth -->
           <template v-slot:header-root="prop">
-            <div class="full-width">
+            <div @click.stop @keypress.stop class="full-width">
               <div class="flex">
                 <!-- 서버에 저장된 상태일 때 v-if="prop.node.cateCode" -->
                 <q-checkbox
@@ -124,7 +123,7 @@
           </template>
           <!-- 2 depth -->
           <template v-slot:header-middle="prop">
-            <div class="full-width">
+            <div @click.stop @keypress.stop class="full-width">
               <div class="flex q-pl-lg">
                 <q-input
                   @click.stop
@@ -160,7 +159,7 @@
           </template>
           <!-- 3 depth -->
           <template v-slot:header-last="prop">
-            <div class="full-width">
+            <div @click.stop @keypress.stop class="full-width">
               <div class="flex q-pl-sm">
                 <q-input
                   @click.stop
@@ -201,10 +200,11 @@ const nodes = ref([]);
 
 const exceptArr = ref([]);
 
+// 시험분류 목록 조회
 const fetchedCateInfo = async () => {
-  const { data, expand, error } = await $fetchedCateInfo();
+  const { data, error } = await $fetchedCateInfo();
   if (error) return $showAlert(error);
-  expanded.value = expand;
+  // expanded.value = expand; // expand
   nodes.value = data;
 };
 fetchedCateInfo();
@@ -233,7 +233,10 @@ const saveCategory = async () => {
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    await $saveCateInfo(nodes.value);
+    await $saveCateInfo({
+      selected: selected.value,
+      except: exceptArr.value,
+    });
     $showAlert('저장되었습니다.');
   }
 };
@@ -297,6 +300,21 @@ const appendCategory = (node, depth) => {
     node.children.push(obj);
 
     if (!expanded.value.includes(node.key)) expanded.value.push(node.key);
+  }
+};
+// 삭제
+const updateExamCategoryUsyn = async () => {
+  if (!selected.value.length) return $showAlert('항목을 선택해주세요.');
+
+  if (await $showConfirm('삭제하시겠습니까')) {
+    const arr = selected.value.filter((item) => item?.cateCode).map((item) => item.cateCode);
+    const { error } = await $updateExamCategoryUsyn(arr);
+
+    if (error) $showAlert(error);
+    else {
+      $showAlert('삭제되었습니다.');
+      await fetchedCateInfo();
+    }
   }
 };
 </script>

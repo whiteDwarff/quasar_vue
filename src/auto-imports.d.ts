@@ -30,6 +30,7 @@ declare global {
   const $saveSurveyInfo: typeof import('./api/assign/survey.js')['$saveSurveyInfo']
   const $showAlert: typeof import('./utils/globals.js')['$showAlert']
   const $showConfirm: typeof import('./utils/globals.js')['$showConfirm']
+  const $updateExamCategoryUsyn: typeof import('./api/assign/cateInfo.js')['$updateExamCategoryUsyn']
   const $updateExamInfoUsyn: typeof import('./api/examInfo/index.js')['$updateExamInfoUsyn']
   const $updateExamineeUsyn: typeof import('./api/assign/examinee.js')['$updateExamineeUsyn']
   const $updateLocationUsyn: typeof import('./api/assign/location.js')['$updateLocationUsyn']

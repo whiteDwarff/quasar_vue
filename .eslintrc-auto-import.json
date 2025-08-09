@@ -21,6 +21,7 @@
     "$saveSurveyInfo": "readonly",
     "$showAlert": "readonly",
     "$showConfirm": "readonly",
+    "$updateExamCategoryUsyn": "readonly",
     "$updateExamInfoUsyn": "readonly",
     "$updateExamineeUsyn": "readonly",
     "$updateLocationUsyn": "readonly",
