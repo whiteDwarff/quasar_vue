@@ -67,24 +67,9 @@ export const useMenuStore = defineStore(
         menuSeq: 9,
         menuNm: '일정관리',
         icon: 'bi-clock',
-        menuTy: 'D',
+        menuTy: 'P',
         depth: 1,
-        children: [
-          {
-            menuSeq: 10,
-            menuNm: '일정등록',
-            menuUrl: '/schedule',
-            menuTy: 'P',
-            depth: 2,
-          },
-          {
-            menuSeq: 11,
-            menuNm: '일정관리',
-            menuUrl: '/schedule/mngr',
-            menuTy: 'P',
-            depth: 2,
-          },
-        ],
+        menuUrl: '/schedule',
       },
     ]);
 

@@ -3,11 +3,11 @@
     <q-card flat>
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
-          <span class="title">시험분류</span>
+          <span class="title">교과목분류</span>
           <q-space />
           <span class="bar">Home</span>
           <span class="bar">배정요소</span>
-          <span class="current">시험분류</span>
+          <span class="current">교과목분류</span>
         </div>
       </q-card-section>
 
@@ -64,7 +64,7 @@
             outline
             class="q-mx-sm w-100"
           />
-          <CustomButton @click="appendCategory(null, 1)" label="시험분류 추가" outline />
+          <CustomButton @click="appendCategory(null, 1)" label="교과목분류 추가" outline />
         </div>
       </div>
 
@@ -89,7 +89,7 @@
                 />
                 <q-input
                   @click.stop
-                  v-model="prop.node.cateName"
+                  v-model="prop.node.subjectCateName"
                   outlined
                   dense
                   class="bg-white"
@@ -125,7 +125,7 @@
               <div class="flex q-pl-lg">
                 <q-input
                   @click.stop
-                  v-model="prop.node.cateName"
+                  v-model="prop.node.subjectCateName"
                   outlined
                   dense
                   class="bg-white"
@@ -161,7 +161,7 @@
               <div class="flex q-pl-sm">
                 <q-input
                   @click.stop
-                  v-model="prop.node.cateName"
+                  v-model="prop.node.subjectCateName"
                   outlined
                   dense
                   class="bg-white"
@@ -199,11 +199,11 @@ const nodes = ref([]);
 const exceptArr = ref([]);
 
 // 부모-자식 유지하면서 필터링
-function filterNodes(nodesArr, keyword) {
+const filterNodes = (nodesArr, keyword) => {
   const filt = keyword.toLowerCase();
   return nodesArr
     .map((node) => {
-      const matched = node.cateName.toLowerCase().includes(filt);
+      const matched = node.subjectCateName.toLowerCase().includes(filt);
 
       let filteredChildren = [];
       if (node.children && node.children.length > 0) {
@@ -228,7 +228,7 @@ function filterNodes(nodesArr, keyword) {
       return null;
     })
     .filter((n) => n !== null);
-}
+};
 
 const filteredNodes = computed(() => {
   if (!param.value) {
@@ -239,7 +239,7 @@ const filteredNodes = computed(() => {
 
 // 시험분류 목록 조회
 const fetchedCateInfo = async () => {
-  const { data, error } = await $fetchedCateInfo();
+  const { data, error } = await $fetchedSubjectCateInfo();
   if (error) return $showAlert(error);
   // expanded.value = expand; // expand
   isAll.value = false;
@@ -261,18 +261,18 @@ const saveCategory = async () => {
   if (!selected.value.length) return $showAlert('항목을 선택해주세요.');
 
   for (let root of nodes.value) {
-    if (!root.cateName) {
+    if (!root.subjectCateName) {
       return $showAlert('대분류를 모두 입력해주세요.');
     }
     for (let middle of root.children) {
-      if (!middle.cateName) return $showAlert('중분류를 모두 입력해주세요.');
+      if (!middle.subjectCateName) return $showAlert('중분류를 모두 입력해주세요.');
       for (let last of middle.children)
-        if (!last.cateName) return $showAlert('소분류를 모두 입력해주세요.');
+        if (!last.subjectCateName) return $showAlert('소분류를 모두 입력해주세요.');
     }
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const result = await $saveCateInfo({
+    const result = await $saveSubjectCateInfo({
       selected: nodes.value.filter((node) => selected.value.includes(node.key)),
       except: exceptArr.value,
     });
@@ -311,14 +311,14 @@ const exceptCategory = (node, depth) => {
   // 체크상태 재할당
   isAll.value = selected.value.length == nodes.value.length && nodes.value.length > 0;
 
-  if (node?.cateCode) exceptArr.value.push(node.cateCode);
+  if (node?.subjectCateCode) exceptArr.value.push(node.subjectCateCode);
 };
 // 분류 추가
 const appendCategory = (node, depth) => {
   if (depth == 1) {
     nodes.value.unshift({
       key: crypto.randomUUID(),
-      cateName: '',
+      subjectCateName: '',
       cateStep: depth,
       useFlag: 'Y',
       header: 'root',
@@ -335,7 +335,7 @@ const appendCategory = (node, depth) => {
       cateStep: depth,
       useFlag: 'Y',
       header: is2depth ? 'middle' : 'last',
-      cateName: '',
+      subjectCateName: '',
     };
     if (is2depth) obj.children = [];
     else obj.sub1Code = node.key;
@@ -349,9 +349,11 @@ const updateExamCategoryUsyn = async () => {
   if (!selected.value.length) return $showAlert('항목을 선택해주세요.');
 
   if (await $showConfirm('삭제하시겠습니까')) {
-    const arr = selected.value.filter((item) => item?.cateCode).map((item) => item.cateCode);
+    const arr = selected.value
+      .filter((item) => item?.subjectCateCode)
+      .map((item) => item.subjectCateCode);
     if (arr.length) {
-      const { error } = await $updateExamCategoryUsyn(arr);
+      const { error } = await $updateSubjectCategoryUsyn(arr);
       if (error) return $showAlert(error);
     }
     $showAlert('삭제되었습니다.');

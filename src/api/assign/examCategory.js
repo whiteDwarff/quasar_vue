@@ -132,7 +132,7 @@ export async function $saveCateInfo(form) {
         const { cateName, cateStep } = top;
         // 1depth 저장
         const { data: topRes, error: topErr } = await insertExamCategory({ cateName, cateStep });
-        if (topErr) return topErr;
+        if (topErr) return getErrorMessage[topErr.code] || '저장 실패하였습니다.';
         // 2, 3depth 저장
         for (let mid of top.children) {
           const { error } = await insertExamCategoryChilds(
@@ -143,13 +143,13 @@ export async function $saveCateInfo(form) {
             },
             mid,
           );
-          if (error) return error;
+          if (error) return getErrorMessage[error.code] || '저장 실패하였습니다.';
         }
 
         // 수정
       } else {
         const { error } = await upsertExamCategory(top);
-        if (error) error;
+        if (error) return getErrorMessage[error.code] || '저장 실패하였습니다.';
       }
     }
     // 삭제목록 useFlag 변경
@@ -251,7 +251,7 @@ export async function $updateExamCategoryUsyn(arr) {
       );
 
     return {
-      error: error ? getErrorMessage[error.code] : null,
+      error: error ? getErrorMessage[error.code] || '삭제 실패하였습니다.' : null,
     };
   } catch (err) {
     console.log(err);
