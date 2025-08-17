@@ -138,18 +138,75 @@ export async function $fetchedExamInfo(examCode) {
  * @returns object
  */
 export async function $updateExamInfoUsyn(examCode) {
-  store.setLoading(true);
+  try {
+    store.setLoading(true);
 
-  const { data, error } = await supabase
-    .from('tb_exam_info')
-    .update({ use_flag: 'N' })
-    .eq('exam_code', examCode)
-    .select();
+    const { data, error } = await supabase
+      .from('tb_exam_info')
+      .update({ use_flag: 'N' })
+      .eq('exam_code', examCode)
+      .select();
 
-  store.setLoading(false);
+    return {
+      data: data.length ? snakeToCamelByObj(data[0]) : null,
+      error: error ? getErrorMessage[error.code] || '저장 실패하였습니다.' : null,
+    };
+  } catch (err) {
+    console.log(err);
+  } finally {
+    store.setLoading(false);
+  }
+}
 
-  return {
-    data: data.length ? snakeToCamelByObj(data[0]) : null,
-    error: error ? getErrorMessage[error.code] || '저장 실패하였습니다.' : null,
-  };
+export async function $fechtedExamNodes() {
+  try {
+    store.setLoading(true);
+
+    const { data, error } = await supabase
+      .from('tb_exam_info')
+      .select(
+        `
+      exam_code, exam_name, 
+      tb_exam_form_info(
+        exam_form_code,
+        exam_code,
+        exam_form_name
+      )
+    `,
+      )
+      .eq('use_flag', 'Y')
+      .eq('tb_exam_form_info.use_flag', 'Y')
+      .order('exam_code', { ascending: false })
+      .order('exam_order', { referencedTable: 'tb_exam_form_info', ascending: true });
+
+    const nodes = [];
+    if (!error) {
+      for (let node of snakeToCamelByObj(data)) {
+        const obj = {
+          hedaer: 'top',
+          key: node.examCode,
+          label: node.examName,
+          children: node.tbExamFormInfo.map((child) => {
+            return {
+              hedaer: 'middle',
+              key: child.examFormCode,
+              label: child.examFormName,
+              fullLabel: `${node.examName}(${child.examFormName})`,
+              upprKey: node.examCode,
+            };
+          }),
+        };
+        nodes.push(obj);
+      }
+    }
+
+    return {
+      data: nodes,
+      error: error ? getErrorMessage[error.code] || '조회 실패하였습니다.' : '',
+    };
+  } catch (err) {
+    console.log(err);
+  } finally {
+    store.setLoading(false);
+  }
 }

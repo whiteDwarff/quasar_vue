@@ -71,6 +71,43 @@ export const useMenuStore = defineStore(
         depth: 1,
         menuUrl: '/schedule',
       },
+      {
+        menuSeq: 10,
+        menuNm: '문제등록',
+        icon: 'bi-clock',
+        menuTy: 'D',
+        depth: 1,
+        children: [
+          {
+            menuSeq: 11,
+            menuNm: '문제등록',
+            menuUrl: '/question/question',
+            menuTy: 'P',
+            depth: 2,
+          },
+          {
+            menuSeq: 12,
+            menuNm: '사전검토',
+            menuUrl: '/question/checkList',
+            menuTy: 'P',
+            depth: 2,
+          },
+          {
+            menuSeq: 13,
+            menuNm: '문제은행',
+            menuUrl: '/question/qBank',
+            menuTy: 'P',
+            depth: 2,
+          },
+          {
+            menuSeq: 14,
+            menuNm: '등록현황',
+            menuUrl: '/question/regStatus',
+            menuTy: 'P',
+            depth: 2,
+          },
+        ],
+      },
     ]);
 
     const currentMenu = reactive({

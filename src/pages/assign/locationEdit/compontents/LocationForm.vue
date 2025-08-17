@@ -331,17 +331,20 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-section class="flex justify-center">
+      <q-card-section class="flex justify-between">
         <CustomButton @click="cancle()" label="취소" outline class="w-100 q-mr-md" />
-        <CustomButton
-          v-if="form?.examroomCode"
-          @click="locationDelete"
-          label="삭제"
-          color="warning"
-          outline
-          class="q-mr-md w-100"
-        />
-        <CustomButton @click="submit()" label="저장" class="w-100" />
+        <q-flex></q-flex>
+        <div class="flex">
+          <CustomButton
+            v-if="form?.examroomCode"
+            @click="locationDelete"
+            label="삭제"
+            color="warning"
+            outline
+            class="q-mr-md w-100"
+          />
+          <CustomButton @click="submit()" label="저장" class="w-100" />
+        </div>
       </q-card-section>
     </q-card>
   </q-page>

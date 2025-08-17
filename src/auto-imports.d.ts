@@ -7,6 +7,7 @@
 export {}
 declare global {
   const $cancle: (typeof import('./utils/globals.js'))['$cancle']
+  const $fechtedExamNodes: typeof import('./api/examInfo/index.js')['$fechtedExamNodes']
   const $fetchedCateInfo: typeof import('./api/assign/examCategory.js')['$fetchedCateInfo']
   const $fetchedExamInfo: typeof import('./api/examInfo/index.js')['$fetchedExamInfo']
   const $fetchedExamList: typeof import('./api/examInfo/index.js')['$fetchedExamList']

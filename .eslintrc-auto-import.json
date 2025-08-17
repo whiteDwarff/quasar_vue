@@ -1,5 +1,6 @@
 {
   "globals": {
+    "$fechtedExamNodes": "readonly",
     "$fetchedCateInfo": "readonly",
     "$fetchedExamInfo": "readonly",
     "$fetchedExamList": "readonly",
