@@ -4,7 +4,7 @@
 }
 body {
   font-family: 'Noto Sans KR', sans-serif;
-  font-size: 13px;
+  font-size: 12px !important;
 }
 p {
   margin-bottom: 0;

@@ -16,7 +16,7 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
 [disabled] * {
   cursor: default !important;
 }
-
+/* button */
 .q-btn {
   font-weight: 350 !important;
   border-radius: 6px;
@@ -24,12 +24,12 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
 .q-btn--rounded {
   border-radius: 28px !important;
 }
+/* table */
 .q-table__card {
   border-radius: 0;
 }
 .q-table {
   border-top: 1px solid rgba(0, 0, 0, 0.12);
-  /* border-bottom: 1px solid rgba(0, 0, 0, 0.12); */
 }
 .q-table thead tr.q-tr {
   height: 35px;
@@ -48,19 +48,8 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
 .q-table tbody tr.current td {
   background: #f2f7ff !important;
   color: #69a5fe !important;
-  /*
-  border-top: 1px solid #69a5fe !important;
-  border-bottom: 1px solid #69a5fe !important;
-  */
 }
-/*
-.q-table tbody tr.current td:first-child {
-  border-left: 1px solid #69a5fe;
-}
-.q-table tbody tr.current td:last-child {
-  border-right: 1px solid #69a5fe;
-}
-*/
+/* pagination */
 .q-pagination__content button {
   margin: 0 5px;
   border-radius: 4px !important;
@@ -71,6 +60,11 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   padding: 7px;
   color: var(--q-primary);
   opacity: 0.7;
+}
+/* select placeholder */
+.q-field--dense .q-field__label {
+  font-size: 12px;
+  margin-top: 3px;
 }
 
 @media all and (min-width: 600px) and (max-width: 1290px) {

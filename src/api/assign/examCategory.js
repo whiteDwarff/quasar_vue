@@ -259,3 +259,38 @@ export async function $updateExamCategoryUsyn(arr) {
     store.setLoading(false);
   }
 }
+
+/**
+ * 1, 2, 3 depth 목록 조회
+ * @param {number} parentCode
+ * @param {number} subCode
+ * @returns object
+ */
+export async function $fetchedExamCategoryByDepth(cateStep, parentCode, subCode) {
+  try {
+    let query = supabase
+      .from('tb_exam_cate_info')
+      .select('cate_code, cate_name, parent_code, sub1_code, cate_step')
+      .eq('use_flag', 'Y')
+      .eq('cate_step', cateStep)
+      .order('cate_code', { ascending: true }); // 내림차순 정렬
+
+    if (parentCode) query = query.eq('parent_code', parentCode);
+    if (subCode) query = query.eq('sub1_code', subCode);
+
+    const { data, error } = await query;
+
+    return {
+      data: snakeToCamelByObj(data).map((data) => {
+        return {
+          ...data,
+          label: data.cateName,
+          value: data.cateCode,
+        };
+      }),
+      error: error ? getErrorMessage[error.code] || '데이터 조회에 실패하였습니다.' : '',
+    };
+  } catch (err) {
+    console.log(err);
+  }
+}

@@ -2,6 +2,7 @@
   "globals": {
     "$fechtedExamNodes": "readonly",
     "$fetchedCateInfo": "readonly",
+    "$fetchedExamCategoryByDepth": "readonly",
     "$fetchedExamInfo": "readonly",
     "$fetchedExamList": "readonly",
     "$fetchedExamineeInfo": "readonly",
@@ -9,6 +10,7 @@
     "$fetchedLocationInfo": "readonly",
     "$fetchedLocationList": "readonly",
     "$fetchedSubjectCateInfo": "readonly",
+    "$fetchedSubjectCategoryByDepth": "readonly",
     "$fetchedSurveyInfo": "readonly",
     "$fetchedSurveyList": "readonly",
     "$getNowString": "readonly",

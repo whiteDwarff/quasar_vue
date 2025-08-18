@@ -333,7 +333,7 @@
       </q-card-section>
       <q-card-section class="flex justify-between">
         <CustomButton @click="cancle()" label="취소" outline class="w-100 q-mr-md" />
-        <q-flex></q-flex>
+        <q-space />
         <div class="flex">
           <CustomButton
             v-if="form?.examroomCode"
