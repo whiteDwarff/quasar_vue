@@ -121,12 +121,14 @@ export default defineConfig((/* ctx */) => {
           'unplugin-auto-import/vite',
           {
             imports: ['vue', 'vue-router', 'quasar', 'pinia'],
+            /*
             dts: 'src/auto-imports.d.ts',
             eslintrc: {
               enabled: true,
               filepath: './.eslintrc-auto-import.json',
               globalsPropValue: 'readonly',
             },
+            */
             dirs: ['src/stores/**', 'src/utils/**', 'src/boot/**', 'src/api/**'],
           },
         ],
@@ -137,6 +139,15 @@ export default defineConfig((/* ctx */) => {
     devServer: {
       // https: true,
       open: true, // opens browser window automatically
+      hotReload: true,
+      // CORS 설정
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true, // 크로스 플랫폼 허용
+          pathRewrite: { '^/api': '' },
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

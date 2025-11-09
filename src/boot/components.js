@@ -9,11 +9,6 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import 'viewerjs/dist/viewer.css';
 import VueViewer from 'v-viewer';
 
-import ElementPlus from 'element-plus';
-import ElementTiptapPlugin from 'element-tiptap-vue3-fixed';
-import 'element-plus/dist/index.css';
-import 'element-tiptap-vue3-fixed/lib/style.css';
-
 export default defineBoot(({ app }) => {
   app.component('VueDatePicker', VueDatePicker);
 
@@ -21,9 +16,6 @@ export default defineBoot(({ app }) => {
   VueViewer.setDefaults({
     zIndex: 5000,
   });
-
-  app.use(ElementPlus);
-  app.use(ElementTiptapPlugin);
 
   setCssVar('warning', '#ff6363');
 });

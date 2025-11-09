@@ -49,7 +49,7 @@ export function $getPagingCount(totalCount) {
  */
 export function $getPagingOffset(current) {
   const offset = (current - 1) * process.env.PAGE_LIMIT;
-  const limit = offset + process.env.PAGE_LIMIT - 2;
+  const limit = offset + process.env.PAGE_LIMIT;
 
   return {
     offset,

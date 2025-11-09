@@ -7,33 +7,62 @@ const store = useSystemStore();
  * @param {object} params
  * @returns object
  */
-export async function $fetchedExamList(params) {
-  store.setLoading(true);
+export function useExamList() {
+  // 변수
+  const param = ref({
+    examName: '',
+    regId: '',
+    regDay: [],
+    regStDt: null,
+    regEnDt: null,
+    current: 1,
+    min: 1,
+    max: 1,
+  });
+  const rows = ref([]);
+  const totalCount = ref(0);
 
-  // 페이지네이션 사용 위한 개수 조회
-  const { count } = await supabase
-    .from('tb_exam_info')
-    .select('*', { count: 'exact', head: true })
-    .eq('use_flag', 'Y')
-    .ilike('exam_name', `%${params.examName}%`);
+  // 시험정보 요청
+  const getExamList = async (page = 1) => {
+    param.value.current = page;
+    if (param.value.regDay.length) {
+      param.value.regStDt = param.value.regDay[0];
+      if (param.value.regDay.length == 2 && param.value.regDay[0]) {
+        param.value.regEnDt = param.value.regDay[1];
+      }
+    }
 
-  const { offset, limit } = $getPagingOffset(params.current);
+    const { offset, limit } = $getPagingOffset(param.value.current);
 
-  const { data, error } = await supabase
-    .from('tb_exam_info')
-    .select('exam_code, exam_name, rgst_dt, rgst_id')
-    .eq('use_flag', 'Y') // where
-    .ilike('exam_name', `%${params.examName}%`)
-    .range(offset, limit)
-    .order('exam_code', { ascending: false }); // 내림차순 정렬
+    const res = await api_loading.get('/examInfo', {
+      params: {
+        ...param.value,
+        offset,
+        limit,
+      },
+    });
 
-  store.setLoading(false);
+    if (res.data.status == 200) {
+      rows.value = res.data.result.list;
+      totalCount.value = res.data.result.count;
+      param.value.max = $getPagingCount(totalCount.value);
+    }
+  };
+
+  const resetParam = () => {
+    param.value.examName = '';
+    param.value.regId = '';
+    param.value.regDay = [];
+    param.value.regStDt = null;
+    param.value.regEnDt = null;
+  };
 
   return {
-    data: snakeToCamelByObj(data),
-    max: $getPagingCount(count),
-    count,
-    error,
+    param,
+    rows,
+    totalCount,
+    getExamList,
+    resetParam,
   };
 }
 /**

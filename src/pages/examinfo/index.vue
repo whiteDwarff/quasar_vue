@@ -64,7 +64,7 @@
         <div class="flex q-mt-lg">
           <q-space />
           <CustomButton
-            @click="param = resetParam()"
+            @click="resetParam()"
             label="초기화"
             :outline="true"
             class="q-mr-md w-100"
@@ -76,7 +76,7 @@
 
     <div class="flex items-baseline edit-btn-wrap">
       <p class="q-mt-auto">
-        총 <span class="list-count">{{ rows.totalCount }}</span
+        총 <span class="list-count">{{ totalCount }}</span
         >개
       </p>
       <q-space />
@@ -85,7 +85,7 @@
 
     <q-card flat>
       <q-table
-        :rows="rows.data"
+        :rows="rows"
         :rows-per-page-options="[0]"
         flat
         bordered
@@ -145,46 +145,11 @@
 </template>
 
 <script setup>
-const resetParam = () => {
-  return {
-    // companySeq: '',
-    examName: '',
-    regId: '',
-    regDay: [],
-    regStDt: null,
-    regEnDt: null,
-    current: 1,
-    min: 1,
-    max: 1,
-  };
-};
-const param = ref({ ...resetParam(resetParam.value) });
-
 const currentRow = ref(null);
-const rows = ref({
-  totalCount: 0,
-  data: [],
-});
-
-// 시험목록 호출
-const getExamList = async (current = null) => {
-  const {
-    data,
-    count: totalCount,
-    error,
-    max,
-  } = await $fetchedExamList({
-    ...param.value,
-    current,
-  });
-
-  if (!error) {
-    rows.value = { data, totalCount };
-    param.value.max = max;
-  } else $showAlert('데이터 조회 실패하였습니다.');
-};
+// 컴포저블 호출
+const { param, rows, totalCount, getExamList, resetParam } = useExamList();
+// 시험목록 조회
 getExamList(1);
-
 // 삭제
 const updateExamInfoUsyn = async (examCode) => {
   if (await $showConfirm('삭제하시겠습니까?')) {
