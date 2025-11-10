@@ -34,6 +34,22 @@ export function $getNowString() {
   return $getTimeFormat(new Date().toString(), true);
 }
 /**
+ * 시작시간 포맷 설정
+ * @param {string} contents
+ * @return {string}
+ */
+export function $getStartTimeFormat(str) {
+  return $getTimeFormat(str) + ' 00:00:00';
+}
+/**
+ * 종료시간 포맷 설정
+ * @param {string} contents
+ * @return {string}
+ */
+export function $getEndTimeFormat(str) {
+  return $getTimeFormat(str) + ' 23:59:59';
+}
+/**
  * 페이징 개수 반환
  * @param {number} totalCount
  * @returns {number}

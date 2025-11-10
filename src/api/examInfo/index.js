@@ -26,9 +26,9 @@ export function useExamList() {
   const getExamList = async (page = 1) => {
     param.value.current = page;
     if (param.value.regDay.length) {
-      param.value.regStDt = param.value.regDay[0];
+      param.value.regStDt = $getStartTimeFormat(param.value.regDay[0]);
       if (param.value.regDay.length == 2 && param.value.regDay[0]) {
-        param.value.regEnDt = param.value.regDay[1];
+        param.value.regEnDt = $getEndTimeFormat(param.value.regDay[1]);
       }
     }
 
@@ -64,6 +64,20 @@ export function useExamList() {
     getExamList,
     resetParam,
   };
+}
+/**
+ * 시험정보 사용유무 변경
+ * @param {number} examCode - 시험정보pk
+ * @returns boolean - 성공여부
+ */
+export async function updateExamInfoUseFlag(examCode) {
+  try {
+    const res = await await api_loading.patch(`/examInfo/updateUseFlag/${examCode}`);
+    return res.data.status == 200;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 }
 /**
  * 시험정보 등록
@@ -160,31 +174,6 @@ export async function $fetchedExamInfo(examCode) {
     data: snakeToCamelByObj(data),
     error: error ? getErrorMessage[error.code] || '조회 실패하였습니다.' : '',
   };
-}
-/**
- * 시험정보 사용유무 변경
- * @param {number} examCode
- * @returns object
- */
-export async function $updateExamInfoUsyn(examCode) {
-  try {
-    store.setLoading(true);
-
-    const { data, error } = await supabase
-      .from('tb_exam_info')
-      .update({ use_flag: 'N' })
-      .eq('exam_code', examCode)
-      .select();
-
-    return {
-      data: data.length ? snakeToCamelByObj(data[0]) : null,
-      error: error ? getErrorMessage[error.code] || '저장 실패하였습니다.' : null,
-    };
-  } catch (err) {
-    console.log(err);
-  } finally {
-    store.setLoading(false);
-  }
 }
 
 export async function $fechtedExamNodes() {

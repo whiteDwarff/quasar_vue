@@ -104,9 +104,9 @@
         </template>
         <template #body="props">
           <q-tr
-            @click="currentRow = props.rowIndex"
+            @click="currentRow = props.row.examCode"
             :props
-            :class="{ current: currentRow == props.rowIndex }"
+            :class="{ current: currentRow == props.row.examCode }"
             class="cursor-pointer"
           >
             <q-td>{{ props.rowIndex + 1 }}</q-td>
@@ -145,21 +145,24 @@
 </template>
 
 <script setup>
+import { $showAlert } from 'src/utils/globals';
+
 const currentRow = ref(null);
 // 컴포저블 호출
 const { param, rows, totalCount, getExamList, resetParam } = useExamList();
 // 시험목록 조회
 getExamList(1);
-// 삭제
-const updateExamInfoUsyn = async (examCode) => {
-  if (await $showConfirm('삭제하시겠습니까?')) {
-    const { data, error } = await $updateExamInfoUsyn(examCode);
 
-    if (!error && data.useFlag == 'N') {
-      await getExamList(1);
-      $showAlert('삭제되었습니다.');
-    } else $showAlert(error);
-  }
+// 사용유무 변경
+const updateExamInfoUsyn = async (examCode) => {
+  if (!(await $showConfirm('삭제하시겠습니까?'))) return;
+
+  const result = await updateExamInfoUseFlag(examCode);
+
+  if (result) {
+    $showAlert('삭제되었습니다.');
+    getExamList(1);
+  } else $showAlert('삭제 실패하였습니다.');
 };
 
 // 등록일 날짜 포맷 반환
