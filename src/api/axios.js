@@ -4,10 +4,10 @@ const baseURL = 'http://localhost:3000/api';
 
 // const api = axios.create({ baseURL });
 
-const api_loading = axios.create({ baseURL });
+const axiosLoading = axios.create({ baseURL });
 
 // 요청 인터셉터
-api_loading.interceptors.request.use(
+axiosLoading.interceptors.request.use(
   (config) => {
     useSystemStore().setLoading(true);
     return config;
@@ -19,7 +19,7 @@ api_loading.interceptors.request.use(
 );
 
 // 응답 인터셉터
-api_loading.interceptors.response.use(
+axiosLoading.interceptors.response.use(
   (response) => {
     useSystemStore().setLoading(false);
     return response;
@@ -30,4 +30,4 @@ api_loading.interceptors.response.use(
   },
 );
 
-export { api_loading };
+export { axiosLoading };

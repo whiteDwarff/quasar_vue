@@ -1,6 +1,7 @@
 <template>
   <q-page padding>
     <q-card flat>
+      {{ form }}
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
           <span class="title">시험정보등록</span>
@@ -26,30 +27,6 @@
             </tr>
           </tbody>
         </table>
-        <!-- 
-        <div class="row q-col-gutter-md">
-          <div class="col-xs-12 col-md-6">
-            <span class="form-label star">회사명</span>
-            <div>
-              <SelectFilter
-                v-model="form.companySeq"
-                :options="[
-                  { label: '엔비디아', value: 10 },
-                  { label: '테슬라', value: 11 },
-                  { label: '애플', value: 12 },
-                ]"
-              />
-            </div>
-          </div> 
-          <div class="col-xs-12 col-md-6">
-            <div class="col-12">
-              <span class="form-label star">시험명</span>
-              <div>
-                <q-input v-model="form.examName" outlined dense />
-              </div>
-            </div>
-          </div>
-          -->
       </q-card-section>
 
       <!-- 상세 목록 -->
@@ -57,10 +34,10 @@
         <p class="text-subtitle2 text-weight-bold q-mb-md before-line">상세정보 등록</p>
         <q-scroll-area
           ref="scrollTargetRef"
-          :style="{ height: `${form.tbExamFormInfo.length > 1 ? 350 : 280}px` }"
+          :style="{ height: `${form.details.length > 1 ? 350 : 280}px` }"
         >
           <div
-            v-for="(item, i) of form.tbExamFormInfo.filter((item) => item.useFlag == 'Y')"
+            v-for="(item, i) of form.details.filter((item) => item.useFlag == 'Y')"
             :key="i"
             class="dashed-line"
           >
@@ -77,13 +54,7 @@
                   <td colspan="3">
                     <div class="row q-col-gutter-xs">
                       <div class="col-11">
-                        <q-input
-                          v-model="item.examFormName"
-                          outlined
-                          dense
-                          fill
-                          class="full-width"
-                        />
+                        <q-input v-model="item.formName" outlined dense fill class="full-width" />
                       </div>
                       <div class="col-1">
                         <q-btn
@@ -104,7 +75,7 @@
                   <th class="star">시험방법</th>
                   <td>
                     <q-select
-                      v-model="item.examMethod"
+                      v-model="item.method"
                       :options="['UBT', 'IBT']"
                       outlined
                       dense
@@ -114,7 +85,7 @@
                   <th class="star">시험시간</th>
                   <td>
                     <q-input
-                      v-model="item.examTotalTime"
+                      v-model="item.totalTime"
                       outlined
                       dense
                       fill
@@ -195,22 +166,21 @@ const scrollTargetRef = ref(null);
 
 // 세부정보 삭제
 const exceptExamItem = (target, targetIndex) => {
-  if (form.value.tbExamFormInfo.length == 1)
-    return $showAlert('하나의 상세정보는 등록되어야합니다.');
-
+  if (form.value.details.length == 1) return $showAlert('하나의 상세정보는 등록되어야합니다.');
+  // 등록된 정보인 경우 useFlag 변경
   if (target?.examCode) {
     target.useFlag = 'N';
     return;
   }
-
-  form.value.tbExamFormInfo = form.value.tbExamFormInfo.filter((item, i) => i != targetIndex);
+  // 신규 등록이라면 제외
+  form.value.details = form.value.details.filter((item, i) => i != targetIndex);
 };
 // 세부정보 추가
 const addExamItem = () => {
-  form.value.tbExamFormInfo.push({
-    examFormName: '',
-    examMethod: 'UBT',
-    examTotalTime: '',
+  form.value.details.push({
+    formName: '',
+    method: 'UBT',
+    totalTime: '',
     personalInfoUseFlag: 'N',
     personalInfoMessage: '',
     useFlag: 'Y',
@@ -223,18 +193,17 @@ const addExamItem = () => {
 };
 // 저장
 const submit = async () => {
-  // if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
   if (!form.value.examName) return $showAlert('시험명을 입력해주세요.');
 
-  for (let item of form.value.tbExamFormInfo) {
-    if (!item.examFormName) return $showAlert('시험 세부 설명을 입력해주세요.');
-    if (!item.examTotalTime) return $showAlert('시험시간을 입력해주세요.');
+  for (let item of form.value.details) {
+    if (!item.formName) return $showAlert('시험 세부 설명을 입력해주세요.');
+    if (!item.totalTime) return $showAlert('시험시간을 입력해주세요.');
     if (item.personalInfoUseFlag == 'Y' && !item.personalInfoMessage)
       return $showAlert('안내문동의 메시지를 입력해주세요.');
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { status } = await $saveExamInfo(form.value);
+    const { status } = await editExamInfo(form.value);
 
     if (status) {
       await router.push('/examInfo');

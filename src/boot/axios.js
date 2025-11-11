@@ -1,6 +1,5 @@
 import { defineBoot } from '#q-app/wrappers';
 import axios from 'axios';
-import { api_loading } from '../api/axios';
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -18,9 +17,8 @@ export default defineBoot(({ app }) => {
   //       so you won't necessarily have to import axios in each vue file
 
   app.config.globalProperties.$api = api;
-  app.config.globalProperties.$api_loading = api_loading;
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 });
 
-export { api_loading };
+export {};
