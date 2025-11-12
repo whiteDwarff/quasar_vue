@@ -1,7 +1,6 @@
 <template>
   <q-page padding>
     <q-card flat>
-      {{ form }}
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
           <span class="title">시험정보등록</span>
@@ -158,7 +157,7 @@
 
 <script setup>
 const router = useRouter();
-const route = useRoute();
+// const route = useRoute();
 
 const form = defineModel();
 
@@ -178,6 +177,7 @@ const exceptExamItem = (target, targetIndex) => {
 // 세부정보 추가
 const addExamItem = () => {
   form.value.details.push({
+    examFormCode: null,
     formName: '',
     method: 'UBT',
     totalTime: '',
@@ -203,7 +203,7 @@ const submit = async () => {
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { status } = await editExamInfo(form.value);
+    const status = await editExamInfo(form.value);
 
     if (status) {
       await router.push('/examInfo');
@@ -219,13 +219,13 @@ const cancle = async () => {
 };
 // 삭제
 const updateExamInfoUsyn = async () => {
-  if (await $showConfirm('삭제하시겠습니까?')) {
-    const { data, error } = await $updateExamInfoUsyn(route.params.examCode);
+  if (!(await $showConfirm('삭제하시겠습니까?'))) return;
 
-    if (!error && data.useFlag == 'N') {
-      await router.push('/examInfo');
-      $showAlert('삭제되었습니다.');
-    } else $showAlert(error);
-  }
+  const result = await updateExamInfoUseFlag(form.value.examCode);
+
+  if (result) {
+    await router.push('/examInfo');
+    $showAlert('삭제되었습니다.');
+  } else $showAlert('삭제 실패하였습니다.');
 };
 </script>
