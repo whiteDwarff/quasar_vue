@@ -1,6 +1,5 @@
 /**
  * 시험목록 조회
- * @param {object} params
  * @returns object
  */
 export function useExamList() {

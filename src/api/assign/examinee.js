@@ -1,6 +1,84 @@
 const store = useSystemStore();
 
 /**
+ * 응시자 목록 조회
+ * @returns object
+ */
+export function useExamineeList() {
+  // 변수
+  const param = ref({
+    id: '',
+    name: '',
+    major: '',
+    college: '',
+    gender: '',
+    regDay: [],
+    current: 1,
+    min: 1,
+    max: 1,
+  });
+
+  const rows = ref([]);
+  const totalCount = ref(0);
+
+  // 응시자 목록 요청
+  const getExamineeList = async (page = 1) => {
+    try {
+      param.value.current = page;
+
+      let regStDt = null;
+      let regEnDt = null;
+      if (param.value.regDay.length) {
+        regStDt = $getStartTimeFormat(param.value.regDay[0]);
+        if (param.value.regDay.length == 2 && param.value.regDay[1]) {
+          regEnDt = $getEndTimeFormat(param.value.regDay[1]);
+        }
+      }
+
+      const { offset, limit } = $getPagingOffset(param.value.current);
+
+      const res = await axiosLoading.get('/assign/examinee', {
+        params: {
+          ...param.value,
+          offset,
+          limit,
+          regStDt,
+          regEnDt,
+        },
+      });
+
+      if (res.data.status == 200) {
+        rows.value = res.data.result.list;
+        totalCount.value = res.data.result.count;
+        param.value.max = $getPagingCount(totalCount.value);
+      }
+    } catch (err) {
+      rows.value = [];
+      totalCount.value = 0;
+      console.error(err);
+    }
+  };
+
+  // 검색조건 초기화
+  const resetParam = () => {
+    param.id = '';
+    param.name = '';
+    param.major = '';
+    param.college = '';
+    param.gender = '';
+    param.regDay = [];
+  };
+
+  return {
+    param,
+    rows,
+    totalCount,
+    getExamineeList,
+    resetParam,
+  };
+}
+
+/**
  * 응시자정보 등록
  * @param {object} form
  * @returns boolean
@@ -125,83 +203,7 @@ export async function $fetchedExamineeInfo(examineeCode) {
     error: error ? getErrorMessage[error.code] : null,
   };
 }
-/**
- * 응시자 목록 조회
- * @param {object} params
- * @returns
- */
-export async function $fetchedExamineeList(params) {
-  store.setLoading(true);
-  // 페이징 개수 조회
-  //  count: 'exact' : 정확한 개수 조회
-  //  head: true     : 데이터를 같이 조회 하지 않고 개수만 조회
-  const countQuery = supabase.from('tb_examinee_info').select('*', { count: 'exact', head: true });
 
-  const { count } = await fetchedListWhere(countQuery, params);
-
-  // 목록 조회용
-  const dataQuery = supabase
-    .from('tb_examinee_info')
-    .select(
-      `
-      examinee_code,
-      examinee_id,
-      examinee_gender,
-      examinee_name,
-      examinee_major,
-      examinee_college,
-      examinee_phone,
-      examinee_img,
-      use_flag,
-      rgst_dt,
-      updt_dt
-  `,
-    )
-    .order('examinee_code', { ascending: false }); // 내림차순 정렬
-
-  // 받아올 데이터의 개수 계산
-  const { offset, limit } = $getPagingOffset(params.current);
-
-  const { data, error } = await fetchedListWhere(dataQuery, params).range(offset, limit);
-
-  store.setLoading(false);
-
-  return {
-    data: data ? snakeToCamelByObj(data) : null,
-    error: error ? getErrorMessage[error.code] : null,
-    max: $getPagingCount(count),
-    count,
-  };
-}
-/**
- * $fetchedExamineeList의 where 조건 추가
- * @param {supabase} query
- * @param {object} params
- * @returns
- */
-function fetchedListWhere(query, params) {
-  // 사용여부
-  query.eq('use_flag', 'Y');
-  // 응시번호
-  if (params.id) query = query.ilike('examinee_id', `%${params.id.trim()}%`);
-  // 성별
-  if (params.gender) query = query.eq('examinee_gender', params.gender);
-  // 이름
-  if (params.name) query = query.ilike('examinee_name', `%${params.name.trim()}%`);
-  // 대학
-  if (params.college) query = query.ilike('examinee_college', `%${params.college.trim()}%`);
-  // 학과
-  if (params.major) query = query.ilike('examinee_major', `%${params.major.trim()}%`);
-  // 등록일
-  if (params.regDate.length) {
-    query = query.gte('rgst_dt', $getTimeFormat(params.regDate[0]));
-
-    if (params.regDate[1])
-      query = query.lte('rgst_dt', $getTimeFormat(params.regDate[1]) + ' 23:59:59');
-  }
-
-  return query;
-}
 /**
  * 응시자정보 사용여부 변경
  * @param {array | string} value

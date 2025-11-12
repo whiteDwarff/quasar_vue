@@ -145,8 +145,6 @@
 </template>
 
 <script setup>
-import { $showAlert } from 'src/utils/globals';
-
 const currentRow = ref(null);
 // 컴포저블 호출
 const { param, rows, totalCount, getExamList, resetParam } = useExamList();

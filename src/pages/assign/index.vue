@@ -94,7 +94,7 @@
             <div class="flex items-center">
               <span class="label">등록일</span>
               <div class="content">
-                <DatePicker v-model="param.regDate" :range="true" />
+                <DatePicker v-model="param.regDay" :range="true" />
               </div>
             </div>
           </div>
@@ -179,7 +179,7 @@
             <q-td>{{ props.row.examineeCollege }}</q-td>
             <q-td>{{ props.row.examineeMajor }}</q-td>
             <q-td>{{ props.row.examineePhone }}</q-td>
-            <q-td>{{ getTimeFormat(props.row.updtDt) }}</q-td>
+            <q-td>{{ props.row.updtDt }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
@@ -214,44 +214,14 @@
 </template>
 
 <script setup>
-const resetParam = () => {
-  return {
-    id: '',
-    name: '',
-    major: '',
-    college: '',
-    gender: '',
-    current: 1,
-    min: 1,
-    max: 1,
-    regDate: [],
-    // companySeq: '',
-  };
-};
-const param = ref({ ...resetParam() });
-const rows = ref([]); // table row
-const totalCount = ref(0);
+// 컴포저블
+const { param, rows, totalCount, getExamineeList, resetParam } = useExamineeList();
+getExamineeList(1);
 
 const selected = ref([]);
 const currentRow = ref(null);
-
 const visible = ref(false);
 
-// 목록 조회
-const getExamineeList = async (current = null) => {
-  currentRow.value = null;
-  const { data, error, max, count } = await $fetchedExamineeList({
-    ...param.value,
-    current,
-  });
-
-  if (!error) {
-    rows.value = data;
-    param.value.max = max;
-    totalCount.value = count;
-  } else $showAlert('데이터 조회에 실패하였습니다.');
-};
-getExamineeList(1);
 // 응시자 삭제
 const updateExamineeUsyn = async (examineeCode) => {
   if (!examineeCode) {
@@ -268,6 +238,4 @@ const updateExamineeUsyn = async (examineeCode) => {
     } else $showAlert(error);
   }
 };
-// 등록일 날짜 포맷 반환
-const getTimeFormat = (str) => $getTimeFormat(str, true);
 </script>
