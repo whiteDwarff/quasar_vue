@@ -103,7 +103,7 @@
         <div class="col-12 flex q-pr-md">
           <q-space />
           <CustomButton
-            @click="param = resetParam()"
+            @click="resetParam()"
             label="초기화"
             :outline="true"
             class="q-mr-md w-100"
@@ -167,14 +167,14 @@
 
         <template #body="props">
           <q-tr
-            @click="currentRow = props.rowIndex"
+            @click="currentRow = props.row.examineeId"
             :props
-            :class="{ current: currentRow == props.rowIndex }"
+            :class="{ current: currentRow == props.row.examineeId }"
             class="cursor-pointer"
           >
             <q-td> <q-checkbox v-model="props.selected" /></q-td>
             <q-td>{{ props.row.examineeId }}</q-td>
-            <q-td>{{ props.row.examineeGender == '1' ? '남자' : '여자' }}</q-td>
+            <q-td>{{ props.row.examineeGender }}</q-td>
             <q-td>{{ props.row.examineeName }}</q-td>
             <q-td>{{ props.row.examineeCollege }}</q-td>
             <q-td>{{ props.row.examineeMajor }}</q-td>
@@ -226,16 +226,19 @@ const visible = ref(false);
 const updateExamineeUsyn = async (examineeCode) => {
   if (!examineeCode) {
     if (!selected.value.length) return $showAlert('삭제할 응시자를 선택해주세요.');
-    else examineeCode = selected.value;
-  }
+    else examineeCode = selected.value.map((m) => m.examineeCode);
+  } else examineeCode = [examineeCode];
 
-  if (await $showConfirm('삭제하시겠습니까?')) {
-    const { error } = await $updateExamineeUsyn(examineeCode);
+  if (!(await $showConfirm('삭제하시겠습니까?'))) return;
 
-    if (!error) {
-      await getExamineeList(1);
-      $showAlert('삭제되었습니다.');
-    } else $showAlert(error);
-  }
+  const { status, message } = await updateExamineeUseFlag(examineeCode);
+
+  if (!status) return $showAlert(message);
+
+  $showAlert('삭제 성공하였습니다.');
+  // 응시자 목록 조회
+  getExamineeList(param.value.current);
+  // 삭제할 응시자 초기화
+  selected.value = [];
 };
 </script>

@@ -221,11 +221,11 @@ const cancle = async () => {
 const updateExamInfoUsyn = async () => {
   if (!(await $showConfirm('삭제하시겠습니까?'))) return;
 
-  const result = await updateExamInfoUseFlag(form.value.examCode);
+  const { status, message } = await updateExamInfoUseFlag(form.value.examCode);
 
-  if (result) {
-    await router.push('/examInfo');
-    $showAlert('삭제되었습니다.');
-  } else $showAlert('삭제 실패하였습니다.');
+  if (!status) return $showAlert(message);
+  // list로 이동
+  await router.push('/examInfo');
+  $showAlert('삭제 성공하였습니다.');
 };
 </script>

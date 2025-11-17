@@ -112,7 +112,7 @@
             <q-td>{{ props.rowIndex + 1 }}</q-td>
             <q-td>{{ props.row.examName }}</q-td>
             <q-td>-</q-td>
-            <q-td>{{ getTimeFormat(props.row.rgstDt) }}</q-td>
+            <q-td>{{ props.row.rgstDt }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
@@ -155,14 +155,10 @@ getExamList(1);
 const updateExamInfoUsyn = async (examCode) => {
   if (!(await $showConfirm('삭제하시겠습니까?'))) return;
 
-  const result = await updateExamInfoUseFlag(examCode);
+  const { status, message } = await updateExamInfoUseFlag(examCode);
 
-  if (result) {
-    $showAlert('삭제되었습니다.');
-    getExamList(1);
-  } else $showAlert('삭제 실패하였습니다.');
+  if (!status) return $showAlert(message);
+  $showAlert('삭제 성공하였습니다.');
+  getExamList(param.value.current);
 };
-
-// 등록일 날짜 포맷 반환
-const getTimeFormat = (str) => $getTimeFormat(str);
 </script>

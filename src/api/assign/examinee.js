@@ -61,12 +61,12 @@ export function useExamineeList() {
 
   // 검색조건 초기화
   const resetParam = () => {
-    param.id = '';
-    param.name = '';
-    param.major = '';
-    param.college = '';
-    param.gender = '';
-    param.regDay = [];
+    param.value.id = '';
+    param.value.name = '';
+    param.value.major = '';
+    param.value.college = '';
+    param.value.gender = '';
+    param.value.regDay = [];
   };
 
   return {
@@ -76,6 +76,17 @@ export function useExamineeList() {
     getExamineeList,
     resetParam,
   };
+}
+/**
+ * 응시자정보 사용여부 변경
+ * @param {array} value - 응시자pk
+ * @returns {object}    - status, message
+ */
+export function updateExamineeUseFlag(examineeCode) {
+  const res = axiosLoading.patch('/assign/examinee/updateUseFlag', {
+    examineeCode,
+  });
+  return handleApiCall(res);
 }
 
 /**
@@ -200,33 +211,6 @@ export async function $fetchedExamineeInfo(examineeCode) {
 
   return {
     data: data ? snakeToCamelByObj(data) : null,
-    error: error ? getErrorMessage[error.code] : null,
-  };
-}
-
-/**
- * 응시자정보 사용여부 변경
- * @param {array | string} value
- * @returns object
- */
-export async function $updateExamineeUsyn(value) {
-  store.setLoading(true);
-
-  let query = supabase.from('tb_examinee_info').update({
-    use_flag: 'N',
-    updt_dt: $getNowString(),
-  });
-
-  if (Array.isArray(value)) {
-    value = value.map((item) => item.examineeCode);
-    query = query.in('examinee_code', value);
-  } else query = query.eq('examinee_code', value);
-
-  const { error } = await query;
-
-  store.setLoading(false);
-
-  return {
     error: error ? getErrorMessage[error.code] : null,
   };
 }

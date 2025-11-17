@@ -72,14 +72,9 @@ export function useExamList() {
  * @param {number} examCode - 시험정보pk
  * @returns boolean - 성공여부
  */
-export async function updateExamInfoUseFlag(examCode) {
-  try {
-    const res = await axiosLoading.patch(`/examInfo/updateUseFlag/${examCode}`);
-    return res.data.status == 200;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
+export function updateExamInfoUseFlag(examCode) {
+  const res = axiosLoading.patch(`/examInfo/updateUseFlag/${examCode}`);
+  return handleApiCall(res);
 }
 /**
  * 시험정보 객체 반환 및 상세 조회
