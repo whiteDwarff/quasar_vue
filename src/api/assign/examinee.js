@@ -88,6 +88,39 @@ export function updateExamineeUseFlag(examineeCode) {
   });
   return handleApiCall(res);
 }
+/**
+ * 응시자정보 조회
+ * @param {number} examineeCode - 응시자pk
+ * @returns {object}
+ */
+export function useExamineeInfo() {
+  const form = ref({
+    examineeCode: null,
+    examineeId: '',
+    examineePass: '',
+    examineeName: '',
+    examineeNameEn: '',
+    examineeBirth: '',
+    examineeGender: '1',
+    examineePhone: '',
+    examineeEmail: '',
+    examineeCollege: '',
+    examineeMajor: '',
+    examineeImg: '',
+  });
+
+  // 응시자 정보 조회
+  const getExamineeInfo = async (examineeCode) => {
+    // examineeCode 없거나 자료형이 number가 아님
+    if (!examineeCode || !$validNumber(examineeCode)) return false;
+    return;
+  };
+
+  return {
+    form,
+    getExamineeInfo,
+  };
+}
 
 /**
  * 응시자정보 등록

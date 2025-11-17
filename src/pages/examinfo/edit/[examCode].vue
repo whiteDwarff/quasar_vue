@@ -15,9 +15,3 @@ getExamInfo(route?.params?.examCode).then(async (status) => {
   }
 });
 </script>
-
-<route lang="yaml">
-meta:
-  params:
-    examCode: number
-</route>

@@ -10,7 +10,9 @@
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
-      <q-card-section class="q-py-md"> {{ alert.contents }}</q-card-section>
+      <q-card-section class="q-py-md">
+        <p v-html="alert.contents" />
+      </q-card-section>
 
       <q-card-section class="flex justify-end q-py-sm" style="border-top: 1px solid var(--border)">
         <CustomButton @click="alert.visible = false" label="확인" />

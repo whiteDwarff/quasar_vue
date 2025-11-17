@@ -264,8 +264,6 @@ const submit = async () => {
   else if (!$validOnlyEN(form.value.examineeNameEn))
     return $showAlert('이름(영문)은 영어로 입력해주세요.');
 
-  // if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
-
   if (!form.value.examineeBirth) return $showAlert('생년월일을 입력해주세요.');
   else if (!$validDate(form.value.examineeBirth))
     return $showAlert('정확한 생년월일을 입력해주세요.');
