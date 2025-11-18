@@ -1,5 +1,4 @@
 <template>
-  {{ form }}
   <ExamineeForm v-model="form" />
 </template>
 

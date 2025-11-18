@@ -121,83 +121,23 @@ export function useExamineeInfo() {
     getExamineeInfo,
   };
 }
-
 /**
- * 응시자정보 등록
- * @param {object} form
- * @returns boolean
+ * 응시자 등록 및 수정
+ * @param {object} form - 응시자 정보
+ * @returns {Promise<Object>}
  */
-export async function $saveExamineeInfo(form, file) {
-  store.setLoading(true);
+export function examineeEdit(form, file) {
+  const fd = new FormData();
+  fd.append('data', JSON.stringify(form));
+  // 파일이 있다면 추가
+  if (file) fd.append('profile', file);
 
-  // 등록일 경우 응시번호 중복검사
-  if (!form?.examineeCode) {
-    const { count } = await supabase
-      .from('tb_examinee_info')
-      .select('*', { count: 'exact', head: true })
-      .eq('examinee_id', form.examineeId);
-
-    if (count) {
-      return {
-        status: false,
-        error: '등록된 응시번호가 존재합니다.',
-      };
-    }
-  } else {
-    // 등록된 이미지가 있을 때
-    if (form?.examineeImgOri) {
-      // 파일이 변경되지 않은 경우 원본 파일명 재할당
-      if (!file && form.examineeImg) form.examineeImg = form.examineeImgOri;
-    }
-  }
-
-  let status = true; // 반환할 상태 값
-
-  // 파일이 있는 경우 supabase storage에 저장
-  if (file) {
-    const { path, error: imgError } = await addProfleImgByBucket(file, form.examineeId);
-
-    if (!imgError && path) form.examineeImg = path;
-    else {
-      return {
-        status: false,
-        error: '이미지 업로드 실패하였습니다.',
-      };
-    }
-  }
-
-  let query = supabase.from('tb_examinee_info');
-
-  // 수정
-  if (form?.examineeCode) {
-    delete form.examineeImgOri;
-    delete form.rgstDt;
-
-    query = query
-      .update(
-        camelToSnakeByObj({
-          ...form,
-          updt_dt: $getNowString(),
-        }),
-      )
-      .eq('examinee_code', form.examineeCode)
-      .select('examinee_code')
-      .maybeSingle();
-    // 등록
-  } else {
-    query = query.insert(camelToSnakeByObj(form)).select('examinee_code').single();
-  }
-
-  const { data, error } = await query;
-
-  status = !error && data?.examinee_code;
-
-  store.setLoading(false);
-
-  return {
-    status,
-    error: !status ? '저장 실패하였습니다.' : '',
-  };
+  const res = axiosLoading.post('/assign/examinee/edit', fd, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return handleApiCall(res);
 }
 /**
  * 응시자 정보 조회

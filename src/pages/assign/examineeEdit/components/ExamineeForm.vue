@@ -219,6 +219,8 @@
 </template>
 
 <script setup>
+import { $showAlert } from 'src/utils/globals';
+
 const router = useRouter();
 
 const form = defineModel();
@@ -274,14 +276,13 @@ const submit = async () => {
     return $showAlert('전화번호 형식이 아닙니다.');
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { status, error } = await $saveExamineeInfo(form.value, file.value);
-
-    useSystemStore().setLoading(false);
+    const { status, message } = await examineeEdit(form.value, file.value);
 
     if (status) {
       await router.push('/assign');
-      $showAlert('저장되었습니다.');
-    } else $showAlert(error);
+      return $showAlert('저장 성공하였습니다.');
+    }
+    $showAlert(message);
   }
 };
 // 취소 후 목록으로 이동

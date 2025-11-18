@@ -46,7 +46,6 @@ async function handleApiCall(apiCall) {
   } catch (err) {
     const { response } = err;
     console.log(response);
-
     const message = response?.data?.message || '알 수 없는 오류가 발생했습니다.';
 
     return {
