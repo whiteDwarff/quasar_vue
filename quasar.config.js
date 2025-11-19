@@ -159,6 +159,9 @@ export default defineConfig((/* ctx */) => {
         loading: {
           delay: 200,
         },
+        loadingBar: {
+          color: 'primary',
+        },
       },
 
       // iconSet: 'material-icons', // Quasar icon set
