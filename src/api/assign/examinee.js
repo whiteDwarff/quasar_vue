@@ -1,3 +1,5 @@
+import { axiosLoading } from '../axios';
+
 const store = useSystemStore();
 
 /**
@@ -113,6 +115,17 @@ export function useExamineeInfo() {
   const getExamineeInfo = async (examineeCode) => {
     // examineeCode 없거나 자료형이 number가 아님
     if (!examineeCode || !$validNumber(examineeCode)) return false;
+    try {
+      const res = await axiosLoading.get(`/assign/examinee/${examineeCode}`);
+      if (res.data.status == 200) {
+        form.value = res.data.result;
+        return true;
+      }
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+
     return;
   };
 

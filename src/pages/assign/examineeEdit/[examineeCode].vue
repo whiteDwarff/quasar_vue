@@ -6,31 +6,14 @@
 const router = useRouter();
 const route = useRoute();
 
-const form = ref({
-  examineeId: '',
-  examineePass: '',
-  examineeName: '',
-  examineeNameEn: '',
-  examineeBirth: '',
-  examineeGender: '1',
-  examineePhone: '',
-  examineeEmail: '',
-  examineeCollege: '',
-  examineeMajor: '',
-  examineeImg: '',
-  //companySeq: '',
-});
+const { form, getExamineeInfo } = useExamineeInfo();
 
-const getExamineeInfo = async () => {
-  const { data, error } = await $fetchedExamineeInfo(route?.params?.examineeCode);
-
-  if (!error) form.value = data;
-  else {
-    await router.push('/assign/examinee');
-    $showAlert(error);
+getExamineeInfo(route?.params?.examineeCode).then(async (status) => {
+  if (!status) {
+    await router.push('/assign');
+    $showAlert('잘못된 접근입니다.');
   }
-};
-getExamineeInfo();
+});
 </script>
 
 <route lang="yaml">
