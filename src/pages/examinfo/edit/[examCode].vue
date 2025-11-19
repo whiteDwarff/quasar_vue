@@ -3,6 +3,10 @@
 </template>
 
 <script setup>
+definePage({
+  path: '/examInfo/edit/:examCode(\\d+)',
+});
+
 const route = useRoute();
 const router = useRouter();
 

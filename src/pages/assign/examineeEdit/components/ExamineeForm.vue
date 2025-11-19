@@ -219,8 +219,6 @@
 </template>
 
 <script setup>
-import { $showAlert } from 'src/utils/globals';
-
 const router = useRouter();
 
 const form = defineModel();
@@ -228,6 +226,19 @@ const form = defineModel();
 const file = ref(null);
 const visible = ref(false);
 const examineePassConfirm = ref('');
+
+// 수정 시 본인확인정보 확인 바인딩용
+const stopWatcher = watch(
+  form,
+  (n) => {
+    if (n.examineePass && form.value.examineeCode) {
+      examineePassConfirm.value = n.examineePass;
+      // 첫 실행 후 감시 중지
+      stopWatcher();
+    }
+  },
+  { deep: true },
+);
 
 const imageInput = useTemplateRef('imageInput');
 
