@@ -144,10 +144,10 @@
         v-model:selected="selected"
         :rows="rows"
         :rows-per-page-options="[0]"
+        selection="multiple"
+        row-key="examineeCode"
         flat
         bordered
-        selection="multiple"
-        row-key="examineeId"
         hide-pagination
         hide-selected-banner
       >
@@ -167,9 +167,10 @@
 
         <template #body="props">
           <q-tr
-            @click="currentRow = props.row.examineeId"
+            @click="currentRow = props.row.examineeCode"
             :props
-            :class="{ current: currentRow == props.row.examineeId }"
+            no-hover
+            :class="{ current: currentRow == props.row.examineeCode }"
             class="cursor-pointer"
           >
             <q-td> <q-checkbox v-model="props.selected" /></q-td>
@@ -184,14 +185,14 @@
               <div class="row q-col-gutter-sm">
                 <RowEditButton
                   @click.stop="updateExamineeUsyn(props.row.examineeCode)"
-                  :on="currentRow == props.rowIndex"
+                  :on="currentRow == props.row.examineeCode"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
                   @click="$router.push(`/assign/examineeEdit/${props.row.examineeCode}`)"
-                  :on="currentRow == props.rowIndex"
+                  :on="currentRow == props.row.examineeCode"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -206,7 +207,11 @@
         </template>
       </q-table>
       <!-- paging -->
-      <PaginationTemp @update:modelValue="getExamineeList($event - 1)" v-model:page="param" />
+      <BasePagination
+        @update:modelValue="getExamineeList($event)"
+        v-model:page="param.current"
+        v-model:count="totalCount"
+      />
     </q-card>
     <!-- dialog -->
     <FileUploadDialog v-model="visible" url="test" />

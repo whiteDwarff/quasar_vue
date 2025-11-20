@@ -11,8 +11,6 @@ export function useExamList() {
     regStDt: null,
     regEnDt: null,
     current: 1,
-    min: 1,
-    max: 1,
   });
   const rows = ref([]);
   const totalCount = ref(0);
@@ -28,7 +26,7 @@ export function useExamList() {
         }
       }
 
-      const { offset, limit } = $getPagingOffset(param.value.current);
+      const { offset, limit } = $getPagingOffset(page);
 
       const res = await axiosLoading.get('/examInfo', {
         params: {

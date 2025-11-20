@@ -16,8 +16,6 @@ export function useExamineeList() {
     gender: '',
     regDay: [],
     current: 1,
-    min: 1,
-    max: 1,
   });
 
   const rows = ref([]);
@@ -37,7 +35,7 @@ export function useExamineeList() {
         }
       }
 
-      const { offset, limit } = $getPagingOffset(param.value.current);
+      const { offset, limit } = $getPagingOffset(page);
 
       const res = await axiosLoading.get('/assign/examinee', {
         params: {
@@ -52,7 +50,6 @@ export function useExamineeList() {
       if (res.data.status == 200) {
         rows.value = res.data.result.list;
         totalCount.value = res.data.result.count;
-        param.value.max = $getPagingCount(totalCount.value);
       }
     } catch (err) {
       rows.value = [];

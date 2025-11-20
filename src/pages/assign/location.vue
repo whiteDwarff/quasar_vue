@@ -79,13 +79,13 @@
       <q-table
         v-model:selected="selected"
         :rows="rows"
+        :rows-per-page-options="[0]"
         selection="multiple"
         row-key="examroomCode"
         flat
         bordered
         hide-pagination
         hide-selected-banner
-        :rows-per-page-options="[0]"
       >
         <template #header="props">
           <q-tr :props="props">
@@ -111,13 +111,6 @@
           >
             <q-td>
               <q-checkbox v-model="props.selected" />
-
-              <!-- <q-checkbox
-                v-if="!props.row.usedCount"
-                @update:modelValue="changeCheckedVal"
-                v-model="selected"
-                :val="props.row"
-              /> -->
             </q-td>
             <q-td>{{ props.row.no }}</q-td>
             <q-td>{{ props.row.examroomName }}</q-td>
@@ -149,7 +142,7 @@
         </template>
       </q-table>
 
-      <PaginationTemp v-model:page="param" />
+      <BasePagination v-model:page="param.current" v-model:count="totalCount" />
     </q-card>
   </q-page>
 </template>

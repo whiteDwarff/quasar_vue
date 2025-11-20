@@ -137,7 +137,7 @@
         </template>
       </q-table>
 
-      <PaginationTemp v-model:page="param" />
+      <BasePagination v-model:page="param" />
     </q-card>
   </q-page>
 </template>

@@ -106,6 +106,7 @@
           <q-tr
             @click="currentRow = props.row.examCode"
             :props
+            no-hover
             :class="{ current: currentRow == props.row.examCode }"
             class="cursor-pointer"
           >
@@ -117,14 +118,14 @@
               <div class="row q-col-gutter-sm">
                 <RowEditButton
                   @click="updateExamInfoUsyn(props.row.examCode)"
-                  :on="currentRow == props.rowIndex"
+                  :on="currentRow == props.row.examCode"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
                   @click="$router.push(`/examInfo/edit/${props.row.examCode}`)"
-                  :on="currentRow == props.rowIndex"
+                  :on="currentRow == props.row.examCode"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -139,7 +140,11 @@
         </template>
       </q-table>
 
-      <PaginationTemp @update:modelValue="getExamList($event - 1)" v-model:page="param" />
+      <BasePagination
+        @update:modelValue="getExamList($event)"
+        v-model:page="param.current"
+        v-model:count="totalCount"
+      />
     </q-card>
   </q-page>
 </template>

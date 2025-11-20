@@ -39,7 +39,7 @@ export default defineConfig((/* ctx */) => {
         node: 'node20',
       },
       env: {
-        PAGE_LIMIT: 20,
+        PAGE_SIZE: 10,
         SUPABASE_URL: 'https://gnkjzbqpyweuerrxdnbm.supabase.co',
         SUPABASE_KEY:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdua2p6YnFweXdldWVycnhkbmJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMjAzMzksImV4cCI6MjA2ODg5NjMzOX0.YqnJKdpIwfZbD97lUF4WgGilUVTuDURE7OxgwusUOGk',
@@ -146,6 +146,10 @@ export default defineConfig((/* ctx */) => {
           target: 'http://localhost:3000',
           changeOrigin: true, // 크로스 플랫폼 허용
           pathRewrite: { '^/api': '' },
+        },
+        '/uploads': {
+          target: 'http://localhost:3000', // 서버 주소
+          changeOrigin: true,
         },
       },
     },

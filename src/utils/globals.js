@@ -64,8 +64,9 @@ export function $getPagingCount(totalCount) {
  * @returns {object}
  */
 export function $getPagingOffset(current) {
-  const offset = (current - 1) * process.env.PAGE_LIMIT;
-  const limit = offset + process.env.PAGE_LIMIT;
+  const listSize = process.env.PAGE_SIZE;
+  const offset = (current - 1) * listSize;
+  const limit = offset + listSize;
 
   return {
     offset,

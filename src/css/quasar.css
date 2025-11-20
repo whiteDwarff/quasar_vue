@@ -56,10 +56,13 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   font-weight: 400 !important;
 }
 .q-pagination__content button i.q-icon {
-  font-size: 17px;
+  font-size: 14px;
   padding: 7px;
   color: var(--q-primary);
   opacity: 0.7;
+}
+.q-pagination__content span.block {
+  font-size: 14px;
 }
 /* select placeholder */
 .q-field--dense .q-field__label {
