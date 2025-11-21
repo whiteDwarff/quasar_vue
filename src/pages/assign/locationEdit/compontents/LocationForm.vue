@@ -337,7 +337,7 @@
         <div class="flex">
           <CustomButton
             v-if="form?.examroomCode"
-            @click="locationDelete"
+            @click="updateLocationUsyn"
             label="삭제"
             color="warning"
             outline
@@ -459,13 +459,13 @@ const submit = async () => {
   }
 };
 // 장소삭제
-const locationDelete = async () => {
+const updateLocationUsyn = async () => {
   if (await $showConfirm('삭제하시겠습니까?')) {
-    const { error } = await $updateLocationUsyn(form.value.examroomCode);
-    if (!error) {
+    const { status, message } = await updateLocationUseFlag(form.value.examroomCode);
+    if (!status) {
       await router.push('/assign/location');
       $showAlert('삭제되었습니다.');
-    }
+    } else $showAlert(message);
   }
 };
 </script>

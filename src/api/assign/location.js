@@ -4,6 +4,68 @@ import { toRaw } from 'vue';
 const store = useSystemStore();
 
 /**
+ * 장소 목록조회
+ * @param {object} param
+ * @returns object
+ */
+export function useLocationList() {
+  const param = ref({
+    roomName: '',
+    location: '',
+    current: 1,
+  });
+
+  const rows = ref([]);
+  const totalCount = ref(0);
+
+  // 시험장 목록 요청
+  const getLocationList = async (page = 1) => {
+    try {
+      param.value.current = page;
+
+      const res = await axiosLoading.get('/assign/location', {
+        params: {
+          ...param.value,
+          ...$getPagingOffset(page),
+        },
+      });
+
+      if (res.data.status == 200) {
+        rows.value = res.data.result.list;
+        totalCount.value = res.data.result.count;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 검색조건 초기화
+  const resetParam = () => {
+    param.value.roomName = '';
+    param.value.location = '';
+  };
+
+  return {
+    param,
+    rows,
+    totalCount,
+    getLocationList,
+    resetParam,
+  };
+}
+/**
+ * 시험장 사용여부 변경
+ * @param {array} value
+ * @returns object
+ */
+export function updateLocationUseFlag(examroomCode) {
+  const res = axiosLoading.patch('/assign/location/updateUseFlag', {
+    examroomCode,
+  });
+  return handleApiCall(res);
+}
+
+/**
  * 장소 등록 및 수정
  * @param {object} form
  * @returns object
@@ -156,85 +218,4 @@ export async function $fetchedLocationInfo(examRoomCode) {
   } finally {
     store.setLoading(false);
   }
-}
-/**
- * 장소 목록조회
- * @param {object} param
- * @returns object
- */
-export async function $fetchedLocationList(param) {
-  try {
-    store.setLoading(true);
-
-    let countQuery = supabase.from('tb_examroom_info').select('*', { count: 'exact', head: true });
-    const { count } = await locationListWhere(countQuery, param);
-
-    // 받아올 데이터의 개수 계산
-    const { offset, limit } = $getPagingOffset(param.current);
-
-    let dataQuery = supabase
-      .from('tb_examroom_info')
-      .select(
-        `
-          examroom_code,
-          examroom_name,
-          examroom_location,
-          examroom_addr
-        `,
-      )
-      .order('examroom_code', { ascending: false });
-    const { data, error } = await locationListWhere(dataQuery, param).range(offset, limit);
-
-    return {
-      data: snakeToCamelByObj(data),
-      error: error ? getErrorMessage[error.code] || '데이터 조회에 실패하였습니다.' : '',
-      max: $getPagingCount(count),
-      count,
-    };
-  } catch (err) {
-    console.log(err);
-  } finally {
-    store.setLoading(false);
-  }
-}
-/**
- * 장소 조회 검색조건 반환
- * @param {supabase} query
- * @param {object} param
- * @returns
- */
-function locationListWhere(query, param) {
-  query = query.eq('use_flag', 'Y');
-
-  if (param.examRoomName) query = query.like('examroom_name', `%${param.examRoomName}%`);
-  if (param.examRoomLocation)
-    query = query.like('examroom_location', `%${param.examRoomLocation}%`);
-  return query;
-}
-
-/**
- * 장소 사용여부 변경
- * @param {array | number} value
- * @returns object
- */
-export async function $updateLocationUsyn(value) {
-  store.setLoading(true);
-
-  let query = supabase.from('tb_examroom_info').update({
-    use_flag: 'N',
-    updt_dt: $getNowString(),
-  });
-
-  if (Array.isArray(value)) {
-    value = value.map((item) => item.examroomCode);
-    query = query.in('examroom_code', value);
-  } else query = query.eq('examroom_code', value);
-
-  const { error } = await query.select();
-
-  store.setLoading(false);
-
-  return {
-    error: error ? getErrorMessage[error.code] : null,
-  };
 }

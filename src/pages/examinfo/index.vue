@@ -13,16 +13,6 @@
 
       <q-card-section class="search-wrap">
         <div class="row q-col-gutter-md">
-          <!-- 
-          <div class="col-xs-12 col-sm-6 col-md-3">
-            <div class="flex items-center">
-              <span class="label">회사명</span>
-              <div class="content">
-                <SelectFilter v-model="param.companySeq" />
-              </div>
-            </div>
-          </div> 
-          -->
           <div class="col-xs-12 col-sm-6 col-md-4">
             <div class="flex items-center">
               <span class="label">시험명</span>

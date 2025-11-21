@@ -18,8 +18,8 @@
               <span class="label">시험장</span>
               <div class="content">
                 <q-input
-                  @keyup.enter="fetchedLocationList(1)"
-                  v-model="param.examRoomName"
+                  @keyup.enter="getLocationList(1)"
+                  v-model="param.roomName"
                   outlined
                   dense
                   class="bg-white"
@@ -32,8 +32,8 @@
               <span class="label">시험지역</span>
               <div class="content">
                 <q-input
-                  @keyup.enter="fetchedLocationList(1)"
-                  v-model="param.examRoomLocation"
+                  @keyup.enter="getLocationList(1)"
+                  v-model="param.location"
                   outlined
                   dense
                   class="bg-white"
@@ -45,12 +45,12 @@
             <div class="flex">
               <q-space />
               <CustomButton
-                @click="param = resetParam()"
+                @click="resetParam()"
                 label="초기화"
                 :outline="true"
                 class="q-mr-md w-100"
               />
-              <CustomButton @click="fetchedLocationList(1)" label="검색" class="w-100" />
+              <CustomButton @click="getLocationList(1)" label="검색" class="w-100" />
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
       <q-space />
       <div class="flex justify-end">
         <CustomButton
-          @click="locationDelete(null)"
+          @click="updateLocationUsyn(null)"
           label="삭제"
           color="warning"
           outline
@@ -103,10 +103,10 @@
 
         <template #body="props">
           <q-tr
-            @click="currentRow = props.rowIndex"
+            @click="currentRow = props.row.examroomCode"
             :props="props"
             no-hover
-            :class="{ current: currentRow == props.rowIndex }"
+            :class="{ current: currentRow == props.row.examroomCode }"
             class="cursor-pointer"
           >
             <q-td>
@@ -119,15 +119,15 @@
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="locationDelete(props.row)"
-                  :on="currentRow == props.rowIndex"
+                  @click="updateLocationUsyn([props.row.examroomCode])"
+                  :on="currentRow == props.row.examroomCode"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
                   @click="$router.push(`/assign/locationEdit/${props.row.examroomCode}`)"
-                  :on="currentRow == props.rowIndex"
+                  :on="currentRow == props.row.examroomCode"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -142,55 +142,38 @@
         </template>
       </q-table>
 
-      <BasePagination v-model:page="param.current" v-model:count="totalCount" />
+      <BasePagination
+        @update:modelValue="getLocationList($event)"
+        v-model:page="param.current"
+        v-model:count="totalCount"
+      />
     </q-card>
   </q-page>
 </template>
 
 <script setup>
-const resetParam = () => {
-  return {
-    examRoomLocation: '',
-    examRoomName: '',
-    current: 1,
-    min: 1,
-    max: 1,
-  };
-};
-const totalCount = ref(0);
-const param = ref({ ...resetParam() });
+const { param, rows, totalCount, getLocationList, resetParam } = useLocationList();
+
+getLocationList(1);
 
 const selected = ref([]);
 const currentRow = ref(null);
 
-const rows = ref([]);
-
-const fetchedLocationList = async (current = 0) => {
-  const { data, error, max, count } = await $fetchedLocationList({
-    ...param.value,
-    current,
-  });
-
-  if (!error) {
-    rows.value = data;
-    currentRow.value = null;
-
-    param.value.max = max;
-    totalCount.value = count;
-  } else $showAlert(error);
-};
-fetchedLocationList(1);
-// 장소삭제
-const locationDelete = async (examroomCode) => {
+// 시험장 삭제
+const updateLocationUsyn = async (examroomCode) => {
   if (!examroomCode && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
-  else examroomCode = selected.value;
+  if (!(await $showConfirm('삭제하시겠습니까?'))) return;
 
-  if (await $showConfirm('삭제하시겠습니까?')) {
-    const { error } = await $updateLocationUsyn(examroomCode);
-    if (!error) {
-      await fetchedLocationList(param.value.current);
-      $showAlert('삭제되었습니다.');
-    }
-  }
+  const { status, message } = await updateLocationUseFlag(
+    examroomCode || selected.value.map((m) => m.examroomCode),
+  );
+
+  if (!status) return $showAlert(message);
+
+  $showAlert('삭제 성공하였습니다.');
+  // 시험장 목록 조회
+  getLocationList(param.value.current);
+  // 삭제한 시험장 초기화
+  selected.value = [];
 };
 </script>
