@@ -187,11 +187,11 @@
             </div>
 
             <q-table
-              :rows="form.tbExamroomNumInfo"
+              :rows="form.roomNumInfo"
               row-key="key"
               flat
               hide-pagination
-              :class="{ 'table-height': form.tbExamroomNumInfo.length }"
+              :class="{ 'table-height': form.roomNumInfo.length }"
               style="min-height: 86px"
             >
               <template #header>
@@ -356,7 +356,7 @@ const router = useRouter();
 const form = defineModel();
 
 // 호실 정보
-const roomInfo = ref({
+const roomInfo = reactive({
   examroomNumName: '',
   examroomNumCol: '',
   examroomNumRow: '',
@@ -375,7 +375,7 @@ const validRoomInfo = (obj, i = null) => {
 
   if (!examroomNumName) return $showAlert('호실을 입력하세요.');
 
-  const target = form.value.tbExamroomNumInfo.find((item, j) => {
+  const target = form.value.roomNumInfo.find((item, j) => {
     if (i != null) {
       if (i != j && item.examroomNumNameOri == examroomNumName) return item;
     } else {
@@ -396,8 +396,9 @@ const addExamRoomNum = async (obj) => {
     const { examroomNumName, examroomNumCol, examroomNumRow } = obj;
 
     if (await $showConfirm('호실정보를 추가하시겠습니까?')) {
-      form.value.tbExamroomNumInfo.push({
+      form.value.roomNumInfo.push({
         key: crypto.randomUUID(),
+        examroomNumCode: null,
         examroomNumName,
         examroomNumCol,
         examroomNumRow,
@@ -416,28 +417,27 @@ const updateExamRoomNum = (obj, i) => {
   if (validRoomInfo(obj, i)) {
     const { examroomNumName, examroomNumCol, examroomNumRow } = obj;
 
-    for (let j in form.value.tbExamroomNumInfo)
+    for (let j in form.value.roomNumInfo)
       if (i == j) {
-        form.value.tbExamroomNumInfo[j].examroomNumNameOri = examroomNumName;
-        form.value.tbExamroomNumInfo[j].examroomNumColOri = examroomNumCol;
-        form.value.tbExamroomNumInfo[j].examroomNumRowOri = examroomNumRow;
+        form.value.roomNumInfo[j].examroomNumNameOri = examroomNumName;
+        form.value.roomNumInfo[j].examroomNumColOri = examroomNumCol;
+        form.value.roomNumInfo[j].examroomNumRowOri = examroomNumRow;
       }
   }
 };
 // 호실 삭제
 const exceptRoomInfo = (data, i) => {
-  if (form.value.tbExamroomNumInfo.length == 1)
-    return $showAlert('하나의 호실은 등록되어야합니다.');
+  if (form.value.roomNumInfo.length == 1) return $showAlert('하나의 호실은 등록되어야합니다.');
   else {
     if (data?.examroomNumCode) data.useFlag = 'N';
-    else form.value.tbExamroomNumInfo = form.value.tbExamroomNumInfo.filter((item, j) => i != j);
+    else form.value.roomNumInfo = form.value.roomNumInfo.filter((item, j) => i != j);
   }
 };
 // 호실정보 초기화
 const resetExamRoomNum = () => {
-  roomInfo.value.examroomNumName = '';
-  roomInfo.value.examroomNumCol = '';
-  roomInfo.value.examroomNumRow = '';
+  roomInfo.examroomNumName = '';
+  roomInfo.examroomNumCol = '';
+  roomInfo.examroomNumRow = '';
 };
 // 취소 후 목록으로 이동
 const cancle = async () => {
@@ -448,24 +448,25 @@ const submit = async () => {
   if (!form.value.examroomName) return $showAlert('시험장을 입력해주세요.');
   if (!form.value.examroomAddr) return $showAlert('시험장소를 입력해주세요.');
 
-  if (!form.value.tbExamroomNumInfo.length) return $showAlert('하나의 호실은 등록되어야합니다.');
+  if (!form.value.roomNumInfo.length) return $showAlert('하나의 호실은 등록되어야합니다.');
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { data, error } = await $saveLocationInfo(form.value);
-    if (!error && data) {
+    const { status, message } = await locationEdit(form.value);
+    if (status) {
       await router.push('/assign/location');
-      $showAlert('저장되었습니다.');
-    } else $showAlert(error);
+      $showAlert('저장 성공하였습니다.');
+    } else $showAlert(message);
   }
 };
 // 장소삭제
 const updateLocationUsyn = async () => {
   if (await $showConfirm('삭제하시겠습니까?')) {
-    const { status, message } = await updateLocationUseFlag(form.value.examroomCode);
-    if (!status) {
-      await router.push('/assign/location');
-      $showAlert('삭제되었습니다.');
-    } else $showAlert(message);
+    const { status, message } = await updateLocationUseFlag([form.value.examroomCode]);
+
+    if (!status) return $showAlert(message);
+
+    await router.push('/assign/location');
+    $showAlert('삭제 성공하였습니다.');
   }
 };
 </script>

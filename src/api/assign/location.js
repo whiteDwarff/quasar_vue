@@ -1,5 +1,4 @@
 import { supabase, getErrorMessage } from '../supabase';
-import { toRaw } from 'vue';
 
 const store = useSystemStore();
 
@@ -9,7 +8,7 @@ const store = useSystemStore();
  * @returns object
  */
 export function useLocationList() {
-  const param = ref({
+  const param = reactive({
     roomName: '',
     location: '',
     current: 1,
@@ -21,11 +20,11 @@ export function useLocationList() {
   // 시험장 목록 요청
   const getLocationList = async (page = 1) => {
     try {
-      param.value.current = page;
+      param.current = page;
 
       const res = await axiosLoading.get('/assign/location', {
         params: {
-          ...param.value,
+          ...param,
           ...$getPagingOffset(page),
         },
       });
@@ -41,8 +40,8 @@ export function useLocationList() {
 
   // 검색조건 초기화
   const resetParam = () => {
-    param.value.roomName = '';
-    param.value.location = '';
+    param.roomName = '';
+    param.location = '';
   };
 
   return {
@@ -65,100 +64,48 @@ export function updateLocationUseFlag(examroomCode) {
   return handleApiCall(res);
 }
 
+export function useLocationInfo() {
+  const form = ref({
+    examroomCode: null,
+    examroomName: '', // 시험장
+    examroomLocation: '', // 시험지역
+    examroomAddr: '', // 시험장소
+    examroomInfo: '', // 시험정보
+    examroomCharge: '', // 담당자
+    examroomPhone: '', // 담당자 전화번호
+    examroomChargeInfo: '', // 담당자 정보
+    roomNumInfo: [],
+  });
+
+  // 시험장 정보 조회
+  const getLocation = async (examroomCode) => {
+    // examroomCode가 없거나 자료형이 number가 아님
+    if (!examroomCode || !$validNumber(examroomCode)) return false;
+    try {
+      const res = await axiosLoading.get(`/assign/location/${examroomCode}`);
+      if (res.data.status == 200) {
+        form.value = res.data.result;
+        return true;
+      }
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  return {
+    form,
+    getLocation,
+  };
+}
 /**
  * 장소 등록 및 수정
  * @param {object} form
  * @returns object
  */
-export async function $saveLocationInfo(form) {
-  try {
-    store.setLoading(true);
-    let examRoomQuery = supabase.from('tb_examroom_info');
-
-    const {
-      examroomName, // 시험장
-      examroomLocation, // 시험지역
-      examroomAddr, // 시험장소
-      examroomInfo, // 시험정보
-      examroomCharge, // 담당자
-      examroomPhone, // 담당자 전화번호
-      examroomChargeInfo, // 담당자
-    } = form;
-
-    // 등록
-    if (!form?.examroomCode) {
-      examRoomQuery = examRoomQuery
-        .insert(
-          camelToSnakeByObj({
-            examroomName,
-            examroomLocation,
-            examroomAddr,
-            examroomInfo,
-            examroomCharge,
-            examroomPhone,
-            examroomChargeInfo,
-          }),
-        )
-        .select('examroom_code')
-        .single();
-    } else {
-      examRoomQuery = examRoomQuery
-        .update(
-          camelToSnakeByObj({
-            examroomName,
-            examroomLocation,
-            examroomAddr,
-            examroomInfo,
-            examroomCharge,
-            examroomPhone,
-            examroomChargeInfo,
-            updt_dt: $getNowString(),
-          }),
-        )
-        .eq('examroom_code', form.examroomCode)
-        .select('examroom_code')
-        .maybeSingle();
-    }
-
-    const { data, error } = await examRoomQuery;
-
-    // 성공 - 호실정보 등록
-    if (!error && data?.examroom_code) {
-      const insertArr = [];
-      const updateArr = [];
-
-      // proxy 객체를 순수 객체로 변환 후 깊은 복사 (delete 때문)
-      for (let roomNum of structuredClone(toRaw(form.tbExamroomNumInfo))) {
-        roomNum.examroomCode = data.examroom_code;
-        roomNum.examroomNumMax = roomNum.examroomNumCol * roomNum.examroomNumRow; // 정원
-        delete roomNum.key;
-        delete roomNum.examroomNumNameOri;
-        delete roomNum.examroomNumColOri;
-        delete roomNum.examroomNumRowOri;
-
-        roomNum = camelToSnakeByObj(roomNum);
-
-        roomNum?.examroom_num_code ? updateArr.push(roomNum) : insertArr.push(roomNum);
-      }
-
-      if (insertArr.length)
-        await supabase.from('tb_examroom_num_info').insert(insertArr).select('examroom_num_code');
-      if (updateArr.length)
-        await supabase
-          .from('tb_examroom_num_info')
-          .upsert(updateArr, { onConflict: 'examroom_num_code' })
-          .select('examroom_num_code');
-    }
-
-    return {
-      data,
-      error: error ? getErrorMessage[error.code] || '저장 실패하였습니다' : '',
-    };
-  } catch (err) {
-    console.log(err);
-  } finally {
-    store.setLoading(false);
-  }
+export function locationEdit(form) {
+  const res = axiosLoading.post('/assign/location/edit', form);
+  return handleApiCall(res);
 }
 /**
  * 장소 상세 조회

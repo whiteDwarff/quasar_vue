@@ -4,7 +4,7 @@
  */
 export function useExamList() {
   // 변수
-  const param = ref({
+  const param = reactive({
     examName: '',
     regId: '',
     regDay: [],
@@ -18,11 +18,11 @@ export function useExamList() {
   // 시험정보 요청
   const getExamList = async (page = 1) => {
     try {
-      param.value.current = page;
-      if (param.value.regDay.length) {
-        param.value.regStDt = $getStartTimeFormat(param.value.regDay[0]);
-        if (param.value.regDay.length == 2 && param.value.regDay[1]) {
-          param.value.regEnDt = $getEndTimeFormat(param.value.regDay[1]);
+      param.current = page;
+      if (param.regDay.length) {
+        param.regStDt = $getStartTimeFormat(param.regDay[0]);
+        if (param.regDay.length == 2 && param.regDay[1]) {
+          param.regEnDt = $getEndTimeFormat(param.regDay[1]);
         }
       }
 
@@ -30,7 +30,7 @@ export function useExamList() {
 
       const res = await axiosLoading.get('/examInfo', {
         params: {
-          ...param.value,
+          ...param,
           offset,
           limit,
         },
@@ -39,7 +39,6 @@ export function useExamList() {
       if (res.data.status == 200) {
         rows.value = res.data.result.list;
         totalCount.value = res.data.result.count;
-        param.value.max = $getPagingCount(totalCount.value);
       }
     } catch (err) {
       rows.value = [];
@@ -50,11 +49,11 @@ export function useExamList() {
 
   // 검색조건 초기화
   const resetParam = () => {
-    param.value.examName = '';
-    param.value.regId = '';
-    param.value.regDay = [];
-    param.value.regStDt = null;
-    param.value.regEnDt = null;
+    param.examName = '';
+    param.regId = '';
+    param.regDay = [];
+    param.regStDt = null;
+    param.regEnDt = null;
   };
 
   return {

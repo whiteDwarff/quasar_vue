@@ -59,7 +59,7 @@
 
     <div class="row items-baseline edit-btn-wrap">
       <p class="q-mt-auto">
-        총 <span class="list-count">{{ rows.length }}</span
+        총 <span class="list-count">{{ totalCount }}</span
         >개
       </p>
       <q-space />
@@ -93,7 +93,7 @@
               <!-- <q-checkbox @update:model-value="toggleSelected" v-model="isAll" /> -->
               <q-checkbox v-model="props.selected" />
             </q-th>
-            <q-th style="width: 5%">번호</q-th>
+            <q-th style="width: 5%">No</q-th>
             <q-th style="width: 20%">시험장</q-th>
             <q-th style="width: 20%">시험지역</q-th>
             <q-th style="width: 30%">시험장소</q-th>
@@ -112,21 +112,21 @@
             <q-td>
               <q-checkbox v-model="props.selected" />
             </q-td>
-            <q-td>{{ props.row.no }}</q-td>
+            <q-td>{{ props.row.rowNum }}</q-td>
             <q-td>{{ props.row.examroomName }}</q-td>
             <q-td>{{ props.row.examroomLocation }}</q-td>
             <q-td>{{ props.row.examroomAddr }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="updateLocationUsyn([props.row.examroomCode])"
+                  @click.stop="updateLocationUsyn([props.row.examroomCode])"
                   :on="currentRow == props.row.examroomCode"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
-                  @click="$router.push(`/assign/locationEdit/${props.row.examroomCode}`)"
+                  @click.stop="$router.push(`/assign/locationEdit/${props.row.examroomCode}`)"
                   :on="currentRow == props.row.examroomCode"
                   label="수정"
                   icon="edit"
@@ -172,7 +172,7 @@ const updateLocationUsyn = async (examroomCode) => {
 
   $showAlert('삭제 성공하였습니다.');
   // 시험장 목록 조회
-  getLocationList(param.value.current);
+  getLocationList(param.current);
   // 삭제한 시험장 초기화
   selected.value = [];
 };

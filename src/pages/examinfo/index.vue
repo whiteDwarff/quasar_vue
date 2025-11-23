@@ -84,7 +84,7 @@
       >
         <template #header>
           <q-tr>
-            <q-th style="width: 5%">번호</q-th>
+            <q-th style="width: 5%">No</q-th>
             <!-- <q-th style="width: 20%">회사명</q-th> -->
             <q-th style="width: 40%">시험명</q-th>
             <q-th style="width: 15%">등록자</q-th>
@@ -100,21 +100,21 @@
             :class="{ current: currentRow == props.row.examCode }"
             class="cursor-pointer"
           >
-            <q-td>{{ props.rowIndex + 1 }}</q-td>
+            <q-td>{{ props.row.rowNum }}</q-td>
             <q-td>{{ props.row.examName }}</q-td>
             <q-td>-</q-td>
             <q-td>{{ props.row.rgstDt }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="updateExamInfoUsyn(props.row.examCode)"
+                  @click.stop="updateExamInfoUsyn(props.row.examCode)"
                   :on="currentRow == props.row.examCode"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
-                  @click="$router.push(`/examInfo/edit/${props.row.examCode}`)"
+                  @click.stop="$router.push(`/examInfo/edit/${props.row.examCode}`)"
                   :on="currentRow == props.row.examCode"
                   label="수정"
                   icon="edit"
@@ -154,6 +154,6 @@ const updateExamInfoUsyn = async (examCode) => {
 
   if (!status) return $showAlert(message);
   $showAlert('삭제 성공하였습니다.');
-  getExamList(param.value.current);
+  getExamList(param.current);
 };
 </script>

@@ -154,6 +154,7 @@
         <template #header="props">
           <q-tr>
             <q-th><q-checkbox v-model="props.selected" /></q-th>
+            <q-th style="width: 5%">No</q-th>
             <q-th style="width: 10%">응시번호</q-th>
             <q-th style="width: 5%">성별</q-th>
             <q-th style="width: 10%">이름</q-th>
@@ -174,6 +175,7 @@
             class="cursor-pointer"
           >
             <q-td> <q-checkbox v-model="props.selected" /></q-td>
+            <q-td>{{ props.row.rowNum }}</q-td>
             <q-td>{{ props.row.examineeId }}</q-td>
             <q-td>{{ props.row.examineeGender }}</q-td>
             <q-td>{{ props.row.examineeName }}</q-td>
@@ -242,7 +244,7 @@ const updateExamineeUsyn = async (examineeCode) => {
 
   $showAlert('삭제 성공하였습니다.');
   // 응시자 목록 조회
-  getExamineeList(param.value.current);
+  getExamineeList(param.current);
   // 삭제할 응시자 초기화
   selected.value = [];
 };

@@ -1,14 +1,10 @@
-import { axiosLoading } from '../axios';
-
-const store = useSystemStore();
-
 /**
  * 응시자 목록 조회
  * @returns object
  */
 export function useExamineeList() {
   // 변수
-  const param = ref({
+  const param = reactive({
     id: '',
     name: '',
     major: '',
@@ -24,14 +20,14 @@ export function useExamineeList() {
   // 응시자 목록 요청
   const getExamineeList = async (page = 1) => {
     try {
-      param.value.current = page;
+      param.current = page;
 
       let regStDt = null;
       let regEnDt = null;
-      if (param.value.regDay.length) {
-        regStDt = $getStartTimeFormat(param.value.regDay[0]);
-        if (param.value.regDay.length == 2 && param.value.regDay[1]) {
-          regEnDt = $getEndTimeFormat(param.value.regDay[1]);
+      if (param.regDay.length) {
+        regStDt = $getStartTimeFormat(param.regDay[0]);
+        if (param.regDay.length == 2 && param.regDay[1]) {
+          regEnDt = $getEndTimeFormat(param.regDay[1]);
         }
       }
 
@@ -39,7 +35,7 @@ export function useExamineeList() {
 
       const res = await axiosLoading.get('/assign/examinee', {
         params: {
-          ...param.value,
+          ...param,
           offset,
           limit,
           regStDt,
@@ -60,12 +56,12 @@ export function useExamineeList() {
 
   // 검색조건 초기화
   const resetParam = () => {
-    param.value.id = '';
-    param.value.name = '';
-    param.value.major = '';
-    param.value.college = '';
-    param.value.gender = '';
-    param.value.regDay = [];
+    param.id = '';
+    param.name = '';
+    param.major = '';
+    param.college = '';
+    param.gender = '';
+    param.regDay = [];
   };
 
   return {
@@ -122,8 +118,6 @@ export function useExamineeInfo() {
       console.error(err);
       return false;
     }
-
-    return;
   };
 
   return {
@@ -148,52 +142,4 @@ export function examineeEdit(form, file) {
     },
   });
   return handleApiCall(res);
-}
-/**
- * 응시자 정보 조회
- * @param {string} examineeCode
- * @returns object
- */
-export async function $fetchedExamineeInfo(examineeCode) {
-  store.setLoading(true);
-
-  // 응시자정보 조회
-  const { data, error } = await supabase
-    .from('tb_examinee_info')
-    .select(
-      `
-      examinee_code, 
-      examinee_id, 
-      examinee_pass,
-      examinee_name,
-      examinee_name_en,
-      examinee_birth,
-      examinee_gender,
-      examinee_phone,
-      examinee_email,
-      examinee_college,
-      examinee_major,
-      examinee_img,
-      use_flag,
-      rgst_dt
-    `,
-    )
-    .eq('examinee_code', examineeCode)
-    .single();
-
-  // 프로필 이미지가 등록된 경우 bucket의 public url 조회
-  if (data && !error) {
-    if (data.examinee_img) {
-      data.examinee_img_ori = data.examinee_img;
-      data.examinee_img = await fetchedProfileImg(data.examinee_img);
-    }
-    data.rgst_dt = $getTimeFormat(data.rgst_dt);
-  }
-
-  store.setLoading(false);
-
-  return {
-    data: data ? snakeToCamelByObj(data) : null,
-    error: error ? getErrorMessage[error.code] : null,
-  };
 }

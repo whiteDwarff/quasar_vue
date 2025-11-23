@@ -49,6 +49,9 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   background: #f2f7ff !important;
   color: #69a5fe !important;
 }
+.q-table tbody td:after {
+  background: none;
+}
 /* pagination */
 .q-pagination__content button {
   margin: 0 5px;
