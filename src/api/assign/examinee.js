@@ -75,7 +75,7 @@ export function useExamineeList() {
 /**
  * 응시자정보 사용여부 변경
  * @param {array} value - 응시자pk
- * @returns {object}    - status, message
+ * @returns             - status, message
  */
 export function updateExamineeUseFlag(examineeCode) {
   const res = axiosLoading.patch('/assign/examinee/updateUseFlag', {
@@ -85,8 +85,8 @@ export function updateExamineeUseFlag(examineeCode) {
 }
 /**
  * 응시자정보 조회
- * @param {number} examineeCode - 응시자pk
- * @returns {object}
+ * @returns  응시자 정보
+ * @returns  응시자 조회 함수
  */
 export function useExamineeInfo() {
   const form = ref({

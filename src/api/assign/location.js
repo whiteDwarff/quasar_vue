@@ -1,7 +1,3 @@
-import { supabase, getErrorMessage } from '../supabase';
-
-const store = useSystemStore();
-
 /**
  * 장소 목록조회
  * @param {object} param
@@ -63,7 +59,11 @@ export function updateLocationUseFlag(examroomCode) {
   });
   return handleApiCall(res);
 }
-
+/**
+ * 시험장 상세 조회
+ * @returns - 시험장 정보
+ * @return  - 시험장 조회 함수
+ */
 export function useLocationInfo() {
   const form = ref({
     examroomCode: null,
@@ -106,63 +106,4 @@ export function useLocationInfo() {
 export function locationEdit(form) {
   const res = axiosLoading.post('/assign/location/edit', form);
   return handleApiCall(res);
-}
-/**
- * 장소 상세 조회
- * @param {number} examRoomCode
- * @returns object
- */
-export async function $fetchedLocationInfo(examRoomCode) {
-  try {
-    store.setLoading(true);
-    let { data, error } = await supabase
-      .from('tb_examroom_info')
-      .select(
-        `
-      examroom_code,
-      examroom_name,
-      examroom_location,
-      examroom_addr,
-      examroom_info,
-      examroom_charge,
-      examroom_phone,
-      examroom_charge_info,
-      tb_examroom_num_info ( 
-        examroom_code,
-        examroom_num_code,
-        examroom_num_name,
-        examroom_num_max,
-        examroom_num_row,
-        examroom_num_col,
-        examroom_num_info,
-        use_flag
-        )
-        `,
-      )
-      .eq('examroom_code', examRoomCode)
-      .eq('use_flag', 'Y')
-      .eq('tb_examroom_num_info.use_flag', 'Y')
-      .order('examroom_num_code', { referencedTable: 'tb_examroom_num_info', ascending: true })
-      .single();
-
-    if (!error) {
-      data = snakeToCamelByObj(data);
-
-      for (let item of data.tbExamroomNumInfo) {
-        item.examroomNumNameOri = item.examroomNumName;
-        item.examroomNumColOri = item.examroomNumCol;
-        item.examroomNumRowOri = item.examroomNumRow;
-        item.key = item.examroomNumCode;
-      }
-    }
-
-    return {
-      data,
-      error: error ? getErrorMessage[error.code] || '조회 실패하였습니다.' : '',
-    };
-  } catch (err) {
-    console.log(err);
-  } finally {
-    store.setLoading(false);
-  }
 }

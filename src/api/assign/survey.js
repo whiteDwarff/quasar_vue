@@ -1,5 +1,121 @@
 const store = useSystemStore();
 
+export function useServeyList() {
+  const param = reactive({
+    researchTitle: '',
+    researchMemo: '',
+    current: 1,
+  });
+
+  const rows = ref([]);
+  const totalCount = ref(0);
+
+  // 설문 목록 요청
+  const getServeyList = async (page = 1) => {
+    try {
+      param.current = page;
+
+      const res = await axiosLoading.get('/assign/servey', {
+        params: {
+          ...param,
+          ...$getPagingOffset(page),
+        },
+      });
+
+      if (res.data.status == 200) {
+        rows.value = res.data.result.list;
+        totalCount.value = res.data.result.count;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const resetParam = () => {
+    param.researchTitle = '';
+    param.researchMemo = '';
+    param.current = 1;
+  };
+
+  return {
+    param,
+    rows,
+    totalCount,
+    getServeyList,
+    resetParam,
+  };
+}
+/**
+ * 설문 사용여부 변경
+ * @param {array} value
+ * @returns object
+ */
+export function updateServeyUseFlag(researchCode) {
+  const res = axiosLoading.patch('/assign/servey/updateUseFlag', {
+    researchCode,
+  });
+  return handleApiCall(res);
+}
+/**
+ * 설문 등록 및 수정
+ * @param {object} form
+ * @returns object
+ */
+export function serveyEdit(form) {
+  const res = axiosLoading.post('/assign/servey/edit', form);
+  return handleApiCall(res);
+}
+/**
+ * 설문정보 조회
+ * @returns  설문 정보
+ * @returns  설문 조회 함수
+ */
+export function useServeyInfo() {
+  const form = ref({
+    researchCode: null,
+    researchTitle: '',
+    researchMemo: '',
+    survey: [
+      {
+        reItemCode: null,
+        reItemTitle: '',
+        reItemNo: 1,
+        reItemType: '1',
+        useFlag: 'Y',
+        reItemExample: [
+          {
+            value: '',
+            order: 1,
+          },
+          {
+            value: '',
+            order: 2,
+          },
+        ],
+      },
+    ],
+    currentOrder: 1,
+  });
+
+  // 응시자 정보 조회
+  const getServeyInfo = async (researchCode) => {
+    // researchCode 없거나 자료형이 number가 아님
+    if (!researchCode || !$validNumber(researchCode)) return false;
+    try {
+      const res = await axiosLoading.get(`/assign/servey/${researchCode}`);
+      if (res.data.status == 200) {
+        form.value = res.data.result;
+        return true;
+      }
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  return { form, getServeyInfo };
+}
+
 /**
  * 설문 저장
  * @param {object} form
@@ -131,70 +247,7 @@ export async function $fetchedSurveyInfo(researchCode) {
     store.setLoading(false);
   }
 }
-/**
- * 설문 목록조회
- * @param {object} param
- * @returns object
- */
-export async function $fetchedSurveyList(param) {
-  try {
-    store.setLoading(true);
 
-    const countQuery = supabase
-      .from('tb_research_info')
-      .select('*', { count: 'exact', head: true });
-
-    const { count } = await fetchedListWhere(countQuery, param);
-    // 받아올 데이터의 개수 계산
-    const { offset, limit } = $getPagingOffset(param.current);
-
-    const dataQuery = supabase
-      .from('tb_research_info')
-      .select(
-        `
-      research_code,
-      research_title,
-      research_memo,
-      tb_research_item_info ( 
-        re_item_code,
-        research_code,
-        re_item_no,
-        re_item_title,
-        re_item_type,
-        re_item_example,
-        use_flag
-        )
-        `,
-      )
-      .eq('tb_research_item_info.use_flag', 'Y');
-
-    let { data, error } = await fetchedListWhere(dataQuery, param).range(offset, limit);
-    data = snakeToCamelByObj(data);
-
-    return {
-      data,
-      error: error ? getErrorMessage[error.code] || '데이터 조회에 실패하였습니다.' : '',
-      max: $getPagingCount(count),
-      count,
-    };
-  } catch (err) {
-    console.log(err);
-  } finally {
-    store.setLoading(false);
-  }
-}
-
-function fetchedListWhere(query, param) {
-  // 사용여부
-  query = query.eq('use_flag', 'Y');
-  // 설문 제목
-  if (param.researchTitle) query = query.ilike('research_title', `%${param.researchTitle.trim()}%`);
-  // 설문 설명
-  if (param.researchMemo) query = query.ilike('research_memo', `%${param.researchMemo.trim()}%`);
-  query.order('research_code', { ascending: false }); // 내림차순 정렬
-
-  return query;
-}
 /**
  * 응시자정보 사용여부 변경
  * @param {array | string} value

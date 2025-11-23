@@ -200,27 +200,19 @@ const saveSurveyInfo = async () => {
   }
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { data, error } = await $saveSurveyInfo(form.value);
-
-    if (!error && data?.research_code) {
+    const { status, message } = await serveyEdit(form.value);
+    if (status) {
       await router.push('/assign/survey');
       $showAlert('저장되었습니다.');
-    } else $showAlert(error);
-  }
+    } else $showAlert(message);
 
-  /*
-  try {
-    const res = $axios_loading.post('', form.value);
+    //   const { data, error } = await $saveSurveyInfo(form.value);
 
-    if(res.data.status == 200) {
-      $showAlert('저장되었습니다.');
-      return router.push('/assign/survey');
-    }
-    $showAlert('저장 실패하였습니다.');
-  } catch(err) {
-    console.log(err);
+    //   if (!error && data?.research_code) {
+    //     await router.push('/assign/survey');
+    //     $showAlert('저장되었습니다.');
+    //   } else $showAlert(error);
   }
-  */
 };
 // 설문삭제
 const exceptSurveyItem = (survey) => {
@@ -241,7 +233,6 @@ const exceptSurveyItem = (survey) => {
       }
     }
   });
-  console.log(form.value.survey);
   form.value.currentOrder = reItemNo != 1 ? reItemNo - 1 : 1;
 };
 // 설문추가
