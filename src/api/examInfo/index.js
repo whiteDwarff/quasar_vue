@@ -6,7 +6,7 @@ export function useExamList() {
   // 변수
   const param = reactive({
     examName: '',
-    regId: '',
+    rgstId: '',
     regDay: [],
     regStDt: null,
     regEnDt: null,
@@ -50,7 +50,7 @@ export function useExamList() {
   // 검색조건 초기화
   const resetParam = () => {
     param.examName = '';
-    param.regId = '';
+    param.rgstId = '';
     param.regDay = [];
     param.regStDt = null;
     param.regEnDt = null;

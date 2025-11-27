@@ -33,7 +33,7 @@
               <div class="content">
                 <q-input
                   @keyup.enter="getExamList(1)"
-                  v-model="param.regId"
+                  v-model="param.rgstId"
                   outlined
                   dense
                   class="bg-white"

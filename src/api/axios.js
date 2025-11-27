@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { $showAlert } from 'src/utils/globals';
 
 const baseURL = 'http://localhost:3000/api';
 
@@ -26,9 +27,28 @@ axiosLoading.interceptors.response.use(
   },
   (error) => {
     useSystemStore().setLoading(false);
-    return Promise.reject(error);
+    return responseErrorHandler(error);
   },
 );
+
+/**
+ * response의 에러 처리 공통 메서드
+ * @param {object} error
+ */
+function responseErrorHandler(error) {
+  let errorMessage = '요청 처리 중 알 수 없는 오류가 발생했습니다.';
+
+  if (error.response && error.response?.data) {
+    errorMessage = error.response?.data?.result?.originalMessage || error.response.data.message;
+  } else if (error.request) {
+    errorMessage = '서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.';
+  }
+
+  // 에러 메시지 활성화
+  $showAlert(errorMessage);
+
+  return Promise.reject(error);
+}
 
 /**
  * API 요청과 표준 응답/오류 처리를 감싸는 래퍼 함수
@@ -40,17 +60,21 @@ async function handleApiCall(apiCall) {
     const res = await apiCall;
     return {
       status: res.data.status === 200,
-      message: res.data.message || '요청에 성공했습니다.',
+      message: res.data.message || '요청 성공했습니다.',
+      data: res.data?.result || {},
     };
     // API 요청 실패
   } catch (err) {
     const { response } = err;
-    console.log(response);
-    const message = response?.data?.message || '알 수 없는 오류가 발생했습니다.';
+    const message =
+      response?.data?.result?.originalMessage ||
+      response?.data?.message ||
+      '요청 처리 중 오류가 발생하였습니다.';
 
     return {
       status: false,
       message,
+      data: null,
     };
   }
 }
