@@ -27,7 +27,8 @@ axiosLoading.interceptors.response.use(
   },
   (error) => {
     useSystemStore().setLoading(false);
-    return responseErrorHandler(error);
+    responseErrorHandler(error);
+    return Promise.reject(error);
   },
 );
 
@@ -39,15 +40,17 @@ function responseErrorHandler(error) {
   let errorMessage = '요청 처리 중 알 수 없는 오류가 발생했습니다.';
 
   if (error.response && error.response?.data) {
-    errorMessage = error.response?.data?.result?.originalMessage || error.response.data.message;
+    errorMessage = error.response.data.message;
+    // 에러 원인
+    const context = error.response?.data?.result?.context || '';
+    // 개발 모드에서는 오류원인 출력
+    if (process.env.NODE_ENV === 'development' && context) errorMessage += `<br/>[${context}]`;
   } else if (error.request) {
     errorMessage = '서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.';
   }
 
   // 에러 메시지 활성화
   $showAlert(errorMessage);
-
-  return Promise.reject(error);
 }
 
 /**
@@ -66,14 +69,10 @@ async function handleApiCall(apiCall) {
     // API 요청 실패
   } catch (err) {
     const { response } = err;
-    const message =
-      response?.data?.result?.originalMessage ||
-      response?.data?.message ||
-      '요청 처리 중 오류가 발생하였습니다.';
 
     return {
       status: false,
-      message,
+      message: response?.data?.message || '요청 처리 중 오류가 발생하였습니다.',
       data: null,
     };
   }
