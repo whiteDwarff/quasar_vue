@@ -180,12 +180,12 @@ const autofocus = ref(false);
 // 설문삭제
 const surveyDelete = async () => {
   if (await $showConfirm('삭제하시겠습니까?')) {
-    const { error } = await $updateSurveyUsyn(form.value.researchCode);
+    const { status, message } = await updateServeyUseFlag([form.value.researchCode]);
 
-    if (!error) {
-      await router.push('/assign/survey');
-      $showAlert('삭제되었습니다.');
-    } else $showAlert(error);
+    if (!status) return $showAlert(message);
+
+    await router.push('/assign/survey');
+    $showAlert('삭제 성공하였습니다.');
   }
 };
 // 설문정보 저장
@@ -205,13 +205,6 @@ const saveSurveyInfo = async () => {
       await router.push('/assign/survey');
       $showAlert('저장되었습니다.');
     } else $showAlert(message);
-
-    //   const { data, error } = await $saveSurveyInfo(form.value);
-
-    //   if (!error && data?.research_code) {
-    //     await router.push('/assign/survey');
-    //     $showAlert('저장되었습니다.');
-    //   } else $showAlert(error);
   }
 };
 // 설문삭제
