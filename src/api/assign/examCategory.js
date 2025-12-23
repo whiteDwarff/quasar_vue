@@ -1,5 +1,66 @@
 const store = useSystemStore();
 
+export function useExamCategory() {
+  const nodes = ref([]);
+  const param = ref('');
+
+  // 시험분류 목록 요청
+  const getExamCategory = async () => {
+    try {
+      const res = await axiosLoading.get('/assign/examCategory');
+
+      if (res.data.status == 200) nodes.value = res.data.result.list;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const filteredNodes = computed(() => {
+    if (!param.value) {
+      return nodes.value;
+    }
+    return filterNodes(nodes.value, param.value);
+  });
+
+  return {
+    nodes, // 실제 데이터
+    filterNodes: filteredNodes, // 검색용 노드 데이터
+    param,
+    getExamCategory,
+  };
+}
+// 부모-자식 유지하면서 필터링 (useFlag='Y'인 노드만)
+function filterNodes(nodesArr, keyword) {
+  const filt = keyword.toLowerCase();
+  return nodesArr
+    .map((node) => {
+      const matched = node.name.toLowerCase().includes(filt);
+
+      let filteredChildren = [];
+      if (node.children && node.children.length > 0) {
+        filteredChildren = filterNodes(node.children, keyword);
+      }
+      // 부모가 매칭되면 자식 전부 유지
+      if (matched) {
+        return {
+          ...node,
+          children: node.children ? node.children.map((child) => ({ ...child })) : [],
+        };
+      }
+
+      // 부모는 불일치하나 자식 중 일부가 매칭되면 매칭된 자식만 유지
+      if (filteredChildren.length > 0) {
+        return {
+          ...node,
+          children: filteredChildren,
+        };
+      }
+
+      return null;
+    })
+    .filter((n) => n !== null);
+}
+
 /**
  * insert 공통처리 함수
  * @param {object | array} values

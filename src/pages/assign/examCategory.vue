@@ -199,7 +199,7 @@ const nodes = ref([]);
 const exceptArr = ref([]);
 
 // 부모-자식 유지하면서 필터링
-function filterNodes(nodesArr, keyword) {
+const filterNodes = (nodesArr, keyword) => {
   const filt = keyword.toLowerCase();
   return nodesArr
     .map((node) => {
@@ -228,7 +228,7 @@ function filterNodes(nodesArr, keyword) {
       return null;
     })
     .filter((n) => n !== null);
-}
+};
 
 const filteredNodes = computed(() => {
   if (!param.value) {
