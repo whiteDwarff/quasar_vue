@@ -1,9 +1,9 @@
 <template>
   <q-btn
-    @click="visible = !visible"
+    @click="emit('selection', 'heading')"
     :ripple="false"
     unelevated
-    size="sm"
+    size="xs"
     :color="editor.isActive('heading') ? 'grey-2' : ''"
     padding="xs"
     style="border-radius: 13px"
@@ -11,12 +11,12 @@
     <q-icon
       :name="!current ? 'sym_o_h_mobiledata' : `sym_o_format_h${current}`"
       :color="!current ? 'grey-14' : 'deep-purple-12'"
-      size="sm"
+      size="xs"
     />
     <q-icon name="sym_o_keyboard_arrow_down" color="grey-14" style="font-size: 11px" />
   </q-btn>
 
-  <div v-show="visible" class="absolute shadow-3 bg-white editor__menu__wrap">
+  <div v-show="visible" id="wrapper" class="absolute shadow-3 bg-white editor__menu__wrap">
     <div
       v-for="i in 4"
       :key="i"
@@ -30,7 +30,7 @@
       <q-icon
         :name="`sym_o_format_h${i}`"
         :color="isActive(i) ? 'deep-purple-12' : 'grey-14'"
-        size="sm"
+        size="xs"
         class="q-mr-xs"
       />
       <span :class="isActive(i) ? 'grey-10 text-weight-bold' : 'text-grey-14'"
@@ -47,7 +47,9 @@ const props = defineProps({
   },
 });
 
-const visible = ref(false);
+const emit = defineEmits(['selection']);
+
+const visible = defineModel();
 
 const current = computed(() => {
   for (let i = 1; i <= 4; i++) {
@@ -63,3 +65,10 @@ const selection = (i) => {
   visible.value = false;
 };
 </script>
+
+<style scoped>
+#wrapper {
+  width: 120px;
+  bottom: -119px;
+}
+</style>

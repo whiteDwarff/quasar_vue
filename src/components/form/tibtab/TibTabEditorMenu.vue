@@ -1,64 +1,76 @@
 <template>
-  <div v-if="editor" class="flex flex items-center q-pa-xs relative-position">
-    <HeadingDropdown :editor />
-    <!-- text-color -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_border_color"
-      @click="color.click()"
-      :style="{ color: setIconColor(editor.getAttributes('textStyle')) }"
-    >
-      <q-tooltip class="bg-grey"> 선택 후 ENTER </q-tooltip>
-      <input
-        ref="color"
-        type="color"
-        @input="editor.chain().focus().setColor($event.target.value).run()"
-        :value="editor.getAttributes('textStyle').color || '#000000'"
-        style="width: 0px"
-        class="invisible"
+  <div v-if="editor" id="editor__menu" class="flex flex items-center q-pa-xs relative-position">
+    <template v-if="visible.all">
+      <HeadingDropdown @selection="toggleVisible" v-model="visible.heading" :editor />
+      <ListDropdown @selection="toggleVisible" v-model="visible.list" :editor />
+
+      <!-- blockquote -->
+      <StaticButton
+        @click="editor.chain().focus().toggleBlockquote().run()"
+        :active="editor.isActive('blockquote')"
+        icon="bi-blockquote-left"
+        tooltip="Blockquote"
       />
-    </q-btn>
-    <!-- background-color -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_palette"
-      @click="highlight.click()"
-      :style="{
-        color: setIconColor(editor.getAttributes('highlight')),
-      }"
-    >
-      <q-tooltip class="bg-grey"> 선택 후 ENTER </q-tooltip>
-      <input
-        ref="highlight"
-        type="color"
-        @input="editor.chain().focus().toggleHighlight({ color: $event.target.value }).run()"
-        :value="editor.getAttributes('highLight').color || '#ffffff'"
-        style="width: 0px"
-        class="invisible"
+      <!-- codeBlock -->
+      <StaticButton
+        @click="editor.chain().focus().toggleCodeBlock().run()"
+        :active="editor.isActive('codeBlock')"
+        icon="sym_o_code_blocks"
+        tooltip="Code Block"
       />
-    </q-btn>
-    <q-separator vertical inset spaced />
-    <!-- bold -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_bold"
-      @click="editor.chain().focus().toggleBold().run()"
-      :disabled="!editor.can().chain().focus().toggleBold().run()"
-      :color="editor.isActive('bold') ? 'blue' : null"
+
+      <q-separator vertical inset spaced class="separator" />
+
+      <!-- bold -->
+      <StaticButton
+        @click="editor.chain().focus().toggleBold().run()"
+        :active="editor.isActive('bold')"
+        icon="bi-type-bold"
+        tooltip="Bold"
+      />
+      <!-- italic -->
+      <StaticButton
+        @click="editor.chain().focus().toggleItalic().run()"
+        :active="editor.isActive('italic')"
+        icon="bi-type-italic"
+        tooltip="Italic"
+      />
+      <!-- strike -->
+      <StaticButton
+        @click="editor.chain().focus().toggleStrike().run()"
+        :active="editor.isActive('strike')"
+        icon="bi-type-strikethrough"
+        tooltip="Strike"
+      />
+      <!-- code -->
+      <StaticButton
+        @click="editor.chain().focus().toggleCode().run()"
+        :active="editor.isActive('code')"
+        icon="bi-code-slash"
+        tooltip="Code"
+      />
+      <!-- underline -->
+      <StaticButton
+        @click="editor.chain().focus().toggleUnderline().run()"
+        :active="editor.isActive('underline')"
+        icon="bi-type-underline"
+        tooltip="Underline"
+      />
+      <!-- highlight -->
+      <StaticButton
+        @click="((visible.all = false), (visible.highLight = true))"
+        icon="bi-highlighter"
+        tooltip="Highlight"
+      />
+    </template>
+
+    <ColorPalette
+      @cancle="((visible[$event] = false), (visible.all = true))"
+      v-else-if="!visible.all && visible.highLight"
+      :editor
+      type="highlight"
     />
 
-    <!-- italic -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_italic"
-      @click="editor.chain().focus().toggleItalic().run()"
-      :disabled="!editor.can().chain().focus().toggleItalic().run()"
-      :color="editor.isActive('italic') ? 'blue' : null"
-    />
     <!-- text-align-->
     <q-btn flat dense :icon="icon.align" color="blue">
       <q-menu>
@@ -94,31 +106,7 @@
         />
       </q-menu>
     </q-btn>
-    <!-- indent -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_quote"
-      @click="editor.chain().focus().toggleBlockquote().run()"
-      :color="editor.isActive('blockquote') ? 'blue' : null"
-    />
-    <!-- text-decoration -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_underlined"
-      @click="editor.chain().focus().toggleUnderline().run()"
-      :disabled="!editor.can().chain().focus().toggleStrike().run()"
-      :color="editor.isActive('underline') ? 'blue' : null"
-    />
-    <q-btn
-      flat
-      dense
-      icon="sym_o_strikethrough_s"
-      @click="editor.chain().focus().toggleStrike().run()"
-      :disabled="!editor.can().chain().focus().toggleStrike().run()"
-      :color="editor.isActive('strike') ? 'blue' : null"
-    />
+
     <!-- hiper-link -->
     <q-btn
       flat
@@ -128,15 +116,7 @@
       :disabled="!editor.can().chain().focus().toggleStrike().run()"
       :color="editor.isActive('link') ? 'blue' : null"
     />
-    <q-separator vertical inset spaced />
-    <!-- code -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_code_blocks"
-      @click="editor.chain().focus().toggleCodeBlock().run()"
-      :color="editor.isActive('codeBlock') ? 'blue' : null"
-    />
+
     <q-separator vertical inset spaced />
     <!-- 웹에 저장된 이미지의 URL 셋팅 -->
     <q-btn flat dense icon="sym_o_image" @click="handleImageMenu">
@@ -147,47 +127,7 @@
       <q-tooltip class="bg-grey"> 이미지 업로드 </q-tooltip>
     </q-btn>
     <q-separator vertical inset spaced />
-    <!-- heading 1 -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_h1"
-      @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-      :color="editor.isActive('heading', { level: 1 }) ? 'blue' : null"
-    />
-    <!-- heading 2 -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_h2"
-      @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
-      :color="editor.isActive('heading', { level: 2 }) ? 'blue' : null"
-    />
-    <!-- heading 3 -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_h3"
-      @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
-      :color="editor.isActive('heading', { level: 3 }) ? 'blue' : null"
-    />
-    <q-separator vertical inset spaced />
-    <!-- unOrder list button -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_list_bulleted"
-      @click="editor.chain().focus().toggleBulletList().run()"
-      :color="editor.isActive('bulletList') ? 'blue' : null"
-    />
-    <!-- order list button -->
-    <q-btn
-      flat
-      dense
-      icon="sym_o_format_list_numbered"
-      @click="editor.chain().focus().toggleOrderedList().run()"
-      :color="editor.isActive('orderedList') ? 'blue' : null"
-    />
+
     <!-- horizontal button -->
     <q-btn
       flat
@@ -218,6 +158,9 @@
 </template>
 
 <script setup>
+import { reactive } from 'vue';
+import ColorPalette from './button/ColorPalette.vue';
+
 const props = defineProps({
   editor: {
     type: Object,
@@ -226,15 +169,25 @@ const props = defineProps({
     type: String,
   },
 });
+// dropdown 상태
+const visible = reactive({
+  all: true,
+  heading: false,
+  list: false,
+  highLight: false,
+});
+// dropdown menu toggle
+const toggleVisible = (e) => {
+  for (let type of Object.keys(visible)) {
+    if (e == type) visible[e] = !visible[e];
+    else visible[type] = false;
+  }
+  visible.all = true;
+};
 const icon = ref({
   align: 'sym_o_format_align_left',
 });
-const color = ref(null);
-const highlight = ref(null);
 
-const setIconColor = ({ color }) => {
-  return color != '#ffffff' ? color : '#ccc';
-};
 // -----------------------------------------------------------
 // insert Link
 const handleLinkMenu = () => {
@@ -312,6 +265,20 @@ const readImageURL = async ({ target }) => {
     }
   }
 };
+
+// onMounted(() => {
+//   const body = document.getElementsByTagName('body');
+//   body.addEventListener('click', () => {
+//     for (let type of Object.keys(visible)) {
+//       visible[type] = false;
+//     }
+//   });
+// });
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped>
+.separator {
+  margin-right: 3px !important;
+  margin-left: 3px !important;
+}
+</style>

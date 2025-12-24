@@ -125,14 +125,3 @@ export function useServeyInfo() {
 
   return { form, getServeyInfo };
 }
-/**
- * 설문 사용여부 변경
- * @param {array} value
- * @returns object
- */
-export function updateLocationUseFlag(researchCode) {
-  const res = axiosLoading.patch('/assign/servey/updateUseFlag', {
-    researchCode,
-  });
-  return handleApiCall(res);
-}

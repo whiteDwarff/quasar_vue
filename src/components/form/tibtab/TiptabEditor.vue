@@ -1,25 +1,43 @@
 <template>
   <q-card class="tiptap" flat bordered>
-    <TibTabEdirotMenu :editor="editor" :dir />
+    <TibTabEditorMenu :editor="editor" :dir />
     <q-separator />
     <editor-content class="editor__content" :editor="editor" />
   </q-card>
 </template>
 
 <script setup>
-import { watch } from 'vue';
+import { onUnmounted, watch } from 'vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import { Color } from '@tiptap/extension-color';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
-import { Link } from '@tiptap/extension-link';
+// import Link  from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { TextAlign } from '@tiptap/extension-text-align';
-import { Underline } from '@tiptap/extension-underline';
 import { Highlight } from '@tiptap/extension-highlight';
 import { ResizableImage } from 'tiptap-extension-resizable-image';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TaskItem } from '@tiptap/extension-task-item';
 
-import TibTabEdirotMenu from './TibTabEdirotMenu.vue';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import css from 'highlight.js/lib/languages/css';
+import js from 'highlight.js/lib/languages/javascript';
+import ts from 'highlight.js/lib/languages/typescript';
+import html from 'highlight.js/lib/languages/xml';
+// load all languages with "all" or common languages with "common"
+import { all, createLowlight } from 'lowlight';
+
+// create a lowlight instance
+const lowlight = createLowlight(all);
+
+// you can also register languages
+lowlight.register('html', html);
+lowlight.register('css', css);
+lowlight.register('js', js);
+lowlight.register('ts', ts);
+
+import TibTabEditorMenu from './TibTabEditorMenu.vue';
 
 // 상위 컴포넌트에서 v-model을 통한 바인딩
 const props = defineProps({
@@ -36,14 +54,17 @@ const emit = defineEmits(['update:modelValue']);
 const editor = useEditor({
   content: props.modelValue,
   extensions: [
-    StarterKit,
+    // StarterKit 설정에서 중복되는 익스텐션을 제외
+    StarterKit.configure({
+      // CodeBlockLowlight를 사용
+      codeBlock: false,
+    }),
     Placeholder.configure({
       placeholder: '내용을 입력해주세요.',
     }),
     TextAlign.configure({
       types: ['heading', 'paragraph'],
     }),
-    Link,
     ResizableImage.configure({
       defaultWidth: 200,
       defaultHeight: 200,
@@ -56,11 +77,21 @@ const editor = useEditor({
     // }), // Duplicated 문제로 주석처리 (ImageResize와 중복)
     TextStyle,
     Color,
-    Underline,
+    // Underline,
     Highlight.configure({ multicolor: true }),
+    TaskList, // 반드시 추가
+    TaskItem.configure({
+      nested: true, // 중첩 리스트 허용 여부
+    }),
+    // Blockquote,
+    CodeBlockLowlight.configure({
+      lowlight,
+      enableTabIndentation: true, // 들여쓰기 활성화
+      HTMLAttributes: {
+        class: 'tiptab__codeblock',
+      },
+    }),
   ],
-  // editor에 변화가 일어났을 때 ~
-  // 사용자의 입력 등...
   onUpdate: () => {
     emit('update:modelValue', editor.value.getHTML());
   },
@@ -76,6 +107,10 @@ watch(
     editor.value.commands.setContent(value, false);
   },
 );
+
+onUnmounted(() => {
+  editor.value.destroy();
+});
 </script>
 
 <style lang="scss" src="src/css/tiptab.scss"></style>
