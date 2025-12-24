@@ -4,7 +4,7 @@
     outline: none;
   }
   p {
-    margin: 0.5rem 0;
+    // margin: 0.5rem 0;
   }
   h1 {
     font-size: 3rem;
@@ -648,9 +648,7 @@ blockquote {
 }
 
 .tiptab__codeblock {
-  background: var(--black);
   border-radius: 0.5rem;
-  color: var(--white);
   font-family: 'JetBrainsMono', monospace;
   margin: 1.5rem 0;
   padding: 0.75rem 1rem;
@@ -716,6 +714,13 @@ blockquote {
   }
 }
 
+#editor__menu > div {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+#editor__menu > div::-webkit-scrollbar {
+  display: none;
+}
 #editor__menu .hover {
   margin: 0 1px;
   border-radius: 10px;
@@ -725,6 +730,22 @@ blockquote {
   transition: 0.2s ease-in;
 }
 
-#editor__menu .hover:hover i {
+#editor__menu .hover:hover i,
+#editor__menu .hover:hover .hover span {
   color: #333 !important;
+}
+
+#editor__menu .hover {
+  flex-shrink: 0;
+}
+.editor__content::-webkit-scrollbar {
+  width: 4px;
+}
+.editor__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editor__content::-webkit-scrollbar-thumb {
+  background-color: #d1d1d1;
+  border-radius: 4px;
 }

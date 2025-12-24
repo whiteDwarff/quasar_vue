@@ -1,6 +1,8 @@
 <template>
   <q-page padding>
-    <tiptabEditor v-model="content" />
+    <tiptabEditor v-model="content" dir="dsd" :height="100" />
+
+    <span style="color: red">adad</span>
   </q-page>
 </template>
 

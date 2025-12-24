@@ -10,7 +10,7 @@
       class="hover"
     >
       <q-icon name="bi-arrow-left" size="xs" color="grey-14" style="font-size: 18px" />
-      <q-icon name="bi-highlighter" size="xs" color="grey-14" style="font-size: 18px" />
+      <q-icon name="sym_o_ink_highlighter" size="xs" color="grey-14" style="font-size: 18px" />
     </q-btn>
 
     <q-separator vertical inset spaced class="separator" />
@@ -19,7 +19,7 @@
     <q-btn
       v-for="color of colors"
       :key="color.background"
-      @click="toggleColor(color.background)"
+      @click.stop="toggleColor(color.background)"
       :color="isActive(color.background) ? 'grey-2' : ''"
       unelevated
       :ripple="false"
@@ -38,17 +38,11 @@
     <q-separator vertical inset spaced class="separator" />
 
     <!-- unset -->
-    <q-btn
-      @click="unsetColor"
+    <StaticButton
+      @click.stop="unsetColor"
       :color="!editor.isActive(type) ? 'grey-2' : ''"
-      unelevated
-      :ripple="false"
-      dense
-      padding="xs"
-      class="hover"
-    >
-      <q-icon name="bi-slash-circle" size="xs" color="grey-14" style="font-size: 18px" />
-    </q-btn>
+      icon="bi-slash-circle"
+    />
   </div>
 </template>
 

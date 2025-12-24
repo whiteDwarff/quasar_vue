@@ -2,7 +2,7 @@
   <q-card class="tiptap" flat bordered>
     <TibTabEditorMenu :editor="editor" :dir />
     <q-separator />
-    <editor-content class="editor__content" :editor="editor" />
+    <editor-content class="editor__content" :editor="editor" :style="{ height: `${height}px` }" />
   </q-card>
 </template>
 
@@ -12,13 +12,15 @@ import { useEditor, EditorContent } from '@tiptap/vue-3';
 import { Color } from '@tiptap/extension-color';
 import { StarterKit } from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extension-placeholder';
-// import Link  from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Highlight } from '@tiptap/extension-highlight';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
+import Superscript from '@tiptap/extension-superscript';
+import Subscript from '@tiptap/extension-subscript';
+
 import { ResizableImage } from 'tiptap-extension-resizable-image';
-import { TaskList } from '@tiptap/extension-task-list';
-import { TaskItem } from '@tiptap/extension-task-item';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import css from 'highlight.js/lib/languages/css';
@@ -48,6 +50,10 @@ const props = defineProps({
   dir: {
     type: String,
   },
+  height: {
+    type: Number,
+    default: () => 400,
+  },
 });
 const emit = defineEmits(['update:modelValue']);
 
@@ -60,7 +66,7 @@ const editor = useEditor({
       codeBlock: false,
     }),
     Placeholder.configure({
-      placeholder: '내용을 입력해주세요.',
+      placeholder: 'Please enter your content.',
     }),
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -69,21 +75,13 @@ const editor = useEditor({
       defaultWidth: 200,
       defaultHeight: 200,
     }),
-    // Image.configure({
-    //   HTMLAttributes: {
-    //     class: 'editor__image',
-    //   },
-    //   allowBase64: true,
-    // }), // Duplicated 문제로 주석처리 (ImageResize와 중복)
     TextStyle,
     Color,
-    // Underline,
     Highlight.configure({ multicolor: true }),
     TaskList, // 반드시 추가
     TaskItem.configure({
       nested: true, // 중첩 리스트 허용 여부
     }),
-    // Blockquote,
     CodeBlockLowlight.configure({
       lowlight,
       enableTabIndentation: true, // 들여쓰기 활성화
@@ -91,6 +89,8 @@ const editor = useEditor({
         class: 'tiptab__codeblock',
       },
     }),
+    Superscript,
+    Subscript,
   ],
   onUpdate: () => {
     emit('update:modelValue', editor.value.getHTML());

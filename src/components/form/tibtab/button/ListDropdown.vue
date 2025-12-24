@@ -1,11 +1,12 @@
 <template>
   <q-btn
-    @click="emit('selection', 'list')"
+    @click.stop="emit('selection', 'list')"
     :ripple="false"
     unelevated
     size="xs"
     :color="current() ? 'grey-2' : ''"
     padding="xs"
+    class="hover"
     style="border-radius: 13px"
   >
     <q-icon
@@ -14,6 +15,7 @@
       size="xs"
     />
     <q-icon name="sym_o_keyboard_arrow_down" color="grey-14" style="font-size: 11px" />
+    <q-tooltip class="bg-grey">List</q-tooltip>
   </q-btn>
 
   <div v-show="visible" id="wrapper" class="absolute shadow-3 bg-white editor__menu__wrap">
@@ -74,6 +76,6 @@ const current = () => {
 #wrapper {
   width: 130px;
   bottom: -93px;
-  left: 40px;
+  left: 104px;
 }
 </style>

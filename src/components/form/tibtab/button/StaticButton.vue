@@ -7,7 +7,13 @@
     padding="xs"
     class="hover"
   >
-    <q-icon :name="icon" :color="!active ? 'grey-14' : 'deep-purple-12'" size="xs" />
+    <q-icon
+      :style="iconStyle"
+      :name="icon"
+      :color="!active ? 'grey-14' : 'deep-purple-12'"
+      size="xs"
+    />
+    <slot></slot>
     <q-tooltip v-if="tooltip" class="bg-grey">{{ tooltip }}</q-tooltip>
   </q-btn>
 </template>
@@ -23,6 +29,12 @@ const props = defineProps({
   },
   tooltip: {
     type: String,
+  },
+  iconStyle: {
+    type: Object,
+    default: () => {
+      return {};
+    },
   },
 });
 </script>

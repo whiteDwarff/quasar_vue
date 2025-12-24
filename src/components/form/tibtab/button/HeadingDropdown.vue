@@ -1,11 +1,12 @@
 <template>
   <q-btn
-    @click="emit('selection', 'heading')"
+    @click.stop="emit('selection', 'heading')"
     :ripple="false"
     unelevated
     size="xs"
     :color="editor.isActive('heading') ? 'grey-2' : ''"
     padding="xs"
+    class="hover"
     style="border-radius: 13px"
   >
     <q-icon
@@ -14,6 +15,7 @@
       size="xs"
     />
     <q-icon name="sym_o_keyboard_arrow_down" color="grey-14" style="font-size: 11px" />
+    <q-tooltip class="bg-grey">Heading</q-tooltip>
   </q-btn>
 
   <div v-show="visible" id="wrapper" class="absolute shadow-3 bg-white editor__menu__wrap">
@@ -70,5 +72,6 @@ const selection = (i) => {
 #wrapper {
   width: 120px;
   bottom: -119px;
+  left: 65px;
 }
 </style>
