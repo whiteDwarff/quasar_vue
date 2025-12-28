@@ -6,13 +6,7 @@
 
 <script setup>
 import { useEditor, EditorContent } from '@tiptap/vue-3';
-import { Color } from '@tiptap/extension-color';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import TextStyle from '@tiptap/extension-text-style';
-import TextAlign from '@tiptap/extension-text-align';
-import Underline from '@tiptap/extension-underline';
-import Highlight from '@tiptap/extension-highlight';
+import { getExtensions } from './extensions';
 
 const props = defineProps({
   content: {
@@ -28,21 +22,7 @@ const props = defineProps({
 
 const editor = useEditor({
   content: props.content,
-  extensions: [
-    StarterKit,
-    TextAlign.configure({
-      types: ['heading', 'paragraph'],
-    }),
-    // Image.configure({
-    //   allowBase64: true,
-    // }), Duplicated 문제로 주석처리 (ImageResize와 중복)
-    ImageResize,
-    Link,
-    TextStyle,
-    Color,
-    Underline,
-    Highlight.configure({ multicolor: true }),
-  ],
+  extensions: getExtensions(),
   // 수정기능 제어
   editable: false,
 });
