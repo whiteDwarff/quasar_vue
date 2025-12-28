@@ -17,17 +17,22 @@
       placeholder="Paste a link.."
     />
 
-    <StaticButton @click.stop="addLink" icon="bi-arrow-return-left" :disable="!link" :iconStyle />
+    <TibtapMenuButton
+      @click.stop="addLink"
+      icon="bi-arrow-return-left"
+      :disable="!link"
+      :iconStyle
+    />
 
     <q-separator vertical inset spaced class="separator" />
 
-    <StaticButton
+    <TibtapMenuButton
       @click.stop="validLink"
       icon="bi-box-arrow-up-right"
       :disable="!link"
       :iconStyle
     />
-    <StaticButton @click.stop="link = ''" icon="bi-trash3" :disable="!link" :iconStyle />
+    <TibtapMenuButton @click.stop="link = ''" icon="bi-trash3" :disable="!link" :iconStyle />
   </div>
 </template>
 

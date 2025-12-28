@@ -41,9 +41,8 @@ export default defineConfig((/* ctx */) => {
       },
       env: {
         PAGE_SIZE: 10,
-        SUPABASE_URL: 'https://gnkjzbqpyweuerrxdnbm.supabase.co',
-        SUPABASE_KEY:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdua2p6YnFweXdldWVycnhkbmJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMjAzMzksImV4cCI6MjA2ODg5NjMzOX0.YqnJKdpIwfZbD97lUF4WgGilUVTuDURE7OxgwusUOGk',
+        IMAGE_EXTS: 'jpg,jpeg,png,gif',
+        SERVER_PORT: 3000,
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'

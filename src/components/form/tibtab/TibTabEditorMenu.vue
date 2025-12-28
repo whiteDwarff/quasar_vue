@@ -3,14 +3,14 @@
     <div class="flex items-center">
       <template v-if="visible.all">
         <!-- undo button -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().undo().run()"
           :disabled="!editor.can().chain().focus().undo().run()"
           icon="sym_o_undo"
           tooltip="Undo"
         />
         <!-- redo button -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().undo().run()"
           :disabled="!editor.can().chain().focus().redo().run()"
           icon="sym_o_redo"
@@ -23,14 +23,14 @@
         <ListDropdown @selection="toggleVisible" v-model="visible.list" :editor />
 
         <!-- blockquote -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleBlockquote().run()"
           :active="editor.isActive('blockquote')"
           icon="bi-blockquote-left"
           tooltip="Blockquote"
         />
         <!-- code block -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleCodeBlock().run()"
           :active="editor.isActive('codeBlock')"
           icon="sym_o_code_blocks"
@@ -40,48 +40,48 @@
         <q-separator vertical inset spaced class="separator" />
 
         <!-- bold -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleBold().run()"
           :active="editor.isActive('bold')"
           icon="bi-type-bold"
           tooltip="Bold"
         />
         <!-- italic -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleItalic().run()"
           :active="editor.isActive('italic')"
           icon="bi-type-italic"
           tooltip="Italic"
         />
         <!-- strike -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleStrike().run()"
           :active="editor.isActive('strike')"
           icon="bi-type-strikethrough"
           tooltip="Strike"
         />
         <!-- code -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleCode().run()"
           :active="editor.isActive('code')"
           icon="bi-code-slash"
           tooltip="Code"
         />
         <!-- underline -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleUnderline().run()"
           :active="editor.isActive('underline')"
           icon="bi-type-underline"
           tooltip="Underline"
         />
         <!-- highlight -->
-        <StaticButton
+        <TibtapMenuButton
           @click.stop="((visible.all = false), (visible.highLight = true))"
           icon="sym_o_ink_highlighter"
           tooltip="Highlight"
         />
         <!-- link -->
-        <StaticButton
+        <TibtapMenuButton
           @click.stop="((visible.all = false), (visible.link = true))"
           icon="bi-link-45deg"
           tooltip="Link"
@@ -91,14 +91,14 @@
         <q-separator vertical inset spaced class="separator" />
 
         <!-- superscript -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleSuperscript().run()"
           :active="editor.isActive('superscript')"
           icon="sym_o_superscript"
           tooltip="Superscript"
         />
         <!-- subscript -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().toggleSubscript().run()"
           :active="editor.isActive('subscript')"
           icon="sym_o_subscript"
@@ -108,25 +108,25 @@
         <q-separator vertical inset spaced class="separator" />
 
         <!-- text align -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().setTextAlign('left').run()"
           :active="editor.isActive({ textAlign: 'left' })"
           icon="bi-text-left"
           tooltip="Align left"
         />
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().setTextAlign('center').run()"
           :active="editor.isActive({ textAlign: 'center' })"
           icon="bi-text-center"
           tooltip="Align center"
         />
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().setTextAlign('right').run()"
           :active="editor.isActive({ textAlign: 'right' })"
           icon="bi-text-right"
           tooltip="Align right"
         />
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().setTextAlign('justify').run()"
           :active="editor.isActive({ textAlign: 'justify' })"
           icon="bi-list"
@@ -136,7 +136,7 @@
         <q-separator vertical inset spaced class="separator" />
 
         <!-- horizontal rule -->
-        <StaticButton
+        <TibtapMenuButton
           @click="editor.chain().focus().setHorizontalRule().run()"
           :active="false"
           icon="sym_o_horizontal_rule"
@@ -146,15 +146,15 @@
         <q-separator vertical inset spaced class="separator" />
 
         <!-- images -->
-        <StaticButton
+        <TibtapMenuButton
           v-if="dir"
-          @click="file.click()"
+          @click="editorFile.click()"
           :active="false"
           icon="bi-images"
           tooltip="Images"
         >
-          <span class="q-ml-xs text-weight-medium text-grey-14">Add</span>
-        </StaticButton>
+          <!-- <span class="q-ml-xs text-weight-medium text-grey-14">Add</span> -->
+        </TibtapMenuButton>
       </template>
 
       <template v-else>
@@ -173,16 +173,18 @@
         />
       </template>
 
-      <input @change="readImageURL($event)" ref="file" type="file" hidden multiple />
+      <input @change="readImageURL($event)" ref="editorFile" type="file" hidden multiple />
     </div>
   </div>
 </template>
 
 <script setup>
 const props = defineProps({
+  // editor 객체
   editor: {
     type: Object,
   },
+  // 파일 저장경로
   dir: {
     type: String,
   },
@@ -206,47 +208,53 @@ const toggleVisible = (e) => {
 
 // -----------------------------------------------------------
 // image upload
-const file = ref(null);
+const editorFile = ref(null);
 
 const readImageURL = async ({ target }) => {
-  console.log(process.env.IMAGE_EXT);
-  const images = target.files;
-  if (images.length) {
+  const files = target.files;
+  if (files.length) {
     try {
-      const form = new FormData();
-      for (let i = 0; i < images.length; i++) {
-        // 파일 유효성 검사 : jpg, jpeg, png, gif 확장자만 에디터 내부에 삽입할 수 있다.
-        let fileName = images[i].name;
+      const fd = new FormData();
+      const exts = process.env.IMAGE_EXTS.split(',');
+
+      for (let file of files) {
+        let fileName = file.name;
         let lastDot = fileName.lastIndexOf('.');
-        let ext = fileName.substring(lastDot, fileName.length).toLowerCase();
-        let extArr = process.env.IMAGE_EXT.split(',');
+        let ext = fileName.substring(lastDot + 1, fileName.length).toLowerCase();
 
-        if (!extArr.includes(ext))
-          // return baseNotify(`${process.env.IMAGE_EXT} 확장자만 등록 가능합니다.`, {
-          //   type: 'warning',
-          // });
+        if (!exts.includes(ext)) {
+          return $showAlert(`${exts.join(', ')} 확장자만 등록할 수 있습니다.`);
+        }
 
-          form.append('images', images[i]);
+        fd.append('file', file);
       }
-      // 이미지 저장 경로 설정
-      // TODO:server.webMvcConfig에 해당 경로 설정 확인 **
-      form.append('dir', props.dir);
 
-      const { data } = await api.post('/system/imageUpload', form, {
+      // 이미지 저장 경로 설정
+      fd.append('dir', props.dir);
+
+      const res = await axiosLoading.post('/editor/imageUpload', fd, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      // 저장한 이미지 editor에 바인딩
-      for (let image of data) {
-        let uploadImg = `<img src='${
-          process.env.SERVER_PORT + image.filePath
-        }' class='editor__image' alt='image'> `;
 
-        props.editor.commands.insertContent(uploadImg);
+      if (res.data.status == 200) {
+        const { images } = res.data.result;
+
+        if (images.length) {
+          for (let path of images) {
+            let img = `<img src="http://localhost:3000${path}" class="editor__image" alt="image">`;
+            props.editor.commands.insertContent(img);
+          }
+        }
       }
-    } catch {
-      baseNotify('이미지 저장 실패', { type: 'warning' });
+    } catch (err) {
+      console.log(err);
+      $showAlert(err.message);
+    } finally {
+      if (editorFile.value) {
+        editorFile.value.value = '';
+      }
     }
   }
 };
@@ -255,7 +263,7 @@ onMounted(() => {
 
   if (body.length)
     body[0].addEventListener('click', () => {
-      toggleVisible();
+      if (!visible.link) toggleVisible();
     });
 });
 </script>

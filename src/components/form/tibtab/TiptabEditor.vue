@@ -7,20 +7,17 @@
 </template>
 
 <script setup>
-import { onUnmounted, watch } from 'vue';
 import { useEditor, EditorContent } from '@tiptap/vue-3';
 import { Color } from '@tiptap/extension-color';
-import { StarterKit } from '@tiptap/starter-kit';
-import { Placeholder } from '@tiptap/extension-placeholder';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
 import { TextStyle } from '@tiptap/extension-text-style';
-import { TextAlign } from '@tiptap/extension-text-align';
-import { Highlight } from '@tiptap/extension-highlight';
+import TextAlign from '@tiptap/extension-text-align';
+import Highlight from '@tiptap/extension-highlight';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Superscript from '@tiptap/extension-superscript';
 import Subscript from '@tiptap/extension-subscript';
-
-import { ResizableImage } from 'tiptap-extension-resizable-image';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import css from 'highlight.js/lib/languages/css';
@@ -29,6 +26,9 @@ import ts from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 // load all languages with "all" or common languages with "common"
 import { all, createLowlight } from 'lowlight';
+
+// import Image from '@tiptap/extension-image';
+import ImageResize from 'tiptap-extension-resize-image';
 
 // create a lowlight instance
 const lowlight = createLowlight(all);
@@ -71,10 +71,6 @@ const editor = useEditor({
     TextAlign.configure({
       types: ['heading', 'paragraph'],
     }),
-    ResizableImage.configure({
-      defaultWidth: 200,
-      defaultHeight: 200,
-    }),
     TextStyle,
     Color,
     Highlight.configure({ multicolor: true }),
@@ -91,6 +87,15 @@ const editor = useEditor({
     }),
     Superscript,
     Subscript,
+    ImageResize.configure({
+      inline: true,
+    }),
+    // Image.configure({
+    //   resize: {
+    //     enabled: true,
+    //     alwaysPreserveAspectRatio: true,
+    //   },
+    // }),
   ],
   onUpdate: () => {
     emit('update:modelValue', editor.value.getHTML());

@@ -38,7 +38,7 @@
     <q-separator vertical inset spaced class="separator" />
 
     <!-- unset -->
-    <StaticButton
+    <TibtapMenuButton
       @click.stop="unsetColor"
       :color="!editor.isActive(type) ? 'grey-2' : ''"
       icon="bi-slash-circle"
