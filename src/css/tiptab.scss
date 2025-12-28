@@ -710,3 +710,27 @@ ul[data-type='taskList'] {
   background-color: #d1d1d1;
   border-radius: 4px;
 }
+
+.bubble-menu {
+  display: flex;
+  background-color: #272a3e;
+  padding: 0.2rem;
+  border-radius: 0.5rem;
+
+  button {
+    border: none;
+    background: none;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    opacity: 0.6;
+    cursor: pointer;
+
+    &:hover,
+    &.is-active {
+      opacity: 1;
+    }
+  }
+}
+

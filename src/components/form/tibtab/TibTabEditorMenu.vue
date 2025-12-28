@@ -21,6 +21,7 @@
 
         <HeadingDropdown @selection="toggleVisible" v-model="visible.heading" :editor />
         <ListDropdown @selection="toggleVisible" v-model="visible.list" :editor />
+        <TableDropdown @selection="toggleVisible" v-model="visible.table" :editor />
 
         <!-- blockquote -->
         <TibtapMenuButton
@@ -196,6 +197,7 @@ const visible = reactive({
   list: false,
   highLight: false,
   link: false,
+  table: false,
 });
 // dropdown menu toggle
 const toggleVisible = (e) => {

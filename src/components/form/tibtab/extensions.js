@@ -20,6 +20,10 @@ import html from 'highlight.js/lib/languages/xml';
 import { all, createLowlight } from 'lowlight';
 
 import ImageResize from 'tiptap-extension-resize-image';
+import { Table } from '@tiptap/extension-table';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { TableRow } from '@tiptap/extension-table-row';
 
 // create a lowlight instance
 const lowlight = createLowlight(all);
@@ -62,4 +66,10 @@ export const getExtensions = () => [
   ImageResize.configure({
     inline: true,
   }),
+  Table.configure({
+    resizable: true,
+  }),
+  TableRow,
+  TableHeader,
+  TableCell,
 ];

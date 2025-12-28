@@ -20,6 +20,7 @@ const props = defineProps({
   },
   dir: {
     type: String,
+    default: undefined,
   },
   height: {
     type: Number,
