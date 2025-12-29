@@ -11,7 +11,7 @@
   >
     <q-icon
       :name="current() ?? 'bi-list-ul'"
-      :color="!current() ? 'grey-14' : 'deep-purple-12'"
+      :color="!current() ? 'grey-14' : 'deep-purple-11'"
       size="xs"
     />
     <q-icon name="sym_o_keyboard_arrow_down" color="grey-14" style="font-size: 11px" />
@@ -75,7 +75,6 @@ const current = () => {
 <style scoped>
 #wrapper {
   width: 130px;
-  bottom: -93px;
   left: 104px;
 }
 </style>

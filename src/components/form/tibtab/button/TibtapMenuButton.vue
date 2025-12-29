@@ -10,7 +10,7 @@
     <q-icon
       :style="iconStyle"
       :name="icon"
-      :color="!active ? 'grey-14' : 'deep-purple-12'"
+      :color="!active ? 'grey-14' : 'deep-purple-11'"
       size="xs"
     />
     <slot></slot>

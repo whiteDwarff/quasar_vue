@@ -11,7 +11,7 @@
   >
     <q-icon
       :name="!current ? 'sym_o_h_mobiledata' : `sym_o_format_h${current}`"
-      :color="!current ? 'grey-14' : 'deep-purple-12'"
+      :color="!current ? 'grey-14' : 'deep-purple-11'"
       size="xs"
     />
     <q-icon name="sym_o_keyboard_arrow_down" color="grey-14" style="font-size: 11px" />
@@ -71,7 +71,6 @@ const selection = (i) => {
 <style scoped>
 #wrapper {
   width: 120px;
-  bottom: -119px;
   left: 65px;
 }
 </style>

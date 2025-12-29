@@ -20,16 +20,19 @@
         <q-separator vertical inset spaced class="separator" />
 
         <HeadingDropdown @selection="toggleVisible" v-model="visible.heading" :editor />
+
         <ListDropdown @selection="toggleVisible" v-model="visible.list" :editor />
-        <TableDropdown @selection="toggleVisible" v-model="visible.table" :editor />
 
         <!-- blockquote -->
         <TibtapMenuButton
-          @click="editor.chain().focus().toggleBlockquote().run()"
-          :active="editor.isActive('blockquote')"
-          icon="bi-blockquote-left"
-          tooltip="Blockquote"
+        @click="editor.chain().focus().toggleBlockquote().run()"
+        :active="editor.isActive('blockquote')"
+        icon="bi-blockquote-left"
+        tooltip="Blockquote"
         />
+
+        <TableDropdown @selection="toggleVisible" v-model="visible.table" :editor />
+        
         <!-- code block -->
         <TibtapMenuButton
           @click="editor.chain().focus().toggleCodeBlock().run()"

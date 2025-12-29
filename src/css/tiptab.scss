@@ -149,7 +149,7 @@
       margin: 0;
       overflow: hidden;
       th {
-        font-weight: 700;
+        // font-weight: 700;
         text-align: left;
       }
       .selectedCell {
@@ -411,6 +411,7 @@
 .tiptap .editor__content table td > *,
 .tiptap .editor__content table th > * {
   margin-bottom: 0;
+  font-weight: normal;
 }
 .tiptap pre code .hljs-comment,
 .tiptap pre code .hljs-quote {
@@ -557,8 +558,9 @@
 
 .editor__menu__wrap {
   z-index: 100;
+  top: 35px;
   padding: 5px;
-  border-radius: 10%;
+  border-radius: 10px;
 }
 .editor__menu__item {
   border-radius: 10px;
