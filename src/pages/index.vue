@@ -1,6 +1,10 @@
 <template>
   <q-page padding>
-    <tiptabEditor v-model="content" :height="500" />
+    <div class="row q-col-gutter-md">
+      <div class="col-12">
+        <tiptabEditor v-model="content" :height="500" />
+      </div>
+    </div>
   </q-page>
 </template>
 

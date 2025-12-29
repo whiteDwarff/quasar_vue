@@ -8,8 +8,8 @@ import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import Superscript from '@tiptap/extension-superscript';
 import Subscript from '@tiptap/extension-subscript';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
+// import Underline from '@tiptap/extension-underline';
+// import Link from '@tiptap/extension-link';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import css from 'highlight.js/lib/languages/css';
@@ -61,8 +61,8 @@ export const getExtensions = () => [
   }),
   Superscript,
   Subscript,
-  Underline,
-  Link,
+  // Underline,
+  // Link,
   ImageResize.configure({
     inline: true,
   }),

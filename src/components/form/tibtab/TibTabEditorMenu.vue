@@ -20,19 +20,17 @@
         <q-separator vertical inset spaced class="separator" />
 
         <HeadingDropdown @selection="toggleVisible" v-model="visible.heading" :editor />
-
         <ListDropdown @selection="toggleVisible" v-model="visible.list" :editor />
+        <TableDropdown @selection="toggleVisible" v-model="visible.table" :editor />
 
         <!-- blockquote -->
         <TibtapMenuButton
-        @click="editor.chain().focus().toggleBlockquote().run()"
-        :active="editor.isActive('blockquote')"
-        icon="bi-blockquote-left"
-        tooltip="Blockquote"
+          @click="editor.chain().focus().toggleBlockquote().run()"
+          :active="editor.isActive('blockquote')"
+          icon="bi-blockquote-left"
+          tooltip="Blockquote"
         />
 
-        <TableDropdown @selection="toggleVisible" v-model="visible.table" :editor />
-        
         <!-- code block -->
         <TibtapMenuButton
           @click="editor.chain().focus().toggleCodeBlock().run()"
@@ -147,18 +145,17 @@
           tooltip="Horizontal rule"
         />
 
-        <q-separator vertical inset spaced class="separator" />
+        <template v-if="dir">
+          <q-separator vertical inset spaced class="separator" />
 
-        <!-- images -->
-        <TibtapMenuButton
-          v-if="dir"
-          @click="editorFile.click()"
-          :active="false"
-          icon="bi-images"
-          tooltip="Images"
-        >
-          <!-- <span class="q-ml-xs text-weight-medium text-grey-14">Add</span> -->
-        </TibtapMenuButton>
+          <!-- images -->
+          <TibtapMenuButton
+            @click="editorFile.click()"
+            :active="false"
+            icon="bi-images"
+            tooltip="Images"
+          />
+        </template>
       </template>
 
       <template v-else>
@@ -166,14 +163,14 @@
         <ColorPalette
           @cancle="((visible.highLight = false), (visible.all = true))"
           v-if="visible.highLight"
-          :editor
+          :editor="editor"
           type="highlight"
         />
         <!-- link -->
         <HyperLink
           @cancle="((visible.link = false), (visible.all = true))"
           v-else-if="visible.link"
-          :editor
+          :editor="editor"
         />
       </template>
 
