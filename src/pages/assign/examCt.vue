@@ -38,14 +38,12 @@
         </div>
       </q-card-section>
 
-      {{ nodes }}
-
-      <SubjectTreeForm v-model:nodes="nodes" v-model:filterNodes="filterNodes" />
+      <SubjectTreeForm v-model:nodes="nodes" :param />
     </q-card>
   </q-page>
 </template>
 
 <script setup>
-const { nodes, filterNodes, param, getExamCategory } = useExamCategory();
+const { nodes, param, getExamCategory } = useExamCategory();
 getExamCategory();
 </script>

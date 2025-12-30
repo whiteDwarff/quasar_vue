@@ -585,9 +585,10 @@ ul[data-type='taskList'] {
   list-style: none;
   margin-left: 0;
   padding: 0;
+  padding-left: 0 !important;
 
   li {
-    align-items: flex-start;
+    align-items: center;
     display: flex;
 
     > label {
@@ -598,6 +599,12 @@ ul[data-type='taskList'] {
 
     > div {
       flex: 1 1 auto;
+    }
+  }
+
+  li[data-checked='true'] {
+    > div {
+      text-decoration: line-through;
     }
   }
 
@@ -735,4 +742,3 @@ ul[data-type='taskList'] {
     }
   }
 }
-

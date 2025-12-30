@@ -73,6 +73,31 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   margin-top: 3px;
 }
 
+/* tree */
+.q-tree .q-focus-helper,
+.q-tree .q-pointer--click {
+  background: none !important;
+}
+.q-tree > .q-tree__node {
+  padding: 10px 0;
+}
+.q-tree > .q-tree__node:first-child {
+  padding-top: 0;
+}
+.q-tree > .q-tree__node:last-child {
+  padding-bottom: 0;
+}
+.q-tree__node-header {
+  pointer-events: none;
+}
+.q-tree__arrow {
+  pointer-events: all;
+}
+.q-tree__node-header-content > div {
+  pointer-events: all;
+}
+
+
 @media all and (min-width: 600px) and (max-width: 1290px) {
   .q-btn--dense .on-left {
     margin-right: 6px;

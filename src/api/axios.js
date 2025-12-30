@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { $showAlert } from 'src/utils/globals';
 
-const baseURL = 'http://localhost:3000/api';
+const baseURL = '/api';
 
 // const api = axios.create({ baseURL });
 

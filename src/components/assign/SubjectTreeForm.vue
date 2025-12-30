@@ -10,8 +10,11 @@
   <div>
     <q-tree
       v-model:expanded="expanded"
-      :nodes="filterNodes"
+      :nodes="nodes"
+      :filter="param || ' '"
+      :filter-method="filters"
       node-key="key"
+      label-key="name"
       no-nodes-label="데이터가 없습니다."
       no-results-label="검색결과가 없습니다."
       default-expand-all
@@ -20,7 +23,7 @@
       <!-- 1 depth -->
       <template v-slot:header-root="prop">
         <div @click.stop @keypress.stop class="full-width">
-          <div class="flex">
+          <div class="flex q-pl-md">
             <q-input
               @click.stop
               v-model="prop.node.name"
@@ -28,9 +31,7 @@
               dense
               :class="{
                 'bg-active': !prop.node.cateCode,
-                'bg-grey-2': prop.node.useFlag == 'N',
               }"
-              :readonly="prop.node.useFlag == 'N'"
               placeholder="대분류를 입력하세요."
               style="width: calc(100% - 88px)"
             />
@@ -61,7 +62,7 @@
       <!-- 2 depth -->
       <template v-slot:header-node="prop">
         <div @click.stop @keypress.stop class="full-width">
-          <div class="flex q-pl-lg">
+          <div class="flex q-pl-md">
             <q-input
               @click.stop
               v-model="prop.node.name"
@@ -97,7 +98,7 @@
       <!-- 3 depth -->
       <template v-slot:header-item="prop">
         <div @click.stop @keypress.stop class="full-width">
-          <div class="flex q-pl-sm">
+          <div class="flex q-pl-md">
             <q-input
               @click.stop
               v-model="prop.node.name"
@@ -126,9 +127,43 @@
 
 <script setup>
 const nodes = defineModel('nodes');
-const filterNodes = defineModel('filterNodes');
+const props = defineProps({
+  param: {
+    type: String,
+    default: '',
+  },
+});
 
 const expanded = ref([]);
+
+// 모든 키 추출 (펼치기용)
+const getNodeKeys = (nodes, keys = []) => {
+  nodes.forEach((node) => {
+    if (node.children && node.children.length > 0) {
+      keys.push(node.key);
+      getNodeKeys(node.children, keys);
+    }
+  });
+  return keys;
+};
+
+// 최초 로드 시 및 검색 시 전체 펼치기
+watch(
+  [() => nodes.value, () => props.param],
+  ([n]) => {
+    if (n.length > 0) {
+      expanded.value = getNodeKeys(n);
+    }
+  },
+  { immediate: true },
+);
+
+// 필터 메소드: useFlag가 N인 항목은 숨김 + 검색어 매칭
+const filters = (node, filterText) => {
+  const isMatch = node.name.toLowerCase().includes(filterText.trim().toLowerCase());
+  const isUseY = node.useFlag !== 'N';
+  return isMatch && isUseY;
+};
 
 // 분류 추가
 const appendCategory = (node, depth) => {
@@ -167,6 +202,8 @@ const appendCategory = (node, depth) => {
 
       delete obj.children;
     }
+    node.children.push(obj);
+
     if (!expanded.value.includes(node.key)) expanded.value.push(node.key);
   }
 };
@@ -184,12 +221,21 @@ const exceptCategory = (node, depth) => {
     } else {
       const root = nodes.value.find((n) => n.key === node.rootKey);
       if (root && root.children) {
-        const nodes = root.children.find((n) => n.key === node.nodeKey);
-        if (nodes && nodes.children) {
-          nodes.children = nodes.children.filter(({ key }) => key !== node.key);
+        const nodesArr = root.children.find((n) => n.key === node.nodeKey);
+        if (nodesArr && nodesArr.children) {
+          nodesArr.children = nodesArr.children.filter(({ key }) => key !== node.key);
         }
       }
     }
+  // 이미 존재하는 데이터는 트리에서 숨김
+  } else setUseFlag(node);
+};
+
+// 재귀적으로 useFlag 변경
+const setUseFlag = (node) => {
+  node.useFlag = 'N';
+  if (node.children && node.children.length) {
+    node.children.forEach((child) => setUseFlag(child));
   }
 };
 </script>
@@ -199,16 +245,7 @@ const exceptCategory = (node, depth) => {
   width: 40px;
   height: 40px;
 }
-:deep(.q-tree > .q-tree__node) {
-  padding: 10px 0;
-}
-:deep(.q-tree > .q-tree__node:first-child) {
-  padding-top: 0;
-}
-:deep(.q-tree > .q-tree__node:last-child) {
-  padding-bottom: 0;
-}
 .bg-active {
-  background-color: #f2f7ff;
+  background: #f2f7ff;
 }
 </style>
