@@ -1,138 +1,176 @@
 <template>
-  <div class="row items-baseline edit-btn-wrap">
-    <q-space />
-    <div class="flex justify-end">
-      <CustomButton :disabled="!nodes.length" label="저장" class="w-100 q-mr-xs" />
-      <CustomButton @click="appendCategory(null, 1)" label="시험분류 추가" outline />
-    </div>
-  </div>
-  <!-- nodes -->
-  <div>
-    <q-tree
-      v-model:expanded="expanded"
-      :nodes="nodes"
-      :filter="param || ' '"
-      :filter-method="filters"
-      node-key="key"
-      label-key="name"
-      no-nodes-label="데이터가 없습니다."
-      no-results-label="검색결과가 없습니다."
-      default-expand-all
-      no-selection-unset
-    >
-      <!-- 1 depth -->
-      <template v-slot:header-root="prop">
-        <div @click.stop @keypress.stop class="full-width">
-          <div class="flex q-pl-md">
-            <q-input
-              @click.stop
-              v-model="prop.node.name"
-              outlined
-              dense
-              :class="{
-                'bg-active': !prop.node.cateCode,
-              }"
-              placeholder="대분류를 입력하세요."
-              style="width: calc(100% - 88px)"
-            />
+  <q-page padding>
+    <q-card flat>
+      <q-card-section class="q-pt-none">
+        <div class="flex items-baseline location-wrap">
+          <span class="title">시험분류</span>
+          <q-space />
+          <span class="bar">Home</span>
+          <span class="bar">배정요소</span>
+          <span class="current">시험분류</span>
+        </div>
+      </q-card-section>
 
-            <q-btn
-              @click.stop="exceptCategory(prop.node, 1)"
-              icon="bi-dash"
-              rounded
-              dense
-              outline
-              unelevated
-              color="grey-7"
-              class="rounded-50 q-mx-xs action-btn"
-            />
-            <q-btn
-              @click.stop="appendCategory(prop.node, 2)"
-              icon="bi-plus"
-              rounded
-              dense
-              outline
-              unelevated
-              color="grey-7"
-              class="rounded-50 action-btn"
-            />
-          </div>
-        </div>
-      </template>
-      <!-- 2 depth -->
-      <template v-slot:header-node="prop">
-        <div @click.stop @keypress.stop class="full-width">
-          <div class="flex q-pl-md">
+      <q-card-section class="search-wrap">
+        <div class="flex justify-center">
+          <div class="contents input-area">
             <q-input
-              @click.stop
-              v-model="prop.node.name"
+              v-model="param"
+              :readonly="!nodes.length"
               outlined
               dense
-              :class="{ 'bg-active': !prop.node.cateCode }"
-              style="width: calc(100% - 88px)"
-              placeholder="중분류를 입력하세요."
-            />
-            <q-btn
-              @click.stop="exceptCategory(prop.node, 2)"
-              icon="bi-dash"
-              rounded
-              dense
-              outline
-              unelevated
-              color="grey-7"
-              class="rounded-50 q-mx-xs action-btn"
-            />
-            <q-btn
-              @click.stop="appendCategory(prop.node, 3)"
-              icon="bi-plus"
-              rounded
-              dense
-              outline
-              unelevated
-              color="grey-7"
-              class="rounded-50 action-btn"
+              class="bg-white"
+              placeholder="분류명을 입력하세요."
             />
           </div>
-        </div>
-      </template>
-      <!-- 3 depth -->
-      <template v-slot:header-item="prop">
-        <div @click.stop @keypress.stop class="full-width">
-          <div class="flex q-pl-md">
-            <q-input
-              @click.stop
-              v-model="prop.node.name"
-              outlined
-              dense
-              :class="{ 'bg-active': !prop.node.cateCode }"
-              style="width: calc(100% - 44px)"
-              placeholder="소분류를 입력하세요."
-            />
-            <q-btn
-              @click.stop="exceptCategory(prop.node, 3)"
-              icon="bi-dash"
-              rounded
-              dense
-              outline
-              unelevated
-              color="grey-7"
-              class="rounded-50 q-ml-xs action-btn"
-            />
+          <div class="button-area">
+            <div class="flex">
+              <q-space />
+              <CustomButton
+                :disabled="!nodes.length"
+                @click="param = ''"
+                label="초기화"
+                :outline="true"
+                class="q-mr-sm w-100"
+              />
+            </div>
           </div>
         </div>
-      </template>
-    </q-tree>
-  </div>
+      </q-card-section>
+
+      <div class="row items-baseline edit-btn-wrap">
+        <q-space />
+        <div class="flex justify-end">
+          <CustomButton @click="submit" :disabled="!nodes.length" label="저장" class="w-100 q-mr-xs" />
+          <CustomButton @click="appendCategory(null, 1)" label="시험분류 추가" outline />
+        </div>
+      </div>
+
+      <!-- nodes -->
+      <div>
+        <q-tree
+          v-model:expanded="expanded"
+          :nodes="nodes"
+          :filter="param || ' '"
+          :filter-method="filters"
+          node-key="key"
+          label-key="name"
+          no-nodes-label="데이터가 없습니다."
+          no-results-label="검색결과가 없습니다."
+          default-expand-all
+          no-selection-unset
+        >
+          <!-- 1 depth -->
+          <template v-slot:header-root="prop">
+            <div @click.stop @keypress.stop class="full-width">
+              <div class="flex q-pl-md">
+                <q-input
+                  @click.stop
+                  v-model="prop.node.name"
+                  outlined
+                  dense
+                  :class="{
+                    'bg-active': !prop.node.cateCode,
+                  }"
+                  placeholder="대분류를 입력하세요."
+                  style="width: calc(100% - 88px)"
+                />
+                <q-btn
+                  @click.stop="exceptCategory(prop.node, 1)"
+                  icon="bi-dash"
+                  rounded
+                  dense
+                  outline
+                  unelevated
+                  color="grey-7"
+                  class="rounded-50 q-mx-xs action-btn"
+                />
+                <q-btn
+                  @click.stop="appendCategory(prop.node, 2)"
+                  icon="bi-plus"
+                  rounded
+                  dense
+                  outline
+                  unelevated
+                  color="grey-7"
+                  class="rounded-50 action-btn"
+                />
+              </div>
+            </div>
+          </template>
+          <!-- 2 depth -->
+          <template v-slot:header-node="prop">
+            <div @click.stop @keypress.stop class="full-width">
+              <div class="flex q-pl-md">
+                <q-input
+                  @click.stop
+                  v-model="prop.node.name"
+                  outlined
+                  dense
+                  :class="{ 'bg-active': !prop.node.cateCode }"
+                  style="width: calc(100% - 88px)"
+                  placeholder="중분류를 입력하세요."
+                />
+                <q-btn
+                  @click.stop="exceptCategory(prop.node, 2)"
+                  icon="bi-dash"
+                  rounded
+                  dense
+                  outline
+                  unelevated
+                  color="grey-7"
+                  class="rounded-50 q-mx-xs action-btn"
+                />
+                <q-btn
+                  @click.stop="appendCategory(prop.node, 3)"
+                  icon="bi-plus"
+                  rounded
+                  dense
+                  outline
+                  unelevated
+                  color="grey-7"
+                  class="rounded-50 action-btn"
+                />
+              </div>
+            </div>
+          </template>
+          <!-- 3 depth -->
+          <template v-slot:header-item="prop">
+            <div @click.stop @keypress.stop class="full-width">
+              <div class="flex q-pl-md">
+                <q-input
+                  @click.stop
+                  v-model="prop.node.name"
+                  outlined
+                  dense
+                  :class="{ 'bg-active': !prop.node.cateCode }"
+                  style="width: calc(100% - 44px)"
+                  placeholder="소분류를 입력하세요."
+                />
+                <q-btn
+                  @click.stop="exceptCategory(prop.node, 3)"
+                  icon="bi-dash"
+                  rounded
+                  dense
+                  outline
+                  unelevated
+                  color="grey-7"
+                  class="rounded-50 q-ml-xs action-btn"
+                />
+              </div>
+            </div>
+          </template>
+        </q-tree>
+      </div>
+    </q-card>
+  </q-page>
 </template>
 
 <script setup>
+const param = defineModel();
 const nodes = defineModel('nodes');
-const props = defineProps({
-  param: {
-    type: String,
-    default: '',
-  },
-});
+
+const emit = defineEmits(['submit']);
 
 const expanded = ref([]);
 
@@ -149,16 +187,13 @@ const getNodeKeys = (nodes, keys = []) => {
 
 // 최초 로드 시 및 검색 시 전체 펼치기
 watch(
-  [() => nodes.value, () => props.param],
+  [() => nodes.value, () => param],
   ([n]) => {
-    if (n.length > 0) {
-      expanded.value = getNodeKeys(n);
-    }
+    if (n.length > 0) expanded.value = getNodeKeys(n);
   },
   { immediate: true },
 );
-
-// 필터 메소드: useFlag가 N인 항목은 숨김 + 검색어 매칭
+// 검색조건에 맞는 노드 필터링
 const filters = (node, filterText) => {
   const isMatch = node.name.toLowerCase().includes(filterText.trim().toLowerCase());
   const isUseY = node.useFlag !== 'N';
@@ -238,6 +273,19 @@ const setUseFlag = (node) => {
     node.children.forEach((child) => setUseFlag(child));
   }
 };
+
+// 저장
+const submit = async () => {
+  for (let root of nodes.value) {
+    if (!root.name) return $showAlert('대분류를 모두 입력해주세요.');
+    for (let node of root.children) {
+      if (!node.name) return $showAlert('중분류를 모두 입력해주세요.');
+      for (let item of node.children)
+        if (!item.name) return $showAlert('소분류를 모두 입력해주세요.');
+    }
+  }
+  if (await $showConfirm('저장하시겠습니까?')) emit('submit');
+}
 </script>
 
 <style scoped>

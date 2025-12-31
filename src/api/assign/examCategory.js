@@ -1,4 +1,10 @@
 
+/**
+ * 시험분류 조회
+ * @returns {object} nodes - 목록
+ * @returns {string} param - 검색조건
+ * @returns {function} getExamCategory - 목록조회 함수
+ */
 export function useExamCategory() {
   const nodes = ref([]);
   const param = ref('');
@@ -19,4 +25,13 @@ export function useExamCategory() {
     param,
     getExamCategory,
   };
+}
+/**
+ * 시험분류 수정
+ * @param {array} nodes - 등록 및 수정 데이터
+ * @returns {Promise}
+ */
+export function examCategoryEdit(nodes) {
+  const res = axiosLoading.post('/assign/examCategoryEdit', nodes);
+  return handleApiCall(res);
 }
