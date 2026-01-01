@@ -3,6 +3,7 @@
     @submit="submit" 
     v-model="param" 
     v-model:nodes="nodes" 
+    title="시험분류"
   />
 </template>
 

@@ -3,11 +3,11 @@
     <q-card flat>
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
-          <span class="title">시험분류</span>
+          <span class="title">{{ title }}</span>
           <q-space />
           <span class="bar">Home</span>
           <span class="bar">배정요소</span>
-          <span class="current">시험분류</span>
+          <span class="current">{{ title }}</span>
         </div>
       </q-card-section>
 
@@ -42,7 +42,7 @@
         <q-space />
         <div class="flex justify-end">
           <CustomButton @click="submit" :disabled="!nodes.length" label="저장" class="w-100 q-mr-xs" />
-          <CustomButton @click="appendCategory(null, 1)" label="시험분류 추가" outline />
+          <CustomButton @click="appendCategory(null, 1)" :label="`${title} 추가`" outline />
         </div>
       </div>
 
@@ -171,6 +171,10 @@ const param = defineModel();
 const nodes = defineModel('nodes');
 
 const emit = defineEmits(['submit']);
+
+defineProps({
+  title: String
+});
 
 const expanded = ref([]);
 
