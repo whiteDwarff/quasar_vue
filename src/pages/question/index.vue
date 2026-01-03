@@ -1,6 +1,5 @@
 <template>
   <q-page padding>
-    {{ form }}
     <q-card flat>
       <q-card-section class="q-pt-none">
         <div class="flex items-baseline location-wrap">
@@ -11,7 +10,8 @@
           <span class="current">문제등록</span>
         </div>
       </q-card-section>
-      <q-card-section>
+
+      <q-card-section class="q-pt-none">
         <p class="text-subtitle2 text-weight-bold q-mb-md before-line">미리보기</p>
 
         <table class="markup-table">
@@ -28,22 +28,19 @@
               <th class="star">문제유형</th>
               <td colspan="5">
                 <q-radio
-                  v-for="item of questionTypeList"
-                  :key="item.id"
+                  v-for="item of questionTypeList" :key="item.id"
                   v-model="form.questionType"
-                  :val="item.value"
-                  :label="item.label"
-                  size="sm"
-                  class="q-mr-sm"
+                  :val="item.value" :label="item.label"
+                  size="xs" class="q-mr-sm"
                 />
               </td>
             </tr>
             <tr>
               <th>문항ID</th>
               <td>
-                {{ !form.questionCode ? '미기입(자동 생성)' : form.questionCode }}
+                {{ !form.questionCode ?  '자동 생성' : form.questionCode }}
               </td>
-              <th class="star">출제자</th>
+              <th>출제자</th>
               <td>
                 <q-input
                   v-model="form.examiner"
@@ -51,11 +48,10 @@
                   dense
                   fill
                   class="full-width"
-                  placeholder="출제자를 입력하세요."
                 />
               </td>
               <th>출제일</th>
-              <td>{{ !form.questionCode ? '미기입(자동 생성)' : form.rgstDt }}</td>
+              <td>{{ !form.questionCode ? '자동 생성' : form.rgstDt }}</td>
             </tr>
             <tr>
               <th class="star">문제번호</th>
@@ -100,31 +96,42 @@
               <th>예상 난이도</th>
               <td>
                 <div class="q-gutter-x-sm">
-                  <q-radio v-model="form.difficultyLevel" :val="3" label="상" size="sm" />
-                  <q-radio v-model="form.difficultyLevel" :val="2" label="중" size="sm" />
-                  <q-radio v-model="form.difficultyLevel" :val="1" label="하" size="sm" />
+                  <q-radio v-model="form.difficultyLevel" :val="3" label="상" size="xs" />
+                  <q-radio v-model="form.difficultyLevel" :val="2" label="중" size="xs" />
+                  <q-radio v-model="form.difficultyLevel" :val="1" label="하" size="xs" />
                 </div>
               </td>
               <th>추정정답률</th>
               <td>
-                <q-input
-                  v-model="form.correctRate"
-                  input-class="text-right"
-                  suffix="%"
-                  mask="###"
-                  outlined
-                  dense
-                  fill
-                  class="full-width"
-                />
+                <div class="row">
+                  <q-input
+                    v-model="form.correctRate"
+                    input-class="text-right"
+                    :readonly="form.correctCk"
+                    suffix="%"
+                    mask="###"
+                    outlined
+                    dense
+                    fill
+                    class="col-xs-12 col-md-8"
+                  />
+                  <q-checkbox
+                    @update:modelValue="form.correctRate = null"
+                    v-model="form.correctCk"
+                    :val="1"
+                    label="해당없음"
+                    size="xs"
+                    class="col-xs-12 col-md-4"
+                  />
+                </div>
               </td>
               <th>지식수준</th>
               <td>
                 <div class="q-gutter-x-sm">
-                  <q-radio v-model="form.questionLevel" :val="1" label="암기" size="sm" />
-                  <q-radio v-model="form.questionLevel" :val="2" label="해석(판단)" size="sm" />
-                  <q-radio v-model="form.questionLevel" :val="3" label="해결" size="sm" />
-                  <q-radio v-model="form.questionLevel" :val="4" label="해당없음" size="sm" />
+                  <q-radio v-model="form.questionLevel" :val="1" label="암기" size="xs" />
+                  <q-radio v-model="form.questionLevel" :val="2" label="해석(판단)" size="xs" />
+                  <q-radio v-model="form.questionLevel" :val="3" label="해결" size="xs" />
+                  <q-radio v-model="form.questionLevel" :val="4" label="해당없음" size="xs" />
                 </div>
               </td>
             </tr>
@@ -136,15 +143,21 @@
                     v-model="form.qRelevanceCheck"
                     :val="1"
                     label="필수적인(essential)"
-                    size="sm"
+                    size="xs"
                   />
                   <q-checkbox
                     v-model="form.qRelevanceCheck"
                     :val="2"
                     label="중요한(important) "
-                    size="sm"
+                    size="xs"
                   />
                 </div>
+              </td>
+            </tr>
+            <tr>
+              <th>문항주제</th>
+              <td colspan="5">
+                <q-input v-model="form.topic" outlined dense fill class="full-width" />
               </td>
             </tr>
             <tr>
@@ -153,12 +166,78 @@
                 <q-input v-model="keyword" outlined dense fill class="full-width" />
               </td>
             </tr>
+            <tr>
+              <th>참고문헌</th>
+              <td colspan="5">
+                <q-input v-model="form.reference" outlined dense fill class="full-width" />
+              </td>
+            </tr>
           </tbody>
         </table>
       </q-card-section>
+
+      <!-- 머리글 -->
+      <q-card-section>
+        <p 
+          :class="{ star : form.questionType == 5 }"
+          class="text-subtitle2 text-weight-bold q-mb-md before-line"
+        >머리글</p>
+        <tiptabEditor v-model="form.headerText" :height="100" />
+      </q-card-section>
+
+      <template v-if="form.questionType != 5">
+        <!-- 문항줄기 -->
+        <q-card-section>
+          <p class="text-subtitle2 text-weight-bold q-mb-md before-line star">문항줄기</p>
+          <tiptabEditor v-model="form.question" :height="100" />
+        </q-card-section>
+        
+        <!-- 자료제시 -->
+        <q-card-section>
+          <p class="text-subtitle2 text-weight-bold q-mb-md before-line">자료제시</p>
+          <PresentationAdd 
+            @add="form.presentation.push($event)" 
+            :midiaItems="form.presentation"
+            :type="['image', 'audio', 'video', 'text']"
+          />
+        </q-card-section>
+      </template>
+
     </q-card>
   </q-page>
 </template>
+
+<script setup>
+const form = ref({
+  questionType: 1,
+  questionCode: null,
+  examiner: '',
+  rgstDt: null,
+  cate1Code: null,     // 시험분류
+  cate2Code: null,
+  cate3Code: null,
+  controlNo: 1,        // 문제번호
+  point: 1,            // 점수
+  subjectCate1: null,  // 교과목분류
+  subjectCate2: null,
+  subjectCate3: null,
+  difficultyLevel: 2,  // 예상 난이도
+  correctRate: null,   // 추천정답률
+  correctCk: true,
+  questionLevel: 4,    // 지식수준
+  qRelevanceCheck: [], // 문항적절성
+  topic: '',           // 문항주제
+  keyword: [],         // 키워드
+  reference: '',       // 참고문헌
+  headerText: '',      // 머리글
+  question: '',        // 문항줄기
+  presentation: []     // 자료제시
+});
+
+const keyword = ref('');
+</script>
+
+
 
 <script>
 const questionTypeList = [
@@ -167,30 +246,6 @@ const questionTypeList = [
   { value: 3, label: '주관식' },
   { value: 4, label: '말하기' },
 ];
-</script>
-
-<script setup>
-const form = ref({
-  questionType: 1,
-  questionCode: null,
-  examiner: '',
-  rgstDt: null,
-  cate1Code: null, // 시험분류
-  cate2Code: null,
-  cate3Code: null,
-  controlNo: 1, // 문제번호
-  point: 1, // 점수
-  subjectCate1: null, // 교과목분류
-  subjectCate2: null,
-  subjectCate3: null,
-  difficultyLevel: 2, // 예상 난이도
-  correctRate: null, // 추천정답률
-  questionLevel: 4, // 지식수준
-  qRelevanceCheck: [], // 문항적절성
-  keyword: [],
-});
-
-const keyword = ref('');
 </script>
 
 <style scoped></style>
