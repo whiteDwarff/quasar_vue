@@ -4,8 +4,6 @@ import pluginVue from 'eslint-plugin-vue';
 import pluginQuasar from '@quasar/app-vite/eslint';
 import prettierSkipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 
-import autoImportGlobals from './.eslintrc-auto-import.json' assert { type: 'json' };
-
 export default [
   {
     /**
@@ -44,8 +42,6 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node, // SSR, Electron, config files
-        // auto-import로 인한 eslint 에러 제거
-        ...autoImportGlobals.globals,
         process: 'readonly', // process.env.*
         ga: 'readonly', // Google Analytics
         cordova: 'readonly',
@@ -57,6 +53,8 @@ export default [
 
     // add your custom rules here
     rules: {
+      'vue/valid-v-bind': 'off',
+      'no-undef': 'off',
       'prefer-promise-reject-errors': 'off',
       'vue/multi-word-component-names': 'off',
       'no-unused-vars': [

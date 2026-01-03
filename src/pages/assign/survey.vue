@@ -17,7 +17,13 @@
             <div class="flex items-center">
               <span class="label">제목</span>
               <div class="content">
-                <q-input v-model="param.title" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getServeyList(1)"
+                  v-model="param.researchTitle"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -25,7 +31,13 @@
             <div class="flex items-center">
               <span class="label">내용</span>
               <div class="content">
-                <q-input v-model="param.memo" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getServeyList(1)"
+                  v-model="param.researchMemo"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -33,12 +45,12 @@
             <div class="flex">
               <q-space />
               <CustomButton
-                @click="param = resetParam()"
+                @click="resetParam()"
                 label="초기화"
                 :outline="true"
                 class="q-mr-md w-100"
               />
-              <CustomButton label="검색" class="w-100" />
+              <CustomButton @click="getServeyList(1)" label="검색" class="w-100" />
             </div>
           </div>
         </div>
@@ -47,13 +59,13 @@
 
     <div class="row items-baseline edit-btn-wrap">
       <p class="q-mt-auto">
-        총 <span class="list-count">{{ rows.length }}</span
+        총 <span class="list-count">{{ totalCount }}</span
         >개
       </p>
       <q-space />
       <div class="flex justify-end">
         <CustomButton
-          @click="surveyDelete(null)"
+          @click="updateResearchUsyn(null)"
           label="삭제"
           color="warning"
           outline
@@ -67,8 +79,9 @@
       <q-table
         v-model:selected="selected"
         :rows="rows"
+        :rows-per-page-options="[0]"
         selection="multiple"
-        row-key="surveyCode"
+        row-key="researchCode"
         flat
         bordered
         hide-pagination
@@ -76,14 +89,12 @@
       >
         <template #header="props">
           <q-tr :props="props">
-            <q-th style="width: 5%">
-              <!-- <q-checkbox v-model="isAll" /> -->
-              <q-checkbox v-model="props.selected" />
-            </q-th>
-            <q-th style="width: 5%">번호</q-th>
-            <q-th style="width: 25%">제목</q-th>
-            <q-th style="width: 30%">내용</q-th>
-            <q-th style="width: 5%">문항수</q-th>
+            <q-th style="width: 5%"><q-checkbox v-model="props.selected" /></q-th>
+            <q-th style="width: 5%">No</q-th>
+            <q-th style="width: 23%">제목</q-th>
+            <q-th style="width: 28%">내용</q-th>
+            <q-th style="width: 7%">문항수</q-th>
+            <q-th style="width: 12%">등록일</q-th>
             <q-th style="width: 20%">관리</q-th>
           </q-tr>
         </template>
@@ -96,31 +107,24 @@
             :class="{ current: currentRow == props.rowIndex }"
             class="cursor-pointer"
           >
-            <q-td>
-              <q-checkbox v-model="props.selected" />
-              <!-- 
-                <q-checkbox
-                v-if="!props.row.usedCount"
-                @update:modelValue="changeCheckedVal"
-                v-model="selected"
-                :val="props.row"
-                />
-              -->
-            </q-td>
-            <q-td>{{ props.rowIndex + 1 }}</q-td>
-            <q-td>{{ props.row.title }}</q-td>
-            <q-td>{{ props.row.memo }}</q-td>
-            <q-td>{{ props.row.surveyCount }}</q-td>
+            <q-td> <q-checkbox v-model="props.selected" /></q-td>
+            <q-td>{{ props.row.rowNum }}</q-td>
+            <q-td>{{ props.row.researchTitle }}</q-td>
+            <q-td>{{ props.row.researchMemo }}</q-td>
+            <q-td>{{ props.row.itemCount }}</q-td>
+            <q-td>{{ props.row.rgstDt }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="surveyDelete(props.row)"
+                  @click.stop="updateResearchUsyn([props.row.researchCode])"
+                  :on="currentRow == props.rowIndex"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
-                  @click="$router.push(`/assign/surveyEdit/${props.row.surveyCode}`)"
+                  @click.stop="$router.push(`/assign/surveyEdit/${props.row.researchCode}`)"
+                  :on="currentRow == props.rowIndex"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -135,79 +139,37 @@
         </template>
       </q-table>
 
-      <PaginationTemp v-model:page="param" />
+      <BasePagination
+        @update:modelValue="getLocationList($event)"
+        v-model:page="param.current"
+        v-model:count="totalCount"
+      />
     </q-card>
   </q-page>
 </template>
 
 <script setup>
-const resetParam = () => {
-  return {
-    title: '',
-    memo: '',
-    current: 1,
-    min: 1,
-    max: 1,
-  };
-};
-const param = ref({ ...resetParam() });
+const { param, rows, totalCount, getServeyList, resetParam } = useServeyList();
+getServeyList(1);
 
 const selected = ref([]);
-// const isAll = ref(false);
 const currentRow = ref(null);
 
-const rows = ref([
-  {
-    surveyCode: 100,
-    title: '오늘은 칼퇴를 할 것인가요?',
-    memo: '칼퇴위원회',
-    surveyCount: 4,
-    usedCount: 0,
-  },
-  {
-    surveyCode: 101,
-    title: 'TMS 시스템에 만족하시나요',
-    memo: '아니오',
-    surveyCount: 1,
-    usedCount: 2,
-  },
-]);
-/*
-// 테이블 row의 checkbox 선택
-const changeCheckedVal = (event) => {
-  isAll.value = rows.value.filter((row) => !row.usedCount).length == event.length;
-};
-// 삭제 가능한 항목 제외 전체 선택
-const toggleSelected = (event) => {
-  if (event) {
-    selected.value = rows.value.filter((row) => !row.usedCount);
-    return;
-  }
-  isAll.value = false;
+// 시험장 삭제
+const updateResearchUsyn = async (researchCode) => {
+  if (!researchCode && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
+  if (!(await $showConfirm('삭제하시겠습니까?'))) return;
+
+  const { status, message } = await updateServeyUseFlag(
+    researchCode || selected.value.map((m) => m.researchCode),
+  );
+
+  if (!status) return $showAlert(message);
+
+  $showAlert('삭제 성공하였습니다.');
+  // 설문 목록 조회
+  getServeyList(param.current);
+  // 삭제한 설문 초기화
   selected.value = [];
-};
-*/
-// 설문삭제
-const surveyDelete = async (survey) => {
-  if (!survey && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
-
-  if (await $showConfirm('삭제하시겠습니까?')) {
-    $showAlert('삭제되었습니다.');
-    /*
-    try {
-      const res = $axios_loading.post('', {
-        selected: [ survey ? survey : ...selected.value ]
-      });
-
-      if(res.data.status == 200) {
-        $showAlert('삭제되었습니다.');
-        return router.push('/assign/survey');
-      }  
-      $showAlert('삭제 실패하였습니다.');
-    } catch(err) {
-      console.log(err);
-    }
-    */
-  }
 };
 </script>

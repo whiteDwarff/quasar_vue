@@ -17,7 +17,13 @@
             <div class="flex items-center">
               <span class="label">시험장</span>
               <div class="content">
-                <q-input v-model="param.examRoomLocation" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getLocationList(1)"
+                  v-model="param.roomName"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -25,7 +31,13 @@
             <div class="flex items-center">
               <span class="label">시험지역</span>
               <div class="content">
-                <q-input v-model="param.examRoomName" outlined dense class="bg-white" />
+                <q-input
+                  @keyup.enter="getLocationList(1)"
+                  v-model="param.location"
+                  outlined
+                  dense
+                  class="bg-white"
+                />
               </div>
             </div>
           </div>
@@ -33,12 +45,12 @@
             <div class="flex">
               <q-space />
               <CustomButton
-                @click="param = resetParam()"
+                @click="resetParam()"
                 label="초기화"
                 :outline="true"
                 class="q-mr-md w-100"
               />
-              <CustomButton label="검색" class="w-100" />
+              <CustomButton @click="getLocationList(1)" label="검색" class="w-100" />
             </div>
           </div>
         </div>
@@ -47,13 +59,13 @@
 
     <div class="row items-baseline edit-btn-wrap">
       <p class="q-mt-auto">
-        총 <span class="list-count">{{ rows.length }}</span
+        총 <span class="list-count">{{ totalCount }}</span
         >개
       </p>
       <q-space />
       <div class="flex justify-end">
         <CustomButton
-          @click="locationDelete(null)"
+          @click="updateLocationUsyn(null)"
           label="삭제"
           color="warning"
           outline
@@ -67,8 +79,9 @@
       <q-table
         v-model:selected="selected"
         :rows="rows"
+        :rows-per-page-options="[0]"
         selection="multiple"
-        row-key="examRoomCode"
+        row-key="examroomCode"
         flat
         bordered
         hide-pagination
@@ -80,7 +93,7 @@
               <!-- <q-checkbox @update:model-value="toggleSelected" v-model="isAll" /> -->
               <q-checkbox v-model="props.selected" />
             </q-th>
-            <q-th style="width: 5%">번호</q-th>
+            <q-th style="width: 5%">No</q-th>
             <q-th style="width: 20%">시험장</q-th>
             <q-th style="width: 20%">시험지역</q-th>
             <q-th style="width: 30%">시험장소</q-th>
@@ -90,36 +103,31 @@
 
         <template #body="props">
           <q-tr
-            @click="currentRow = props.rowIndex"
+            @click="currentRow = props.row.examroomCode"
             :props="props"
             no-hover
-            :class="{ current: currentRow == props.rowIndex }"
+            :class="{ current: currentRow == props.row.examroomCode }"
             class="cursor-pointer"
           >
             <q-td>
               <q-checkbox v-model="props.selected" />
-
-              <!-- <q-checkbox
-                v-if="!props.row.usedCount"
-                @update:modelValue="changeCheckedVal"
-                v-model="selected"
-                :val="props.row"
-              /> -->
             </q-td>
-            <q-td>{{ props.row.no }}</q-td>
-            <q-td>{{ props.row.examRoomLocation }}</q-td>
-            <q-td>{{ props.row.examRoomName }}</q-td>
-            <q-td>{{ props.row.examRoomAddr }}</q-td>
+            <q-td>{{ props.row.rowNum }}</q-td>
+            <q-td>{{ props.row.examroomName }}</q-td>
+            <q-td>{{ props.row.examroomLocation }}</q-td>
+            <q-td>{{ props.row.examroomAddr }}</q-td>
             <q-td>
               <div class="row q-col-gutter-sm">
                 <RowEditButton
-                  @click="locationDelete(props.row)"
+                  @click.stop="updateLocationUsyn([props.row.examroomCode])"
+                  :on="currentRow == props.row.examroomCode"
                   label="삭제"
                   icon="delete"
                   class="col-xs-12 col-md-6"
                 />
                 <RowEditButton
-                  @click="$router.push(`/assign/locationEdit/${props.row.examRoomCode}`)"
+                  @click.stop="$router.push(`/assign/locationEdit/${props.row.examroomCode}`)"
+                  :on="currentRow == props.row.examroomCode"
                   label="수정"
                   icon="edit"
                   class="col-xs-12 col-md-6"
@@ -134,81 +142,38 @@
         </template>
       </q-table>
 
-      <PaginationTemp v-model:page="param" />
+      <BasePagination
+        @update:modelValue="getLocationList($event)"
+        v-model:page="param.current"
+        v-model:count="totalCount"
+      />
     </q-card>
   </q-page>
 </template>
 
 <script setup>
-const resetParam = () => {
-  return {
-    examRoomLocation: '',
-    examRoomName: '',
-    current: 1,
-    min: 1,
-    max: 1,
-  };
-};
-const param = ref({ ...resetParam() });
+const { param, rows, totalCount, getLocationList, resetParam } = useLocationList();
+
+getLocationList(1);
 
 const selected = ref([]);
-// const isAll = ref(false);
 const currentRow = ref(null);
 
-const rows = ref([
-  {
-    no: 1,
-    examRoomCode: 100,
-    examRoomLocation: '교육용 CBT실',
-    examRoomName: '401호',
-    examRoomAddr: '교육동 4층',
-    usedCount: 0,
-  },
-  {
-    no: 2,
-    examRoomCode: 101,
-    examRoomLocation: 'ㄴㅇㄴ',
-    examRoomName: '201호',
-    examRoomAddr: '진리관 2층',
-    usedCount: 0,
-  },
-]);
-/*
-// 테이블 row의 checkbox 선택
-const changeCheckedVal = (event) => {
-  isAll.value = rows.value.filter((row) => !row.usedCount).length == event.length;
-};
-// 삭제 가능한 항목 제외 전체 선택
-const toggleSelected = (event) => {
-  if (event) {
-    selected.value = rows.value.filter((row) => !row.usedCount);
-    return;
-  }
-  isAll.value = false;
+// 시험장 삭제
+const updateLocationUsyn = async (examroomCode) => {
+  if (!examroomCode && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
+  if (!(await $showConfirm('삭제하시겠습니까?'))) return;
+
+  const { status, message } = await updateLocationUseFlag(
+    examroomCode || selected.value.map((m) => m.examroomCode),
+  );
+
+  if (!status) return $showAlert(message);
+
+  $showAlert('삭제 성공하였습니다.');
+  // 시험장 목록 조회
+  getLocationList(param.current);
+  // 삭제한 시험장 초기화
   selected.value = [];
-};
-*/
-// 장소삭제
-const locationDelete = async (survey) => {
-  if (!survey && !selected.value.length) return $showAlert('삭제할 항목을 선택해주세요.');
-
-  if (await $showConfirm('삭제하시겠습니까?')) {
-    $showAlert('삭제되었습니다.');
-    /*
-    try {
-      const res = $axios_loading.post('', {
-        selected: [ survey ? survey : ...selected.value ]
-      });
-
-      if(res.data.status == 200) {
-        $showAlert('삭제되었습니다.');
-        return router.push('/assign/survey');
-      }  
-      $showAlert('삭제 실패하였습니다.');
-    } catch(err) {
-      console.log(err);
-    }
-    */
-  }
 };
 </script>

@@ -1,57 +1,145 @@
-const store = useSystemStore();
-
 /**
- * 응시자정보 등록
- * @param {object} form
- * @returns boolean
+ * 응시자 목록 조회
+ * @returns object
  */
-export async function $saveExamineeInfo(form, file) {
-  store.setLoading(true);
+export function useExamineeList() {
+  // 변수
+  const param = reactive({
+    id: '',
+    name: '',
+    major: '',
+    college: '',
+    gender: '',
+    regDay: [],
+    current: 1,
+  });
 
-  // 등록일 경우 응시번호 중복검사
-  if (!form?.examineeCode) {
-    const { count } = await supabase
-      .from('tb_examinee_info')
-      .select('*', { count: 'exact', head: true })
-      .eq('examinee_id', form.examineeId);
+  const rows = ref([]);
+  const totalCount = ref(0);
 
-    if (count) {
-      return {
-        status: false,
-        error: '등록된 응시번호가 존재합니다.',
-      };
+  // 응시자 목록 요청
+  const getExamineeList = async (page = 1) => {
+    try {
+      param.current = page;
+
+      let regStDt = null;
+      let regEnDt = null;
+      if (param.regDay.length) {
+        regStDt = $getStartTimeFormat(param.regDay[0]);
+        if (param.regDay.length == 2 && param.regDay[1]) {
+          regEnDt = $getEndTimeFormat(param.regDay[1]);
+        }
+      }
+
+      const { offset, limit } = $getPagingOffset(page);
+
+      const res = await axiosLoading.get('/assign/examinee', {
+        params: {
+          ...param,
+          offset,
+          limit,
+          regStDt,
+          regEnDt,
+        },
+      });
+
+      if (res.data.status == 200) {
+        rows.value = res.data.result.list;
+        totalCount.value = res.data.result.count;
+      }
+    } catch (err) {
+      rows.value = [];
+      totalCount.value = 0;
+      console.error(err);
     }
-  }
+  };
 
-  let status = true; // 반환할 상태 값
+  // 검색조건 초기화
+  const resetParam = () => {
+    param.id = '';
+    param.name = '';
+    param.major = '';
+    param.college = '';
+    param.gender = '';
+    param.regDay = [];
+  };
 
-  // 파일이 있는 경우 supabase storage에 저장
-  if (file) {
-    const { path, error: imgError } = await addProfleImgByBucket(file, form.examineeId);
+  return {
+    param,
+    rows,
+    totalCount,
+    getExamineeList,
+    resetParam,
+  };
+}
+/**
+ * 응시자정보 사용여부 변경
+ * @param {array} value - 응시자pk
+ * @returns             - status, message
+ */
+export function updateExamineeUseFlag(examineeCode) {
+  const res = axiosLoading.patch('/assign/examinee/updateUseFlag', {
+    examineeCode,
+  });
+  return handleApiCall(res);
+}
+/**
+ * 응시자정보 조회
+ * @returns  응시자 정보
+ * @returns  응시자 조회 함수
+ */
+export function useExamineeInfo() {
+  const form = ref({
+    examineeCode: null,
+    examineeId: '',
+    examineePass: '',
+    examineeName: '',
+    examineeNameEn: '',
+    examineeBirth: '',
+    examineeGender: '1',
+    examineePhone: '',
+    examineeEmail: '',
+    examineeCollege: '',
+    examineeMajor: '',
+    examineeImg: '',
+  });
 
-    if (!imgError && path) form.examineeImg = path;
-    else {
-      return {
-        status: false,
-        error: '이미지 업로드 실패하였습니다.',
-      };
+  // 응시자 정보 조회
+  const getExamineeInfo = async (examineeCode) => {
+    // examineeCode 없거나 자료형이 number가 아님
+    if (!examineeCode || !$validNumber(examineeCode)) return false;
+    try {
+      const res = await axiosLoading.get(`/assign/examinee/${examineeCode}`);
+      if (res.data.status == 200) {
+        form.value = res.data.result;
+        return true;
+      }
+    } catch (err) {
+      console.error(err);
+      return false;
     }
-  }
+  };
 
-  // 등록
-  if (!form?.examineeCode) {
-    // 응시자정보 등록
-    const { data, error } = await supabase
-      .from('tb_examinee_info')
-      .insert(camelToSnakeByObj(form))
-      .select('examinee_code')
-      .single();
+  return {
+    form,
+    getExamineeInfo,
+  };
+}
+/**
+ * 응시자 등록 및 수정
+ * @param {object} form - 응시자 정보
+ * @returns {Promise<Object>}
+ */
+export function examineeEdit(form, file) {
+  const fd = new FormData();
+  fd.append('data', JSON.stringify(form));
+  // 파일이 있다면 추가
+  if (file) fd.append('profile', file);
 
-    status = !error && data?.examinee_code;
-
-    return {
-      status,
-      error: !status ? '저장 실패하였습니다.' : '',
-    };
-  }
+  const res = axiosLoading.post('/assign/examinee/edit', fd, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return handleApiCall(res);
 }

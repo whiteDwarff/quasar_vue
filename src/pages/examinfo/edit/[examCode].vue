@@ -3,39 +3,19 @@
 </template>
 
 <script setup>
-const router = useRouter();
-const route = useRoute();
-
-const form = ref({
-  // companySeq: '',
-  examName: '',
-  tbExamFormInfo: [
-    {
-      examFormName: '',
-      examMethod: 'UBT',
-      examTotalTime: '',
-      personalInfoUseFlag: 'N',
-      personalInfoMessage: '',
-    },
-  ],
+definePage({
+  path: '/examInfo/edit/:examCode(\\d+)',
 });
 
-// 시험목록 호출
-const getExamInfo = async () => {
-  const { data, error } = await $fetchedExamInfo(route?.params?.examCode);
+const route = useRoute();
+const router = useRouter();
 
-  if (error) {
+const { form, getExamInfo } = useExamInfo();
+
+getExamInfo(route.params.examCode).then(async (status) => {
+  if (!status) {
     await router.push('/examInfo');
-    return $showAlert(error);
+    $showAlert('잘못된 접근입니다.');
   }
-  form.value = data;
-};
-
-getExamInfo();
+});
 </script>
-
-<route lang="yaml">
-meta:
-  params:
-    examCode: number
-</route>

@@ -17,7 +17,6 @@ export function $showAlert(value) {
 export function $showConfirm(value) {
   return systemStore.showConfirm(value);
 }
-
 /**
  * 시간 포맷 설정
  * @param {string} contents
@@ -26,6 +25,29 @@ export function $showConfirm(value) {
 export function $getTimeFormat(str, isUltraTime = false) {
   if (!str) return '';
   return dayjs(str).format(!isUltraTime ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss');
+}
+/**
+ * 현재시간 반환
+ * @return {string}
+ */
+export function $getNowString() {
+  return $getTimeFormat(new Date().toString(), true);
+}
+/**
+ * 시작시간 포맷 설정
+ * @param {string} contents
+ * @return {string}
+ */
+export function $getStartTimeFormat(str) {
+  return $getTimeFormat(str) + ' 00:00:00';
+}
+/**
+ * 종료시간 포맷 설정
+ * @param {string} contents
+ * @return {string}
+ */
+export function $getEndTimeFormat(str) {
+  return $getTimeFormat(str) + ' 23:59:59';
 }
 /**
  * 페이징 개수 반환
@@ -42,8 +64,9 @@ export function $getPagingCount(totalCount) {
  * @returns {object}
  */
 export function $getPagingOffset(current) {
-  const offset = (current - 1) * process.env.PAGE_LIMIT;
-  const limit = offset + process.env.PAGE_LIMIT - 2;
+  const listSize = process.env.PAGE_SIZE;
+  const offset = (current - 1) * listSize;
+  const limit = offset + listSize;
 
   return {
     offset,

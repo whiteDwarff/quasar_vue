@@ -1,155 +1,132 @@
-import { supabase, getErrorMessage } from '../supabase';
-
-const store = useSystemStore();
-
 /**
  * 시험목록 조회
- * @param {object} params
  * @returns object
  */
-export async function $fetchedExamList(params) {
-  store.setLoading(true);
+export function useExamList() {
+  // 변수
+  const param = reactive({
+    examName: '',
+    rgstId: '',
+    regDay: [],
+    regStDt: null,
+    regEnDt: null,
+    current: 1,
+  });
+  const rows = ref([]);
+  const totalCount = ref(0);
 
-  // 페이지네이션 사용 위한 개수 조회
-  const { count } = await supabase
-    .from('tb_exam_info')
-    .select('*', { count: 'exact', head: true })
-    .eq('use_flag', 'Y')
-    .ilike('exam_name', `%${params.examName}%`);
-
-  const { offset, limit } = $getPagingOffset(params.current);
-
-  const { data, error } = await supabase
-    .from('tb_exam_info')
-    .select('exam_code, exam_name, rgst_dt, rgst_id')
-    .eq('use_flag', 'Y') // where
-    .ilike('exam_name', `%${params.examName}%`)
-    .range(offset, limit)
-    .order('exam_code', { ascending: false }); // 내림차순 정렬
-
-  store.setLoading(false);
-
-  return {
-    data: snakeToCamelByObj(data),
-    max: $getPagingCount(count),
-    count,
-    error,
-  };
-}
-/**
- * 시험정보 등록
- * @param {object} form
- * @returns boolean
- */
-export async function $saveExamInfo(form) {
-  store.setLoading(true);
-
-  const obj = { exam_name: form.examName };
-  if (form?.examCode) obj.exam_code = form.examCode;
-
-  // 시험정보 등록
-  const { data, error } = await supabase
-    .from('tb_exam_info')
-    .upsert(obj, { onConflict: 'exam_code' })
-    .select('exam_code')
-    .maybeSingle(); // 0 또는 1개의 row 조회
-
-  if (!error && data?.exam_code) {
-    // 시험상세정보 등록
-    const examCode = data?.exam_code; // 상위 테이블 seq
-
-    const insertArr = [];
-    const updateArr = [];
-    const status = {
-      insert: true,
-      update: true,
-    };
-
-    for (let [i, item] of [...form.tbExamFormInfo].entries()) {
-      item.exam_order = i + 1;
-      item = camelToSnakeByObj(item);
-      if (item?.exam_code) updateArr.push(item);
-      else {
-        item.exam_code = examCode;
-        insertArr.push(item);
+  // 시험정보 요청
+  const getExamList = async (page = 1) => {
+    try {
+      param.current = page;
+      if (param.regDay.length) {
+        param.regStDt = $getStartTimeFormat(param.regDay[0]);
+        if (param.regDay.length == 2 && param.regDay[1]) {
+          param.regEnDt = $getEndTimeFormat(param.regDay[1]);
+        }
       }
+
+      const { offset, limit } = $getPagingOffset(page);
+
+      const res = await axiosLoading.get('/examInfo', {
+        params: {
+          ...param,
+          offset,
+          limit,
+        },
+      });
+
+      if (res.data.status == 200) {
+        rows.value = res.data.result.list;
+        totalCount.value = res.data.result.count;
+      }
+    } catch (err) {
+      rows.value = [];
+      totalCount.value = 0;
+      console.error(err);
     }
+  };
 
-    if (insertArr.length) {
-      let { error: insertErr } = await supabase.from('tb_exam_form_info').insert(insertArr);
-      status.insert = !insertErr;
-    }
-
-    if (updateArr.length) {
-      let { error: updateErr } = await supabase
-        .from('tb_exam_form_info')
-        .upsert(updateArr, { onConflict: 'exam_form_code' });
-      status.insert = !updateErr;
-    }
-
-    store.setLoading(false);
-
-    return {
-      status: status.insert && status.update,
-    };
-  } else return { status: false };
-}
-/**
- * 시험정보 상세조회
- * @param {number} examCode
- * @returns object
- */
-export async function $fetchedExamInfo(examCode) {
-  store.setLoading(true);
-
-  const { data, error } = await supabase
-    .from('tb_exam_info')
-    .select(
-      `
-      exam_code, exam_name, 
-      tb_exam_form_info(
-        exam_form_code,
-        exam_code,
-        exam_form_name,
-        exam_order,
-        exam_method,
-        exam_total_time,
-        personal_info_message,
-        personal_info_use_flag,
-        use_flag
-      )
-    `,
-    )
-    .eq('exam_code', examCode)
-    .eq('tb_exam_form_info.use_flag', 'Y')
-    .order('exam_order', { referencedTable: 'tb_exam_form_info', ascending: true })
-    .single();
-
-  store.setLoading(false);
+  // 검색조건 초기화
+  const resetParam = () => {
+    param.examName = '';
+    param.rgstId = '';
+    param.regDay = [];
+    param.regStDt = null;
+    param.regEnDt = null;
+  };
 
   return {
-    data: snakeToCamelByObj(data),
-    error: error ? getErrorMessage[error.code] : false,
+    param,
+    rows,
+    totalCount,
+    getExamList,
+    resetParam,
   };
 }
 /**
  * 시험정보 사용유무 변경
- * @param {number} examCode
+ * @param {number} examCode - 시험정보pk
+ * @returns boolean - 성공여부
+ */
+export function updateExamInfoUseFlag(examCode) {
+  const res = axiosLoading.patch(`/examInfo/updateUseFlag/${examCode}`);
+  return handleApiCall(res);
+}
+/**
+ * 시험정보 객체 반환 및 상세 조회
+ * @param {number} examCode - 시험정보pk
  * @returns object
  */
-export async function $updateExamInfoUsyn(examCode) {
-  store.setLoading(true);
+export function useExamInfo() {
+  const form = ref({
+    examCode: null,
+    examName: '',
+    details: [
+      {
+        examFormCode: null,
+        formName: '',
+        method: 'UBT',
+        totalTime: '',
+        personalInfoUseFlag: 'N',
+        personalInfoMessage: '',
+        useFlag: 'Y',
+      },
+    ],
+  });
 
-  const { data, error } = await supabase
-    .from('tb_exam_info')
-    .update({ use_flag: 'N' })
-    .eq('exam_code', examCode)
-    .select();
-
-  store.setLoading(false);
+  // 등록된 시험정보 조회
+  const getExamInfo = async (examCode) => {
+    // examCode가 없거나 자료형이 number가 아님
+    if (!examCode || !$validNumber(examCode)) return false;
+    try {
+      const res = await axiosLoading.get(`/examInfo/${examCode}`);
+      if (res.data.status == 200) {
+        form.value = res.data.result;
+        return true;
+      }
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
 
   return {
-    data: data.length ? snakeToCamelByObj(data[0]) : null,
-    error: error ? getErrorMessage[error.code] || '저장 실패하였습니다.' : null,
+    form,
+    getExamInfo,
   };
+}
+/**
+ * 시험정보 등록 및 수정
+ * @param {object} form
+ * @returns boolean
+ */
+export async function editExamInfo(form) {
+  try {
+    const res = await axiosLoading.post('/examInfo/edit', form);
+    return res.data.status == 200;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 }

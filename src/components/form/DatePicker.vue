@@ -11,19 +11,21 @@
 </template>
 
 <script setup>
-const modelValue = defineModel()
+const modelValue = defineModel();
 
 defineProps({
   range: {
     type: Boolean,
     default: () => false,
   },
-})
+});
 </script>
 
 <style>
 .dp__input {
-  height: 41px;
+  height: 40px;
+}
+.dp__input {
   border: 1px solid rgba(0, 0, 0, 0.24);
   transition: border-color 0.36s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 13px;

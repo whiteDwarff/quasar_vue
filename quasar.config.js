@@ -29,6 +29,7 @@ export default defineConfig((/* ctx */) => {
       'roboto-font', // optional, you are not bound to it
       'material-icons', // optional, you are not bound to it
       'material-symbols-outlined',
+      'material-icons-sharp',
       'bootstrap-icons',
     ],
 
@@ -39,10 +40,9 @@ export default defineConfig((/* ctx */) => {
         node: 'node20',
       },
       env: {
-        PAGE_LIMIT: 20,
-        SUPABASE_URL: 'https://gnkjzbqpyweuerrxdnbm.supabase.co',
-        SUPABASE_KEY:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdua2p6YnFweXdldWVycnhkbmJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMjAzMzksImV4cCI6MjA2ODg5NjMzOX0.YqnJKdpIwfZbD97lUF4WgGilUVTuDURE7OxgwusUOGk',
+        PAGE_SIZE: 10,
+        IMAGE_EXTS: 'jpg,jpeg,png,gif',
+        SERVER_PORT: 3000,
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
@@ -121,21 +121,15 @@ export default defineConfig((/* ctx */) => {
           'unplugin-auto-import/vite',
           {
             imports: ['vue', 'vue-router', 'quasar', 'pinia'],
+            /*
             dts: 'src/auto-imports.d.ts',
             eslintrc: {
               enabled: true,
               filepath: './.eslintrc-auto-import.json',
               globalsPropValue: 'readonly',
             },
-            dirs: [
-              // 'src/service/**',
-              'src/stores/**',
-              'src/utils/**',
-              'src/boot/**',
-              'src/api/**',
-              'src/api/**/**',
-              // 'src/options/**',
-            ],
+            */
+            dirs: ['src/stores/**', 'src/utils/**', 'src/boot/**', 'src/api/**'],
           },
         ],
       ],
@@ -145,6 +139,19 @@ export default defineConfig((/* ctx */) => {
     devServer: {
       // https: true,
       open: true, // opens browser window automatically
+      hotReload: true,
+      // CORS 설정
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true, // 크로스 플랫폼 허용
+          pathRewrite: { '^/api': '' },
+        },
+        '/uploads': {
+          target: 'http://localhost:3000', // 서버 주소
+          changeOrigin: true,
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
@@ -155,6 +162,9 @@ export default defineConfig((/* ctx */) => {
         },
         loading: {
           delay: 200,
+        },
+        loadingBar: {
+          color: 'primary',
         },
       },
 

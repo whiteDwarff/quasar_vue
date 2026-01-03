@@ -2,10 +2,10 @@
   <div class="row justify-center q-mt-lg">
     <q-pagination
       @update:modelValue="$emit('update:modelValue', $event)"
-      v-model="page.current"
-      :min="page?.min || 1"
-      :max="page?.max || 1"
-      :max-pages="page?.maxPages || 20"
+      v-model="page"
+      :min="1"
+      :max
+      :max-pages="maxPages"
       :boundary-numbers="false"
       :ellipses="false"
       outline
@@ -17,21 +17,20 @@
       boundary-links
       icon-first="keyboard_double_arrow_left"
       icon-last="keyboard_double_arrow_right"
-      size="18px"
+      size="17px"
     />
   </div>
 </template>
 <script setup>
 const page = defineModel('page');
+const count = defineModel('count', { default: 0 });
+
 const emit = defineEmits(['update:modelValue']);
 
-/**
-    @doc      https://quasar.dev/vue-components/pagination#qpagination-api
-    @required page (v-model:page="value-name") 
+const max = ref(1);
+const maxPages = ref(process.env.PAGE_SIZE);
 
-    - min:       최소 페이지 개수
-    - max:       최대 페이지 개수
-    - maxPages : 페이지네이션 개수 (0번부터 n번까지만 보이게)
-    - current  : 현재 페이지
- */
+watch(count, (n) => {
+  max.value = Math.ceil(n / maxPages.value);
+});
 </script>

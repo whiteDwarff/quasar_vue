@@ -3,21 +3,19 @@
 </template>
 
 <script setup>
-const route = useRoute();
-const router = useRouter();
+definePage({
+  path: '/assign/examineeEdit/:examineeCode(\\d+)',
+});
 
-if (!$validString(route.params.examineeCode)) {
-  router.push('/error');
-}
-const form = ref({
-  examineeId: route.params?.examineeCode,
-  examineeNameEn: '',
-  examineeName: '',
-  birth: '',
-  email: '',
-  tel: '',
-  file: null,
-  imagePath: '',
-  //companySeq: '',
+const router = useRouter();
+const route = useRoute();
+
+const { form, getExamineeInfo } = useExamineeInfo();
+
+getExamineeInfo(route.params.examineeCode).then(async (status) => {
+  if (!status) {
+    await router.push('/assign');
+    $showAlert('잘못된 접근입니다.');
+  }
 });
 </script>

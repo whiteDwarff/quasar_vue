@@ -3,22 +3,19 @@
 </template>
 
 <script setup>
-const route = useRoute();
+definePage({
+  path: '/assign/locationEdit/:examRoomCode(\\d+)',
+});
+
 const router = useRouter();
+const route = useRoute();
 
-if (!$validNumber(route.params?.examRoomCode)) {
-  router.push('/error');
-}
+const { form, getLocation } = useLocationInfo();
 
-const form = reactive({
-  examRoomCode: route.params.examRoomCode,
-  examRoomName: '', // 시험장
-  examRoomLocation: '', // 시험지역
-  examRoomAddr: '', // 시험장소
-  examRoomInfo: '', // 시험정보
-  mngr: '', // 담당자
-  mngrTel: '', // 담당자 전화번호
-  mngrInfo: '', // 담당자 정보
-  examRoomNum: [],
+getLocation(route.params.examRoomCode).then(async (status) => {
+  if (!status) {
+    await router.push('/assign/location');
+    $showAlert('잘못된 접근입니다.');
+  }
 });
 </script>

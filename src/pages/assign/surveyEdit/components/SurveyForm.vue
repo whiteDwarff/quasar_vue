@@ -17,13 +17,13 @@
           <div class="col-xs-12 col-md-6">
             <span class="form-label star">설문제목</span>
             <div>
-              <q-input v-model="form.title" outlined dense />
+              <q-input v-model="form.researchTitle" outlined dense />
             </div>
           </div>
           <div class="col-xs-12 col-md-6">
             <span class="form-label">설문설명</span>
             <div>
-              <q-input v-model="form.memo" outlined dense />
+              <q-input v-model="form.researchMemo" outlined dense />
             </div>
           </div>
         </div>
@@ -34,11 +34,11 @@
         <!-- 설문 문항 선택 -->
         <div id="survey-order-wrap" class="q-mb-sm">
           <q-btn
-            v-for="item of form.survey"
-            :key="item.order"
-            @click="form.currentOrder = item.order"
-            :label="item.order"
-            :outline="form.currentOrder != item.order"
+            v-for="item of form.survey.filter((survey) => survey.useFlag == 'Y')"
+            :key="item.reItemNo"
+            @click="form.currentOrder = item.reItemNo"
+            :label="item.reItemNo"
+            :outline="form.currentOrder != item.reItemNo"
             paddng="xs"
             color="primary"
             unelevated
@@ -46,17 +46,20 @@
             style="width: 36px; height: 36px"
           >
             <q-tooltip class="text-center">
-              <span>{{ item.title ? item.title : '문제를 입력해주세요.' }}</span>
-              <p v-if="item.title">
-                <span>{{ item.type == 1 ? '객관식' : '주관식' }}</span>
-                <span>{{ item.type == 1 ? ` / ${item.example.length}` : '' }}</span>
+              <span>{{ item.reItemTitle ? item.reItemTitle : '문제를 입력해주세요.' }}</span>
+              <p v-if="item.reItemTitle">
+                <span>{{ item.reItemType == '1' ? '객관식' : '주관식' }}</span>
+                <span>{{ item.reItemType == '1' ? ` / ${item.reItemExample.length}` : '' }}</span>
               </p>
             </q-tooltip>
           </q-btn>
         </div>
 
-        <template v-for="item of form.survey" :key="item.order">
-          <table v-if="item.order == form.currentOrder" class="markup-table">
+        <template v-for="item of form.survey" :key="item.reItemNo">
+          <table
+            v-if="item.reItemNo == form.currentOrder && item.useFlag == 'Y'"
+            class="markup-table"
+          >
             <colgroup>
               <col width="20%" />
               <col width="80%" />
@@ -67,7 +70,7 @@
                 <td>
                   <div class="flex">
                     <q-input
-                      v-model="item.title"
+                      v-model="item.reItemTitle"
                       :autofocus
                       outlined
                       dense
@@ -75,7 +78,7 @@
                       style="width: calc(100% - 48px)"
                     />
                     <q-btn
-                      @click="exceptSurveyItem(item.order)"
+                      @click="exceptSurveyItem(item)"
                       icon="bi-trash3"
                       flat
                       :ripple="false"
@@ -92,23 +95,23 @@
                 <th class="star">설문유형</th>
                 <td>
                   <q-radio
-                    v-model="item.type"
+                    v-model="item.reItemType"
                     name="surveyType"
-                    :val="1"
+                    val="1"
                     label="객관식"
                     size="sm"
                   />
                   <q-radio
-                    v-model="item.type"
+                    v-model="item.reItemType"
                     name="surveyType"
-                    :val="3"
+                    val="3"
                     label="주관식"
                     size="sm"
                   />
                 </td>
               </tr>
-              <template v-if="item.type == 1">
-                <tr v-for="(example, i) of item.example" :key="i">
+              <template v-if="item.reItemType == '1'">
+                <tr v-for="(example, i) of item.reItemExample" :key="i">
                   <th>보기 {{ example.order }}</th>
                   <td>
                     <div class="flex items-center example-row">
@@ -117,10 +120,10 @@
                         outlined
                         dense
                         fill
-                        :class="{ last: i + 1 == item.example.length }"
+                        :class="{ last: i + 1 == item.reItemExample.length }"
                       />
                       <q-btn
-                        @click="exceptExample(example.order, item.example)"
+                        @click="exceptExample(example.order, item.reItemExample)"
                         icon="bi-dash"
                         rounded
                         dense
@@ -130,8 +133,8 @@
                         class="rounded-50"
                       />
                       <q-btn
-                        v-if="i + 1 == item.example.length"
-                        @click="addExample(item.example)"
+                        v-if="i + 1 == item.reItemExample.length"
+                        @click="addExample(item.reItemExample)"
                         icon="bi-plus"
                         rounded
                         dense
@@ -152,7 +155,8 @@
           <CustomButton @click="cancle" label="취소" outline class="w-100" />
           <div class="flex">
             <CustomButton
-              @click="deleteSurvey"
+              v-if="form?.researchCode"
+              @click="surveyDelete"
               label="삭제"
               color="warning"
               outline
@@ -171,74 +175,68 @@
 const router = useRouter();
 
 const form = defineModel();
-
 const autofocus = ref(false);
 
 // 설문삭제
-const deleteSurvey = async () => {
-  if ((await $showConfirm('설문을 삭제하시겠습니까?')) == false) return;
+const surveyDelete = async () => {
+  if (await $showConfirm('삭제하시겠습니까?')) {
+    const { status, message } = await updateServeyUseFlag([form.value.researchCode]);
 
-  router.push('/assign/survey');
-  /*
-  try {
-    const res = $axios_loading.post('', form.value);
+    if (!status) return $showAlert(message);
 
-    if(res.data.status == 200) {
-      $showAlert('삭제되었습니다.');
-      return router.push('/assign/survey');
-    }  
-    $showAlert('삭제 실패하였습니다.');
-  } catch(err) {
-    console.log(err);
+    await router.push('/assign/survey');
+    $showAlert('삭제 성공하였습니다.');
   }
-    */
 };
 // 설문정보 저장
 const saveSurveyInfo = async () => {
-  if (!form.value.title) return $showAlert('설문제목을 입력해주세요.');
+  if (!form.value.researchTitle) return $showAlert('설문제목을 입력해주세요.');
 
   for (let survey of form.value.survey) {
-    if (!survey.title) return $showAlert(`${survey.order}번 문항의 문제를 입력해주세요.`);
+    if (!survey.reItemTitle) return $showAlert(`${survey.reItemNo}번 문항의 문제를 입력해주세요.`);
 
-    if (survey.type == 1 && survey.example.some(({ value }) => !value))
-      return $showAlert(`${survey.order}번 문항의 보기를 모두 입력해주세요.`);
+    if (survey.reItemType == 1 && survey.reItemExample.some(({ value }) => !value))
+      return $showAlert(`${survey.reItemNo}번 문항의 보기를 모두 입력해주세요.`);
   }
-  /*
-  try {
-    const res = $axios_loading.post('', form.value);
 
-    if(res.data.status == 200) {
+  if (await $showConfirm('저장하시겠습니까?')) {
+    const { status, message } = await serveyEdit(form.value);
+    if (status) {
+      await router.push('/assign/survey');
       $showAlert('저장되었습니다.');
-      return router.push('/assign/survey');
-    }  
-    $showAlert('저장 실패하였습니다.');
-  } catch(err) {
-    console.log(err);
+    } else $showAlert(message);
   }
-  */
 };
 // 설문삭제
-const exceptSurveyItem = (order) => {
+const exceptSurveyItem = (survey) => {
   if (form.value.survey.length == 1) return $showAlert('하나의 문항은 등록되어야합니다.');
 
-  let newOrder = 1;
+  const reItemNo = survey.reItemNo;
+
+  let newItemNo = 1;
   form.value.survey = form.value.survey.filter((item) => {
-    if (item.order != order) {
-      item.order = newOrder;
-      newOrder++;
+    if (item.reItemNo != reItemNo && item.useFlag == 'Y') {
+      item.reItemNo = newItemNo;
+      newItemNo++;
       return item;
+    } else {
+      if (item?.reItemCode) {
+        survey.useFlag = 'N';
+        return item;
+      }
     }
   });
-  form.value.currentOrder = order != 1 ? order - 1 : 1;
+  form.value.currentOrder = reItemNo != 1 ? reItemNo - 1 : 1;
 };
 // 설문추가
 const addSurvey = async () => {
-  const current = form.value.survey.length + 1;
+  const current = form.value.survey.filter(({ useFlag }) => useFlag == 'Y').length + 1;
   form.value.survey.push({
-    title: '',
-    type: 1,
-    order: current,
-    example: [
+    reItemTitle: '',
+    reItemType: '1',
+    reItemNo: current,
+    useFlag: 'Y',
+    reItemExample: [
       { value: '', order: 1 },
       { value: '', order: 2 },
     ],
@@ -247,12 +245,12 @@ const addSurvey = async () => {
   autofocus.value = true;
 };
 // 설문 보기항목 삭제
-const exceptExample = (order, example) => {
-  if (example.length <= 2) return $showAlert('두개의 보기는 등록되어야합니다.');
+const exceptExample = (order, reItemExample) => {
+  if (reItemExample.length <= 2) return $showAlert('두개의 보기는 등록되어야합니다.');
   for (let survey of form.value.survey) {
-    if (survey.order == form.value.currentOrder) {
+    if (survey.reItemNo == form.value.currentOrder) {
       let newOrder = 1;
-      survey.example = survey.example.filter((item) => {
+      survey.reItemExample = survey.reItemExample.filter((item) => {
         if (item.order != order) {
           item.order = newOrder;
           newOrder++;
@@ -264,9 +262,9 @@ const exceptExample = (order, example) => {
   }
 };
 // 설문 보기항목 추가
-const addExample = (example) => {
-  if (example.length > 9) return $showAlert('보기는 10개를 초과할 수 없습니다.');
-  example.push({ value: '', order: example.length + 1 });
+const addExample = (reItemExample) => {
+  if (reItemExample.length > 9) return $showAlert('보기는 10개를 초과할 수 없습니다.');
+  reItemExample.push({ value: '', order: reItemExample.length + 1 });
 };
 // 취소 후 목록으로 이동
 const cancle = async () => {

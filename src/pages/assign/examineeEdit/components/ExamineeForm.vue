@@ -53,7 +53,7 @@
                   />
                 </div>
               </template>
-              <small v-if="$route.params?.examineeId" class="reg-date">등록일 ⎮ 2025.05.23</small>
+              <small v-if="form?.examineeCode" class="reg-date">등록일 ⎮ {{ form.rgstDt }}</small>
             </div>
           </div>
           <div class="col-xs-12 col-md-10">
@@ -62,7 +62,7 @@
                 <span class="form-label star">응시번호</span>
                 <q-input
                   v-model="form.examineeId"
-                  :readonly="$route.params?.examineeId ? true : false"
+                  :readonly="form.examineeCode ? true : false"
                   outlined
                   dense
                   fill
@@ -219,11 +219,6 @@
 </template>
 
 <script setup>
-const { data } = supabase.storage
-  .from('Image')
-  .getPublicUrl('profile/d8d9407e-b448-4761-bc10-531d852a6785-xxx1234.png');
-console.log(data);
-
 const router = useRouter();
 
 const form = defineModel();
@@ -231,6 +226,19 @@ const form = defineModel();
 const file = ref(null);
 const visible = ref(false);
 const examineePassConfirm = ref('');
+
+// 수정 시 본인확인정보 확인 바인딩용
+const stopWatcher = watch(
+  form,
+  (n) => {
+    if (n.examineePass && form.value.examineeCode) {
+      examineePassConfirm.value = n.examineePass;
+      // 첫 실행 후 감시 중지
+      stopWatcher();
+    }
+  },
+  { deep: true },
+);
 
 const imageInput = useTemplateRef('imageInput');
 
@@ -269,8 +277,6 @@ const submit = async () => {
   else if (!$validOnlyEN(form.value.examineeNameEn))
     return $showAlert('이름(영문)은 영어로 입력해주세요.');
 
-  // if (!form.value.companySeq) return $showAlert('회사를 선택해주세요.');
-
   if (!form.value.examineeBirth) return $showAlert('생년월일을 입력해주세요.');
   else if (!$validDate(form.value.examineeBirth))
     return $showAlert('정확한 생년월일을 입력해주세요.');
@@ -281,19 +287,18 @@ const submit = async () => {
     return $showAlert('전화번호 형식이 아닙니다.');
 
   if (await $showConfirm('저장하시겠습니까?')) {
-    const { status, error } = await $saveExamineeInfo(form.value, file.value);
-
-    useSystemStore().setLoading(false);
+    const { status, message } = await examineeEdit(form.value, file.value);
 
     if (status) {
-      await router.push('/assign/examinee');
-      $showAlert('저장되었습니다.');
-    } else $showAlert(error);
+      await router.push('/assign');
+      return $showAlert('저장 성공하였습니다.');
+    }
+    $showAlert(message);
   }
 };
 // 취소 후 목록으로 이동
 const cancle = async () => {
-  if (await $showConfirm('취소하시겠습니까?')) router.push('/assign/examinee');
+  if (await $showConfirm('취소하시겠습니까?')) router.push('/assign');
 };
 </script>
 
