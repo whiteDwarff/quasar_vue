@@ -36,7 +36,7 @@ export const useMenuStore = defineStore(
           {
             menuSeq: 5,
             menuNm: '관리자 관리',
-            menuUrl: '/assign/manager',
+            menuUrl: '/assign/user',
             menuTy: 'P',
             depth: 2,
           },
