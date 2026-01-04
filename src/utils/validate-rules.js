@@ -75,12 +75,12 @@ export function $validDate(value) {
  * @param {Event} target   - 파일 input 이벤트 객체
  * @returns {null | Object} - 미리보기용 파일 객체 혹은 null
  */
-export function $imageRender(target) {
+export function $imageRender(target, extArr = ['.png', '.jpg', '.jpeg']) {
   if (target.files.length) {
     const file = target.files[0];
 
-    const ext = file.name.split('.').pop().toLowerCase();
-    const extArr = ['png', 'jpg', 'jpeg'];
+    const dotIndex = file.name.lastIndexOf('.');
+    const ext = dotIndex !== -1 ? file.name.slice(dotIndex).toLowerCase() : '';
 
     if (!extArr.includes(ext)) {
       target.value = '';
@@ -107,6 +107,20 @@ export function $validFileExt(file, exts) {
   const fileName = file.name;
   const dotIndex = fileName.lastIndexOf('.');
   const ext = dotIndex !== -1 ? fileName.slice(dotIndex).toLowerCase() : '';
-
   return exts.map((ext) => ext.toLowerCase()).includes(ext) ? true : false;
+}
+/**
+ * 파일 크기를 바이트 단위로 변환
+ * @param {number} bytes - 파일 크기
+ * @returns {string}     - 파일 크기
+ */
+export function $formatToFileSize(bytes) {
+  if (!bytes) return '0B';
+
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    const size = bytes / Math.pow(1024, i);
+    
+    // 소수점 2자리까지 표시, .00인 경우 정수로
+    return parseFloat(size.toFixed(2)) + units[i];
 }

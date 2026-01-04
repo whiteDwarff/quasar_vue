@@ -2,9 +2,9 @@
   <div class="row q-col-gutter-x-sm">
     <!-- 대분류 -->
     <q-select
-      @update:modelValue="fetchedSubjectCategoryByDepth(2, $event)"
+      @update:modelValue="getCategory($event, 2)"
       v-model="form.subjectCate1"
-      :options="tops"
+      :options="root"
       dense
       outlined
       options-dense
@@ -14,16 +14,14 @@
       label="대분류"
     >
       <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey"> 데이터가 없습니다 </q-item-section>
-        </q-item>
+        <p class="text-grey q-px-md q-py-sm"> 데이터가 없습니다 </p>
       </template>
     </q-select>
     <!-- 중분류 -->
     <q-select
-      @update:modelValue="fetchedSubjectCategoryByDepth(3, form.subjectCate1, $event)"
+      @update:modelValue="getCategory($event, 3)"
       v-model="form.subjectCate2"
-      :options="middles"
+      :options="node"
       dense
       outlined
       options-dense
@@ -33,15 +31,13 @@
       label="중분류"
     >
       <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey"> 데이터가 없습니다 </q-item-section>
-        </q-item>
+        <p class="text-grey q-px-md q-py-sm"> 데이터가 없습니다 </p>
       </template>
     </q-select>
     <!-- 소분류 -->
     <q-select
       v-model="form.subjectCate3"
-      :options="lows"
+      :options="item"
       dense
       outlined
       options-dense
@@ -51,9 +47,7 @@
       label="소분류"
     >
       <template v-slot:no-option>
-        <q-item>
-          <q-item-section class="text-grey"> 데이터가 없습니다 </q-item-section>
-        </q-item>
+        <p class="text-grey q-px-md q-py-sm"> 데이터가 없습니다 </p>
       </template>
     </q-select>
   </div>
@@ -62,25 +56,26 @@
 <script setup>
 const form = defineModel();
 
-const tops = ref([]);
-const middles = ref([]);
-const lows = ref([]);
+const root = ref([]);
+const node = ref([]);
+const item = ref([]);
 
-const fetchedSubjectCategoryByDepth = async (cateStep, parentCode, subCode) => {
-  const { data, error } = await $fetchedSubjectCategoryByDepth(cateStep, parentCode, subCode);
+// 대분류 요청
+getSubjectCategoryByDepth(form.value, 1).then(res => root.value = res);
 
-  if (!error) {
-    if (cateStep == 1) {
-      tops.value = data;
-    } else if (cateStep == 2) {
-      middles.value = data;
-      form.value.subjectCate2 = null;
-      form.value.subjectCate3 = null;
-    } else {
-      lows.value = data;
-      form.value.subjectCate3 = null;
-    }
-  } else $showAlert(error);
+const getCategory = async (val, cateStep) => {
+  // 대분류 변경 시
+  if (cateStep === 2) {
+    form.value.subjectCate1 = val;
+    form.value.subjectCate2 = null;
+    form.value.subjectCate3 = null;
+    node.value = await getSubjectCategoryByDepth(form.value, 2);
+    item.value = [];
+    // 중분류 변경 시
+  } else if (cateStep === 3) {
+    form.value.subjectCate2 = val;
+    form.value.subjectCate3 = null;
+    item.value = await getSubjectCategoryByDepth(form.value, 3);
+  }
 };
-fetchedSubjectCategoryByDepth(1);
 </script>

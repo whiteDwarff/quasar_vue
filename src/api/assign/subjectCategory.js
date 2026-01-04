@@ -34,3 +34,8 @@ export function subjectCategoryEdit(nodes) {
   const res = axiosLoading.post('/assign/subjectCategoryEdit', nodes);
   return handleApiCall(res);
 }
+export async function getSubjectCategoryByDepth(params, cateStep) {
+  params = { ...params, cateStep };
+  const res = await axios.get('/assign/subjectCategoryByDepth', { params });
+  return res.data.status == 200 ? res.data.result.list : [];
+}

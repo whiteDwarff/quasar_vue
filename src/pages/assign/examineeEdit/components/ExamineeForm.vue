@@ -32,7 +32,7 @@
               />
               <template v-else>
                 <div class="profile-wrap rounded-borders overflow-hidden">
-                  <ImageViwer :images="[form.examineeImg]" :index="0" />
+                  <ImageViewer :images="[form.examineeImg]" :index="0" />
                 </div>
                 <div class="row justify-center q-mt-sm q-mx-auto" style="max-width: 162px">
                   <CustomButton

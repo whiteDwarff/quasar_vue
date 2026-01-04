@@ -21,10 +21,14 @@
 
 <script setup>
 const props = defineProps({
+  // 등록된 미디어 목록
   midiaItems: {
     type: Array,
     default: () => []
   },
+  // 화면에 표시될 미디어 타입
+  midiaType: Array,
+  // 등록 가능한 미디어 타입
   type: {
     type: Array,
     required: true
@@ -33,39 +37,21 @@ const props = defineProps({
 
 const emit = defineEmits(['add']);
 
-// 화면에 표시될 미디어 타입
-const midiaType = ref([
-  { type: 'image', icon: 'bi-images' },
-  { type: 'audio', icon: 'bi-volume-up' },
-  { type: 'video', icon: 'bi-camera-video' },
-  { type: 'text', icon: 'bi-card-text' },
-]);
-
-/**
- * 자료제시(이미지, 오디오, 비디오, 텍스트) 항목을 추가하는 함수
- * @param {string} targetType - 추가할 미디어의 타입 
- */
+// 자료제시 추가
 const addMidiaItem = (targetType) => {
   
   if (props.midiaItems.length < 10) {
     if (targetType === 'text') {
-      return emit('add', { midiaType: targetType, keyword: '' }); 
+      return emit('add', { midiaType: targetType, text: '' }); 
     }
-    return emit('add', { midiaType: targetType, file: null });
+    return emit('add', { midiaType: targetType, file: null, url: '' });
   } 
   
   $showAlert('최대 등록 가능한 개수는 10개입니다.');
 }
-
-/**
- * 문자열의 첫 글자를 대문자로 변환하는 유틸리티 함수
- * @param {string} str - 변환할 문자열
- * @returns {string} - 첫 글자가 대문자로 변환된 문자열
- */
+// 문자열의 첫 글자를 대문자로 변환
 const capitalizeLetter = (str) => {
   if (!str) return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 </script>
-
-<style scoped></style>

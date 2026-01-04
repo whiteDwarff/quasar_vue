@@ -209,7 +209,8 @@ const saveSurveyInfo = async () => {
 };
 // 설문삭제
 const exceptSurveyItem = (survey) => {
-  if (form.value.survey.length == 1) return $showAlert('하나의 문항은 등록되어야합니다.');
+  const count = form.value.survey.reduce((acc, m) => acc += m.useFlag == 'Y' ? 1 : 0, 0);
+  if (form.value.survey.length == 1 || count == 1) return $showAlert('하나의 문항은 등록되어야합니다.');
 
   const reItemNo = survey.reItemNo;
 

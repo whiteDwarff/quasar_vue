@@ -6,7 +6,6 @@
           <span class="title">문제등록</span>
           <q-space />
           <span class="bar">Home</span>
-          <span class="bar">문제등록</span>
           <span class="current">문제등록</span>
         </div>
       </q-card-section>
@@ -163,7 +162,22 @@
             <tr>
               <th>키워드</th>
               <td colspan="5">
-                <q-input v-model="keyword" outlined dense fill class="full-width" />
+                <q-btn 
+                  v-for="(keyword, i) of form.keyword" :key="i"
+                  @click="form.keyword.splice(i, 1)"
+                  :label="keyword"
+                  icon-right="close" 
+                  size="sm" color="secondary"
+                  dense unelevated 
+                  rounded no-caps outline :ripple="false"
+                  class="q-px-sm q-ml-xs q-mb-xs"
+                />
+                <q-input
+                  @keyup.enter="addKeyword"
+                  v-model="keyword" 
+                  outlined dense fill 
+                  class="full-width" 
+                />
               </td>
             </tr>
             <tr>
@@ -195,19 +209,32 @@
         <!-- 자료제시 -->
         <q-card-section>
           <p class="text-subtitle2 text-weight-bold q-mb-md before-line">자료제시</p>
-          <PresentationAdd 
+          <!-- button -->
+          <MidiaTypeAddButton 
             @add="form.presentation.push($event)" 
             :midiaItems="form.presentation"
+            :midiaType
             :type="['image', 'audio', 'video', 'text']"
           />
+          <!-- preview -->
+          <MidiaItem 
+            v-for="(item, i) of form.presentation" :key="i"
+            v-model="form.presentation[i]"
+            :midiaType="midiaType.find(m => m.type == item.midiaType)"
+            :isExample="false"
+          />
+        </q-card-section>
+
+        <q-card-section>
+          <p class="text-subtitle2 text-weight-bold q-mb-md before-line">답가지</p>
         </q-card-section>
       </template>
-
     </q-card>
   </q-page>
 </template>
 
 <script setup>
+
 const form = ref({
   questionType: 1,
   questionCode: null,
@@ -235,6 +262,14 @@ const form = ref({
 });
 
 const keyword = ref('');
+
+// 키워드 등록
+const addKeyword = () => {
+  if (!keyword.value) return;
+  if (!form.value.keyword.includes(keyword.value))
+    form.value.keyword.push(keyword.value);
+  keyword.value = '';
+};
 </script>
 
 
@@ -245,6 +280,12 @@ const questionTypeList = [
   { value: 5, label: '객관식(R형)' },
   { value: 3, label: '주관식' },
   { value: 4, label: '말하기' },
+];
+const midiaType = [
+  { type: 'image', icon: 'bi-images', exts: ['.jpg', '.jpeg', '.png', '.gif'], maxSize: 10 * 1024 * 1024 },
+  { type: 'audio', icon: 'bi-volume-up', exts: ['.mp3', '.wav'], maxSize: 10 * 1024 * 1024 },
+  { type: 'video', icon: 'bi-camera-video', exts: ['.mp4', '.webm'], maxSize: 20 * 1024 * 1024  },
+  { type: 'text', icon: 'bi-card-text' },
 ];
 </script>
 

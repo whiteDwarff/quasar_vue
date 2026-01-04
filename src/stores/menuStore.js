@@ -81,7 +81,7 @@ export const useMenuStore = defineStore(
           {
             menuSeq: 11,
             menuNm: '문제등록',
-            menuUrl: '/question/question',
+            menuUrl: '/question',
             menuTy: 'P',
             depth: 2,
           },

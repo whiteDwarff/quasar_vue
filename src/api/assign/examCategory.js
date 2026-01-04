@@ -35,3 +35,9 @@ export function examCategoryEdit(nodes) {
   const res = axiosLoading.post('/assign/examCategoryEdit', nodes);
   return handleApiCall(res);
 }
+
+export async function getExamCategoryByDepth(params, cateStep) {
+  params = { ...params, cateStep };
+  const res = await axios.get('/assign/examCategoryByDepth', { params });
+  return res.data.status == 200 ? res.data.result.list : [];
+}

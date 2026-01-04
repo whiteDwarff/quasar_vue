@@ -3,9 +3,8 @@ import { $showAlert } from 'src/utils/globals';
 
 const baseURL = '/api';
 
-// const api = axios.create({ baseURL });
-
 const axiosLoading = axios.create({ baseURL });
+const api = axios.create({ baseURL });
 
 // 요청 인터셉터
 axiosLoading.interceptors.request.use(
@@ -78,4 +77,4 @@ async function handleApiCall(apiCall) {
   }
 }
 
-export { axiosLoading, handleApiCall };
+export { api as axios, axiosLoading, handleApiCall };
