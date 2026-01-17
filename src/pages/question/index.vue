@@ -11,7 +11,7 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">미리보기</p>
+        <p class="text-subtitle2 text-weight-bold q-mb-sm before-line">미리보기</p>
 
         <table class="markup-table">
           <colgroup>
@@ -194,7 +194,7 @@
       <q-card-section>
         <p 
           :class="{ star : form.questionType == 5 }"
-          class="text-subtitle2 text-weight-bold q-mb-md before-line"
+          class="text-subtitle2 text-weight-bold q-mb-sm before-line"
         >머리글</p>
         <tiptabEditor v-model="form.headerText" :height="100" />
       </q-card-section>
@@ -202,13 +202,13 @@
       <template v-if="form.questionType != 5">
         <!-- 문항줄기 -->
         <q-card-section>
-          <p class="text-subtitle2 text-weight-bold q-mb-md before-line star">문항줄기</p>
+          <p class="text-subtitle2 text-weight-bold q-mb-sm before-line star">문항줄기</p>
           <tiptabEditor v-model="form.question" :height="100" />
         </q-card-section>
         
         <!-- 자료제시 -->
         <q-card-section>
-          <p class="text-subtitle2 text-weight-bold q-mb-md before-line">자료제시</p>
+          <p class="text-subtitle2 text-weight-bold q-mb-sm before-line">자료제시</p>
           <!-- button -->
           <MidiaTypeAddButton 
             @add="form.presentation.push($event)" 
@@ -226,7 +226,7 @@
         </q-card-section>
 
         <q-card-section>
-          <p class="text-subtitle2 text-weight-bold q-mb-md before-line">답가지</p>
+          <p class="text-subtitle2 text-weight-bold q-mb-sm before-line">답가지</p>
         </q-card-section>
       </template>
     </q-card>
@@ -270,6 +270,7 @@ const addKeyword = () => {
     form.value.keyword.push(keyword.value);
   keyword.value = '';
 };
+
 </script>
 
 
@@ -287,6 +288,7 @@ const midiaType = [
   { type: 'video', icon: 'bi-camera-video', exts: ['.mp4', '.webm'], maxSize: 20 * 1024 * 1024  },
   { type: 'text', icon: 'bi-card-text' },
 ];
+
 </script>
 
 <style scoped></style>

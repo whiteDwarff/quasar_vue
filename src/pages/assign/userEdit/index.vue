@@ -180,10 +180,11 @@ const form = ref({
   imagePath: '',
 });
 
+/*
 const isPwd: ref(true);
 const isPwd2: ref(true);
 const userPassChk: ref('');
-
+*/
 const imageInput = useTemplateRef('imageInput');
 const file = ref(null);
 
