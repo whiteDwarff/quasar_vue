@@ -31,6 +31,7 @@
           <ArtPlayer v-else-if="item.midiaType == 'video'" :url="item.url" />
           <AudioPlayer
             v-else-if="item.midiaType == 'audio'"
+            :src="item.url"
           ></AudioPlayer>
         </div>
     </div>

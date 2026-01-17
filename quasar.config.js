@@ -2,8 +2,11 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers';
+import { loadEnv } from 'vite';
 
-export default defineConfig((/* ctx */) => {
+export default defineConfig((ctx) => {
+  const env = loadEnv(ctx.mode, process.cwd());
+
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -40,6 +43,7 @@ export default defineConfig((/* ctx */) => {
         node: 'node20',
       },
       env: {
+        ...env,
         PAGE_SIZE: 10,
         IMAGE_EXTS: 'jpg,jpeg,png,gif',
         SERVER_PORT: 3000,
