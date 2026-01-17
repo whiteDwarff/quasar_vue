@@ -17,10 +17,7 @@
           />
           <input @change="validFile" ref="fileInput" type="file" class="hidden">
           <small>
-            <b class="text-weight-medium">
-              최대 크기: 
-              <span class="text-red font-weight-bold">{{ getMidiTypeInfo().maxSize }}</span>
-            </b>
+            <b class="text-weight-medium">최대 크기: <span class="text-red">{{ getMidiTypeInfo().maxSize }}</span></b>
             <span class="q-ml-sm text-grey-9">({{ midiaType.exts.join(', ') }})</span>
           </small>
         </div>
@@ -34,7 +31,6 @@
           <ArtPlayer v-else-if="item.midiaType == 'video'" :url="item.url" />
           <AudioPlayer
             v-else-if="item.midiaType == 'audio'"
-            :src="item.url"
           ></AudioPlayer>
         </div>
     </div>
@@ -46,6 +42,8 @@
 </template>
 
 <script setup>
+import AudioPlayer from '../common/AudioPlayer.vue';
+
 const props = defineProps({
   // 화면에 표시될 미디어 타입 정보
   midiaType: {
@@ -123,13 +121,9 @@ const getMidiTypeInfo = () => {
   }
 
   .midia-viewer-file {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 5px 10px;
-    width: 100%;
-    // width: fit-content;
-    // max-width: 100%;
+    width: fit-content;
+    max-width: 100%;
     word-break: break-all;
     border-radius: 19px;
     border: 1px solid #eaeaea;
