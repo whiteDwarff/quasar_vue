@@ -230,10 +230,16 @@
         </q-card-section>
       </template>
     </q-card>
+
+    <ImageGen v-model="isGen" />
+    {{ isGen }}
+    <q-btn @click="isGen = true" label="333"></q-btn>
   </q-page>
 </template>
 
 <script setup>
+import ImageGen from 'src/components/common/ImageGen.vue';
+
 
 const form = ref({
   questionType: 1,
@@ -262,6 +268,8 @@ const form = ref({
 });
 
 const keyword = ref('');
+
+const isGen = ref(false);
 
 // 키워드 등록
 const addKeyword = () => {

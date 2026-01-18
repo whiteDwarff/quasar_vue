@@ -36,8 +36,6 @@ const openImageViwer = () => {
   let images = props.images;
 
   if (!images.length) return;
-
-  if (!images.length) return;
   if (typeof images == 'string') images = [images];
 
   return viewerApi({
@@ -52,6 +50,7 @@ const openImageViwer = () => {
       movable: false,
       zoomable: true,
       transition: false,
+      zIndex: 7000,
     },
   });
 };
