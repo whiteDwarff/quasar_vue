@@ -1,9 +1,8 @@
 <template>
-  <div ref="artRef"></div>
+  <div ref="artRef" />
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import Artplayer from 'artplayer';
 
 const props = defineProps({
@@ -40,9 +39,9 @@ onMounted(() => {
   });
 });
 
-watch(() => props.option.url, (newUrl) => {
-  if (instance && newUrl) {
-    instance.switch(newUrl);
+watch(() => props.option.url, n => {
+  if (instance && n) {
+    instance.switch(n);
   }
 });
 

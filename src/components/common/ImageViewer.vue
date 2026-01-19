@@ -2,7 +2,7 @@
   <img
     @click="openImageViwer"
     :src="images[index]"
-    :alt="alt"
+    :alt
     :style="size"
     class="cursor-pointer"
   />
@@ -34,8 +34,6 @@ const props = defineProps({
 
 const openImageViwer = () => {
   let images = props.images;
-
-  if (!images.length) return;
 
   if (!images.length) return;
   if (typeof images == 'string') images = [images];

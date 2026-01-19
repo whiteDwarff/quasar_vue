@@ -204,33 +204,15 @@ a {
 }
 
 /* width */
-.w90 {
-  width: 90%;
-}
-.w80 {
-  width: 80%;
-}
-.w70 {
-  width: 70%;
-}
-.w60 {
-  width: 60%;
-}
-.w50 {
-  width: 50%;
-}
-.w40 {
-  width: 40%;
-}
-.w30 {
-  width: 30%;
-}
-.w20 {
-  width: 20%;
-}
-.w10 {
-  width: 10%;
-}
+.w90 { width: 90%;  }
+.w80 { width: 80%; }
+.w70 { width: 70%; }
+.w60 { width: 60%; }
+.w50 { width: 50%; }
+.w40 { width: 40%; }
+.w30 { width: 30%; }
+.w20 { width: 20%; }
+.w10 { width: 10%; }
 
 /* 모바일 세로 (해상도 ~ 479px)*/
 @media all and (max-width: 479px) {
@@ -242,6 +224,10 @@ a {
   .search-wrap .button-area {
     width: 100%;
   }
+   /* video player */
+  .art-controls .art-control {
+    min-width: 100% !important;
+  }
 }
 @media all and (min-width: 480px) and (max-width: 767px) {
   .search-wrap .input-area {
@@ -251,6 +237,10 @@ a {
   }
   .search-wrap .button-area {
     width: 100%;
+  }
+  /* video player */
+  .art-controls .art-control {
+    min-width: 100% !important;
   }
 }
 /* 모바일 가로 & 테블릿 세로 (해상도 480px ~ 767px)*/

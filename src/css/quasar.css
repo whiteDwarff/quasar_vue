@@ -97,6 +97,21 @@ body.desktop .q-hoverable:hover > .q-focus-helper {
   pointer-events: all;
 }
 
+/* input, select 
+.q-field--dense .q-field__control, .q-field--dense .q-field__marginal {
+  height: 30px;
+}
+.q-field--auto-height.q-field--dense.q-field--labeled .q-field__control-container {
+  padding-top: 0px;
+}
+.q-field--auto-height.q-field--dense .q-field__control, .q-field--auto-height.q-field--dense .q-field__native {
+  min-height: 30px;
+}
+.q-field--dense .q-field__label {
+  margin-top: 0px;  
+  top: 8px;                    
+}
+*/
 
 @media all and (min-width: 600px) and (max-width: 1290px) {
   .q-btn--dense .on-left {

@@ -2,8 +2,13 @@
   <div class="flex items-center q-my-sm">
     <div v-if="item.midiaType != 'text'" class="flex items-center midia-viewer-wrap">
       <div>
-        <q-badge rounded color="red" :label="getMidiTypeInfo().label" class="items-center q-mb-sm" />
-        <p v-if="item.url" class="q-mb-sm midia-viewer-file">
+        <q-badge 
+          rounded 
+          :color="getMidiTypeInfo().color" 
+          :label="getMidiTypeInfo().label" 
+          class="items-center q-mb-sm q-pb-xs" 
+        />
+        <p v-if="item.url" class="q-mb-sm midia-viewer-file flex items-center">
           <span>{{ item.file?.name }}</span>
           <q-icon @click="resetFileInfo" name="bi-x-circle" size="xs" class="cursor-pointer q-ml-sm" />
         </p>
@@ -15,27 +20,36 @@
             dense unelevated size="sm"
             class="q-px-sm q-mr-sm"
           />
-          <input @change="validFile" ref="fileInput" type="file" class="hidden">
+          <input 
+            @change="validFile" 
+            ref="fileInput" 
+            :accept="midiaType.exts.join(',')"
+            type="file" class="hidden"
+          >
           <small>
             <b class="text-weight-medium">최대 크기: <span class="text-red">{{ getMidiTypeInfo().maxSize }}</span></b>
             <span class="q-ml-sm text-grey-9">({{ midiaType.exts.join(', ') }})</span>
           </small>
         </div>
-        </div>
-        <div v-if="item.url" class="midia-viewer shadow-1">
-          <ImageViewer
-            v-if="item.midiaType == 'image'"
-            :images="[item.url]"
-            :index="0"
-          />
-          <ArtPlayer v-else-if="item.midiaType == 'video'" :url="item.url" />
-          <AudioPlayer
-            v-else-if="item.midiaType == 'audio'"
-          ></AudioPlayer>
-        </div>
-    </div>
-    <div v-else>
+      </div>
+      <div v-if="item.url" class="midia-viewer shadow-1">
+        <ImageViewer
+          v-if="item.midiaType == 'image'"
+          :images="[item.url]"
+          :index="0"
+        />
+        <ArtPlayer v-else-if="item.midiaType == 'video'" :url="item.url" />
+        <AudioPlayer
+          v-else-if="item.midiaType == 'audio'"
+        ></AudioPlayer>
+      </div>
 
+      <!-- <div>
+        <q-icon @click="resetFileInfo" name="bi-x-circle" size="xs" class="cursor-pointer q-ml-sm" /> 
+      </div> -->
+    </div>
+    <div v-else class="full-width">
+      <tiptabEditor v-model="item.text" :height="100" />
     </div>
 
   </div>
@@ -103,7 +117,8 @@ const getMidiTypeInfo = () => {
   const { type, maxSize } = props.midiaType
   return {
     label: type.charAt(0).toUpperCase() + type.slice(1),
-    maxSize: $formatToFileSize(maxSize)
+    maxSize: $formatToFileSize(maxSize),
+    color: type == 'image' ? 'sky' : type == 'video' ? 'orange' : 'red'
   }
 }
 </script>
@@ -133,7 +148,6 @@ const getMidiTypeInfo = () => {
     text-decoration: underline;
   }
 
-
   .midia-viewer {
     display: flex;
     align-items: center;
@@ -149,13 +163,6 @@ const getMidiTypeInfo = () => {
     img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-    }
-  
-    /* ArtPlayer 컴포넌트 내부의 div를 타겟팅 */
-    & > div {
-      width: 100% !important;
-      height: 100% !important;
     }
   }
 
