@@ -169,15 +169,15 @@ a {
 }
 .form-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   font-size: 13px;
-  font-weight: 600;
+  /* font-weight: 500; */
   color: #191919;
 }
 .star:after {
   content: '*';
   display: inline;
-  margin-left: 5px;
+  margin-left: 3px;
   font-size: 13px;
   color: #e1322d;
   font-weight: 500;

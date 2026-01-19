@@ -43,7 +43,6 @@
           v-else-if="item.midiaType == 'audio'"
         ></AudioPlayer>
       </div>
-
       <!-- <div>
         <q-icon @click="resetFileInfo" name="bi-x-circle" size="xs" class="cursor-pointer q-ml-sm" /> 
       </div> -->

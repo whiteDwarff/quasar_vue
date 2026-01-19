@@ -10,8 +10,8 @@
         </div>
       </q-card-section>
 
-      <q-card-section class="q-pt-none">
-        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">미리보기</p>
+      <q-card-section class="q-py-none">
+        <p class="text-subtitle2 text-weight-bold q-mb-sm before-line">미리보기</p>
 
         <table class="markup-table">
           <colgroup>
@@ -191,24 +191,24 @@
       </q-card-section>
 
       <!-- 머리글 -->
-      <q-card-section>
+      <q-card-section class="q-pb-none">
         <p 
           :class="{ star : form.questionType == 5 }"
-          class="text-subtitle2 text-weight-bold q-mb-md before-line"
+          class="text-subtitle2 text-weight-bold q-mb-sm before-line"
         >머리글</p>
         <tiptabEditor v-model="form.headerText" :height="100" />
       </q-card-section>
 
       <template v-if="form.questionType != 5">
         <!-- 문항줄기 -->
-        <q-card-section>
-          <p class="text-subtitle2 text-weight-bold q-mb-md before-line star">문항줄기</p>
+        <q-card-section class="q-pb-none">
+          <p class="text-subtitle2 text-weight-bold q-mb-sm before-line star">문항줄기</p>
           <tiptabEditor v-model="form.question" :height="100" />
         </q-card-section>
         
         <!-- 자료제시 -->
-        <q-card-section>
-          <p class="text-subtitle2 text-weight-bold q-mb-md before-line">자료제시</p>
+        <q-card-section class="q-pb-none">
+          <p class="text-subtitle2 text-weight-bold q-mb-sm before-line">자료제시</p>
           <!-- button -->
           <MidiaTypeAddButton 
             @add="form.presentation.push($event)" 
@@ -226,14 +226,20 @@
         </q-card-section>
 
         <q-card-section>
-          <p class="text-subtitle2 text-weight-bold q-mb-md before-line">답가지</p>
+          <p class="text-subtitle2 text-weight-bold q-mb-sm before-line">답가지</p>
         </q-card-section>
       </template>
     </q-card>
+
+    <ImageGen v-model="isGen" />
+    {{ isGen }}
+    <q-btn @click="isGen = true" label="333"></q-btn>
   </q-page>
 </template>
 
 <script setup>
+import ImageGen from 'src/components/common/ImageGen.vue';
+
 
 const form = ref({
   questionType: 1,
@@ -263,6 +269,8 @@ const form = ref({
 
 const keyword = ref('');
 
+const isGen = ref(false);
+
 // 키워드 등록
 const addKeyword = () => {
   if (!keyword.value) return;
@@ -270,6 +278,7 @@ const addKeyword = () => {
     form.value.keyword.push(keyword.value);
   keyword.value = '';
 };
+
 </script>
 
 
@@ -287,6 +296,7 @@ const midiaType = [
   { type: 'video', icon: 'bi-camera-video', exts: ['.mp4', '.webm'], maxSize: 20 * 1024 * 1024  },
   { type: 'text', icon: 'bi-card-text' },
 ];
+
 </script>
 
 <style scoped></style>

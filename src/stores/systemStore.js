@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
+import { reactive } from 'vue';
 
 export const useSystemStore = defineStore('system', () => {
-  const alert = ref({
+  const alert = reactive({
     visible: false,
     contents: '',
   });
 
-  const confirm = ref({
+  const confirm = reactive({
     visible: false,
     contents: '',
     resolve: () => {},
@@ -16,25 +17,25 @@ export const useSystemStore = defineStore('system', () => {
 
   // alert
   function showAlert(contents) {
-    alert.value.visible = true;
-    alert.value.contents = contents;
+    alert.visible = true;
+    alert.contents = contents;
   }
   // confirm
   function showConfirm(contents) {
-    confirm.value.contents = contents;
-    confirm.value.visible = true;
+    confirm.contents = contents;
+    confirm.visible = true;
 
     return new Promise((resolve) => {
-      confirm.value.resolve = resolve;
+      confirm.resolve = resolve;
     });
   }
   function resolve() {
-    confirm.value.visible = false;
-    confirm.value.resolve(true);
+    confirm.visible = false;
+    confirm.resolve(true);
   }
   function reject() {
-    confirm.value.visible = false;
-    confirm.value.resolve(false);
+    confirm.visible = false;
+    confirm.resolve(false);
   }
   // loading
   function setLoading(status) {

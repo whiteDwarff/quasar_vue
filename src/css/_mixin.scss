@@ -1,0 +1,35 @@
+/* 변수 및 믹스인 정의 */
+:root {
+  --border: rgba(0, 0, 0, 0.24);
+}
+
+@mixin mobile {
+  @media all and (max-width: 767px) { @content; }
+}
+@mixin tablet {
+  @media all and (min-width: 768px) and (max-width: 1023px) { @content; }
+}
+@mixin desktop {
+  @media all and (min-width: 1024px) and (max-width: 1279px) { @content; }
+}
+
+// 2. 활성화 상태 믹스인 (hover와 on 클래스를 동시에 처리)
+@mixin active-style($color: var(--q-primary), $bg: transparent) {
+  &:hover, &.on {
+    color: $color !important;
+    background-color: $bg;
+    @content;
+  }
+}
+
+// 3. 가상 요소 선(Bar) 믹스인
+@mixin vertical-line($width: 2px, $height: 12px, $color: var(--q-primary)) {
+  &::before {
+    content: '';
+    position: absolute;
+    width: $width;
+    height: $height;
+    background: $color;
+    @content;
+  }
+}

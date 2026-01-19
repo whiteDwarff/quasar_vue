@@ -50,6 +50,7 @@ const openImageViwer = () => {
       movable: false,
       zoomable: true,
       transition: false,
+      zIndex: 7000,
     },
   });
 };
