@@ -211,7 +211,7 @@
       </q-card-section>
 
       <q-card-section class="flex justify-center">
-        <CustomButton @click="cancle()" label="취소" outline class="q-mr-md w-100" />
+        <CustomButton @click="cancle()" label="취소" outline class="q-mr-sm w-100" />
         <CustomButton @click="submit()" label="저장" class="w-100" />
       </q-card-section>
     </q-card>

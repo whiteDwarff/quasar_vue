@@ -13,7 +13,7 @@
       <q-card-section>
         <div class="row q-col-gutter-md">
           <div class="col-xs-12 col-md-6">
-            <p class="text-subtitle2 text-weight-bold q-mb-md before-line">시험장 등록</p>
+            <p class="text-subtitle2 q-mb-sm before-line">시험장 등록</p>
             <table class="markup-table">
               <colgroup>
                 <col width="20%" />
@@ -104,7 +104,7 @@
           </div>
 
           <div class="col-xs-12 col-md-6">
-            <p class="text-subtitle2 text-weight-bold q-mb-md before-line">호실 등록</p>
+            <p class="text-subtitle2 q-mb-sm before-line">호실 등록</p>
             <table class="markup-table">
               <colgroup>
                 <col width="20%" />
@@ -181,7 +181,7 @@
                 @click="resetExamRoomNum"
                 label="초기화"
                 :outline="true"
-                class="q-mr-md"
+                class="q-mr-sm"
               />
               <CustomButton @click="addExamRoomNum(roomInfo)" label="추가" />
             </div>
@@ -341,7 +341,7 @@
             label="삭제"
             color="warning"
             outline
-            class="q-mr-md w-100"
+            class="q-mr-sm w-100"
           />
           <CustomButton @click="submit()" label="저장" class="w-100" />
         </div>

@@ -13,7 +13,7 @@
 
       <!-- 상세정보 -->
       <q-card-section class="q-pt-none">
-        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">시험명 등록</p>
+        <p class="text-subtitle2 q-mb-sm before-line">시험명 등록</p>
         <table class="markup-table">
           <colgroup>
             <col width="20%" />
@@ -30,7 +30,7 @@
 
       <!-- 상세 목록 -->
       <q-card-section>
-        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">상세정보 등록</p>
+        <p class="text-subtitle2 q-mb-sm before-line">상세정보 등록</p>
         <q-scroll-area
           ref="scrollTargetRef"
           :style="{ height: `${form.details.length > 1 ? 350 : 280}px` }"

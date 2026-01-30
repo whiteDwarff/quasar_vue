@@ -12,7 +12,7 @@
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">설문정보 등록</p>
+        <p class="text-subtitle2 q-mb-sm before-line">설문정보 등록</p>
         <div class="row q-col-gutter-md">
           <div class="col-xs-12 col-md-6">
             <span class="form-label star">설문제목</span>
@@ -30,7 +30,7 @@
       </q-card-section>
 
       <q-card-section>
-        <p class="text-subtitle2 text-weight-bold q-mb-md before-line">설문문항 등록</p>
+        <p class="text-subtitle2 q-mb-sm before-line">설문문항 등록</p>
         <!-- 설문 문항 선택 -->
         <div id="survey-order-wrap" class="q-mb-sm">
           <q-btn
@@ -162,7 +162,7 @@
               outline
               class="w-100"
             />
-            <CustomButton @click="addSurvey" label="설문추가" outline class="q-mx-md w-100" />
+            <CustomButton @click="addSurvey" label="설문추가" outline class="q-mx-sm w-100" />
             <CustomButton @click="saveSurveyInfo" label="저장" class="w-100" />
           </div>
         </q-card-section>

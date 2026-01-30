@@ -1,5 +1,6 @@
 <template>
   <div class="flex items-center q-my-sm">
+    <!-- 이미지, 오디오, 비디오 -->
     <div v-if="item.midiaType != 'text'" class="flex items-center midia-viewer-wrap">
       <div>
         <q-badge 
@@ -8,10 +9,16 @@
           :label="getMidiTypeInfo().label" 
           class="items-center q-mb-sm q-pb-xs" 
         />
-        <p v-if="item.url" class="q-mb-sm midia-viewer-file flex items-center">
-          <span>{{ item.file?.name }}</span>
-          <q-icon @click="resetFileInfo" name="bi-x-circle" size="xs" class="cursor-pointer q-ml-sm" />
+        <p 
+          v-if="item.url" 
+          class="q-mb-sm midia-viewer-file flex items-center"
+        >
+          <span>
+            {{ item.file?.name }}
+            <q-icon @click="resetFileInfo" name="bi-x-circle" size="xs" class="cursor-pointer q-ml-xs" />
+          </span>
         </p>
+        <!-- 파일 선택 -->
         <div class="flex items-center">
           <q-btn 
             @click="fileInput.click()"
@@ -32,6 +39,7 @@
           </small>
         </div>
       </div>
+      <!-- 미디어 뷰어 -->
       <div v-if="item.url" class="midia-viewer shadow-1">
         <ImageViewer
           v-if="item.midiaType == 'image'"
@@ -41,13 +49,31 @@
         <ArtPlayer v-else-if="item.midiaType == 'video'" :url="item.url" />
         <AudioPlayer
           v-else-if="item.midiaType == 'audio'"
-        ></AudioPlayer>
+          :src="item.url"
+        />
       </div>
-      <!-- <div>
-        <q-icon @click="resetFileInfo" name="bi-x-circle" size="xs" class="cursor-pointer q-ml-sm" /> 
-      </div> -->
+      <!-- 삭제 아이콘 -->
+      <q-icon
+        @click="exceptMidiaItem"
+        name="bi-x-circle" 
+        size="xs"
+        class="media-trash"
+      />
     </div>
-    <div v-else class="full-width">
+    <div v-else class="flex items-center midia-viewer-wrap">
+      <div class="flex items-center justify-between full-width">
+        <q-badge 
+          rounded 
+          color="teal-4" 
+          label="Text" 
+          class="items-center q-mb-sm q-pb-xs" 
+        />
+        <q-icon
+          name="bi-x-circle" 
+          size="xs"
+          class="media-trash"
+        />
+      </div>
       <tiptabEditor v-model="item.text" :height="100" />
     </div>
 
@@ -74,6 +100,12 @@ const item = defineModel();
 
 const fileInput = ref(null);
 
+
+const exceptMidiaItem = () => {
+
+}
+
+// 파일 형식 검사
 const validFile = (e) => {
   if (!e.target.files.length) return;
 
@@ -123,6 +155,10 @@ const getMidiTypeInfo = () => {
 </script>
 
 <style lang="scss">
+.media-trash {
+  margin: 0 0 auto auto;
+  cursor: pointer;
+}
 .midia-viewer-wrap {
   padding: 5px 10px;
   width: 100%;
@@ -154,7 +190,7 @@ const getMidiTypeInfo = () => {
     margin-left: 10px;
     border: 1px solid #eaeaea;
     border-radius: 5px;
-    width: 200px;
+    width: 172px;
     height: 100px;
     background-color: #fff;
     overflow: hidden;
@@ -170,7 +206,7 @@ const getMidiTypeInfo = () => {
       width: calc(100% - 160px);
     }
     .midia-viewer {
-      width: 150px;
+      width: 122px;
       height: 75px;
     }
     .midia-viewer-file > span {
@@ -180,7 +216,7 @@ const getMidiTypeInfo = () => {
 
   @media all and (max-width: 500px) {
     > div:first-child {
-      width: calc(100% - 110px);
+      width: calc(100% - 138px);
     }
     .midia-viewer {
       width: 100px;

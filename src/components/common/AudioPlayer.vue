@@ -28,8 +28,6 @@ const currentPlaying = ref(null);
 </script>
 
 <script setup>
-import { onBeforeUnmount, watch } from 'vue';
-
 const props = defineProps({
   src: {
     type: String,

@@ -2,8 +2,12 @@
 :root {
   --border: rgba(0, 0, 0, 0.24);
 }
-body {
+* {
   font-family: 'Noto Sans KR', sans-serif;
+}
+body,
+/* button, */
+input, textarea {
   font-size: 12px !important;
 }
 p {
@@ -91,7 +95,7 @@ a {
   width: 15px;
   height: 15px;
   margin: 0 5px;
-  background: #fff url('src/assets/image/icon/bar.png');
+  background: #fff url('../assets/image/icon/bar.png');
 }
 /* search form */
 .search-wrap {
@@ -99,7 +103,7 @@ a {
   padding: 25px 20px;
 }
 .search-wrap span.label {
-  width: 11%;
+  width: 15%;
   display: block;
 }
 .search-wrap .content {
