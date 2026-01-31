@@ -213,37 +213,49 @@
           <MediaTypeAddButton 
             @add="form.presentation.push($event)" 
             :mediaItems="form.presentation.filter(m => m.useFlag == 'Y')"
-            :mediaType
-            :type="['image', 'audio', 'video', 'text']" keyName="headScriptCode"
+            :type="['image', 'audio', 'video', 'text']" 
+            keyName="headScriptCode" :mediaType
           />
           <!-- preview -->
-          <MediaItem 
-            @except="exceptMediaItem($event, 'presentation', 'headScriptCode')"
-            v-for="(item, i) of form.presentation.filter(m => m.useFlag == 'Y')" :key="i"
-            v-model="form.presentation[i]"
-            :mediaType="mediaType.find(m => m.type == item.mediaType)"
-            :isExample="false" :index="i"
-          />
-        </q-card-section>
-
-        <q-card-section>
-          <p class="text-subtitle2 q-mb-sm before-line">답가지</p>
-          <!-- button -->
-          <MediaTypeAddButton 
-            @add="form.answer.push($event)"
-            :mediaItems="form.answer.filter(m => m.useFlag == 'Y')"
-            :mediaType
-            :type="['text', 'image', 'video']" keyName="exampleCode"
-          />
-          <MediaItem 
-            @except="exceptMediaItem($event, 'answer', 'exampleCode')"
-            v-for="(item, i) of form.answer.filter(m => m.useFlag == 'Y')" :key="i"
-            v-model="form.answer[i]"
-            :mediaType="mediaType.find(m => m.type == item.mediaType)"
-            :isExample="false" :index="i"
-          />
+          <template v-for="(item, i) of form.presentation" :key="i">
+            <MediaItem 
+              v-if="item.useFlag == 'Y'"
+              @except="exceptMediaItem($event, 'presentation', 'headScriptCode')"
+              v-model="form.presentation[i]"
+              :mediaType="mediaType.find(m => m.type == item.mediaType)"
+              :isAnswer="false" :index="i"
+            />
+          </template>
         </q-card-section>
       </template>
+
+      <!-- 답가지 -->
+      <q-card-section class="q-pb-none">
+        <p class="text-subtitle2 q-mb-sm before-line star">답가지</p>
+        <!-- button -->
+        <MediaTypeAddButton 
+          @add="addAnswer"
+          :mediaItems="form.answer.filter(m => m.useFlag == 'Y')"
+          :type="['text', 'image', 'video']" keyName="asnwerCode"
+          :mediaType :isAnswer="true"
+        />
+        <template v-for="(item, i) of form.answer" :key="i">
+          <MediaItem 
+            v-if="item.useFlag == 'Y'"
+            @except="exceptMediaItem($event, 'answer', 'asnwerCode')"
+            v-model="form.answer[i]"
+            :mediaType="mediaType.find(m => m.type == item.mediaType)"
+            :isAnswer="true" :index="i"
+          />
+        </template>
+      </q-card-section>
+
+      <!-- 해설 -->
+      <q-card-section>
+        <p class="text-subtitle2 q-mb-sm before-line">해설</p>
+        <tiptabEditor v-model="form.incNote.text" :height="100" />
+      </q-card-section>
+
     </q-card>
 
     <!-- <ImageGen v-model="isGen" />
@@ -252,6 +264,8 @@
 </template>
 
 <script setup>
+import { $showAlert } from 'src/utils/globals';
+
 const form = ref({
   questionType: 1,
   questionCode: null,
@@ -276,20 +290,45 @@ const form = ref({
   headerText: '',      // 머리글
   question: '',        // 문항줄기
   presentation: [],    // 자료제시
-  answer: [
-    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
-    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
-    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
-    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
-    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
-  ],          // 답가지
+  answer: [            // 답가지
+    { asnwerCode: null, mediaType: 'text', text: '', rightFlag: false, useFlag: 'Y' },
+    { asnwerCode: null, mediaType: 'text', text: '', rightFlag: false, useFlag: 'Y' },
+    { asnwerCode: null, mediaType: 'text', text: '', rightFlag: false, useFlag: 'Y' },
+    { asnwerCode: null, mediaType: 'text', text: '', rightFlag: false, useFlag: 'Y' },
+    { asnwerCode: null, mediaType: 'text', text: '', rightFlag: false, useFlag: 'Y' },
+  ],   
+  incNote: {           // 해설
+    incNoteCode: null,
+    text: '',
+    images: []
+  }     
 });
 
 const keyword = ref('');
 
 // const isGen = ref(false);
+// 답가지 추가
+const addAnswer = (event) => {
+  const temp = [];
+
+  for (let answer of form.value.answer) 
+    if (answer.asnwerCode) {
+      answer.useFlag = 'N';
+      temp.push(answer);
+    }
+  // 저장된 답가지는 db에서 사용여부 변경하기 위해 담기, 신규 답가지는 제거
+  form.value.answer = [ ...temp ];
+  // 5개 추가
+  for (let i = 1; i <= 5; i++)
+    form.value.answer.push({ ...event });
+}
 
 const exceptMediaItem = (index, attr, key) => {
+  // 답가지 개수 확인
+  if (attr == 'answer' && form.value.answer.length < 3) 
+    return $showAlert('두개의 답가지는 등록되어야합니다.');
+  
+
   const hasKey = !!form.value[attr][index][key];
 
   if (!hasKey)
@@ -317,10 +356,10 @@ const questionTypeList = [
   { value: 4, label: '말하기' },
 ];
 const mediaType = [
+  { type: 'text', icon: 'bi-card-text' },
   { type: 'image', icon: 'bi-images', exts: ['.jpg', '.jpeg', '.png', '.gif'], maxSize: 10 * 1024 * 1024 },
   { type: 'audio', icon: 'bi-volume-up', exts: ['.mp3', '.wav'], maxSize: 10 * 1024 * 1024 },
   { type: 'video', icon: 'bi-camera-video', exts: ['.mp4', '.webm'], maxSize: 20 * 1024 * 1024  },
-  { type: 'text', icon: 'bi-card-text' },
 ];
 
 </script>

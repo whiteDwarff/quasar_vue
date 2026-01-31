@@ -37,6 +37,11 @@ const props = defineProps({
   keyName: {
     type: String,
     required: true
+  },
+  // 답가지 여부
+  isAnswer: {
+    type: Boolean,
+    default: () => false
   }
 });
 
@@ -44,12 +49,18 @@ const emit = defineEmits(['add']);
 
 // 자료제시 추가
 const addMediaItem = (mediaType) => {
+  let obj = {
+    [props.keyName]: null,
+    mediaType,
+    useFlag: 'Y'
+  }
+  // 답가지인 경우 정답여부 추가
+  if (props.isAnswer) obj.rightFlag = false;
   
   if (props.mediaItems.length < 10) {
-    if (mediaType == 'text') {
-      return emit('add', { [props.keyName]: null, mediaType, text: '', useFlag: 'Y' }); 
-    }
-    return emit('add', { [props.keyName]: null, mediaType, file: null, url: '', useFlag: 'Y' });
+    obj = mediaType == 'text' ? 
+      { ...obj, text: '' } : { ...obj, file: null, url: '' };
+    return emit('add', obj);
   } 
   
   $showAlert('최대 등록 가능한 개수는 10개입니다.');

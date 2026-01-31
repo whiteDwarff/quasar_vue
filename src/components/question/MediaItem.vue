@@ -1,9 +1,19 @@
 <template>
-  <div class="flex items-center q-my-sm">
+  <div class="flex items-start q-my-sm">
+    <q-checkbox 
+      v-if="isAnswer" 
+      v-model="item.rightFlag" 
+      size="lg" dense class="q-mr-sm right-flag" 
+    />
     <!-- 이미지, 오디오, 비디오 -->
-    <div v-if="item.mediaType != 'text'" class="flex items-center midia-viewer-wrap">
+    <div 
+      v-if="item.mediaType != 'text'" 
+      class="flex items-center midia-viewer-wrap"
+      :class="{ 'answer' : isAnswer }"
+    >
       <div>
         <q-badge 
+          v-if="!isAnswer"
           rounded 
           :color="getMidiTypeInfo().color" 
           :label="getMidiTypeInfo().label" 
@@ -61,13 +71,17 @@
       />
     </div>
     <!-- 텍스트 -->
-    <div v-else class="flex items-center midia-viewer-wrap">
-      <div class="flex items-center justify-between full-width">
+    <div v-else 
+      class="flex items-center midia-viewer-wrap"
+      :class="{ 'answer' : isAnswer }"
+    >
+      <div class="flex items-center justify-between full-width q-mb-sm">
         <q-badge 
+          v-if="!isAnswer"
           rounded 
           color="teal-4" 
           label="Text" 
-          class="items-center q-mb-sm q-pb-xs" 
+          class="items-center q-pb-xs" 
         />
         <q-icon
           @click="emit('except', index)"
@@ -76,7 +90,7 @@
           class="media-trash"
         />
       </div>
-      <tiptabEditor v-model="item.text" :height="100" />
+      <tiptabEditor v-model="item.text" :height="isAnswer ? 50 : 100" />
     </div>
   </div>
 </template>
@@ -91,7 +105,7 @@ const props = defineProps({
     required: true
   },
   // 답가지 여부
-  isExample: {
+  isAnswer: {
     type: Boolean,
     default: () => false
   },
@@ -203,6 +217,10 @@ const getMidiTypeInfo = () => {
       width: 100%;
       height: 100%;
     }
+  }
+
+  &.answer {
+    width: calc(100% - 33px);
   }
 
   @media all and (min-width: 501px) and (max-width: 767px) {
