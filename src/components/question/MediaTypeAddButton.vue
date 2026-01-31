@@ -1,11 +1,11 @@
 <template>
   <div>
-    <template v-for="item of midiaType" :key="item.type">
+    <template v-for="item of mediaType" :key="item.type">
       <q-btn 
         v-if="type.includes(item.type)"
-        @click="addMidiaItem(item.type)"
+        @click="addMediaItem(item.type)"
         :ripple="false"
-        :color="midiaItems.some(({ midiaType }) => midiaType == item.type) ? 'primary' : 'grey'"
+        :color="mediaItems.some(({ mediaType }) => mediaType == item.type) ? 'primary' : 'grey'"
         dense 
         unelevated 
         outline
@@ -22,15 +22,20 @@
 <script setup>
 const props = defineProps({
   // 등록된 미디어 목록
-  midiaItems: {
+  mediaItems: {
     type: Array,
     default: () => []
   },
   // 화면에 표시될 미디어 타입
-  midiaType: Array,
+  mediaType: Array,
   // 등록 가능한 미디어 타입
   type: {
     type: Array,
+    required: true
+  },
+  // 미디어 타입에 따른 시퀀스 명
+  keyName: {
+    type: String,
     required: true
   }
 });
@@ -38,13 +43,13 @@ const props = defineProps({
 const emit = defineEmits(['add']);
 
 // 자료제시 추가
-const addMidiaItem = (targetType) => {
+const addMediaItem = (mediaType) => {
   
-  if (props.midiaItems.length < 10) {
-    if (targetType === 'text') {
-      return emit('add', { midiaType: targetType, text: '' }); 
+  if (props.mediaItems.length < 10) {
+    if (mediaType == 'text') {
+      return emit('add', { [props.keyName]: null, mediaType, text: '', useFlag: 'Y' }); 
     }
-    return emit('add', { midiaType: targetType, file: null, url: '' });
+    return emit('add', { [props.keyName]: null, mediaType, file: null, url: '', useFlag: 'Y' });
   } 
   
   $showAlert('최대 등록 가능한 개수는 10개입니다.');

@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center q-my-sm">
     <!-- 이미지, 오디오, 비디오 -->
-    <div v-if="item.midiaType != 'text'" class="flex items-center midia-viewer-wrap">
+    <div v-if="item.mediaType != 'text'" class="flex items-center midia-viewer-wrap">
       <div>
         <q-badge 
           rounded 
@@ -30,36 +30,37 @@
           <input 
             @change="validFile" 
             ref="fileInput" 
-            :accept="midiaType.exts.join(',')"
+            :accept="mediaType.exts.join(',')"
             type="file" class="hidden"
           >
           <small>
             <b class="text-weight-medium">최대 크기: <span class="text-red">{{ getMidiTypeInfo().maxSize }}</span></b>
-            <span class="q-ml-sm text-grey-9">({{ midiaType.exts.join(', ') }})</span>
+            <span class="q-ml-sm text-grey-9">({{ mediaType.exts.join(', ') }})</span>
           </small>
         </div>
       </div>
       <!-- 미디어 뷰어 -->
       <div v-if="item.url" class="midia-viewer shadow-1">
         <ImageViewer
-          v-if="item.midiaType == 'image'"
+          v-if="item.mediaType == 'image'"
           :images="[item.url]"
           :index="0"
         />
-        <ArtPlayer v-else-if="item.midiaType == 'video'" :url="item.url" />
+        <ArtPlayer v-else-if="item.mediaType == 'video'" :url="item.url" />
         <AudioPlayer
-          v-else-if="item.midiaType == 'audio'"
+          v-else-if="item.mediaType == 'audio'"
           :src="item.url"
         />
       </div>
       <!-- 삭제 아이콘 -->
       <q-icon
-        @click="exceptMidiaItem"
+        @click="emit('except', index)"
         name="bi-x-circle" 
         size="xs"
         class="media-trash"
       />
     </div>
+    <!-- 텍스트 -->
     <div v-else class="flex items-center midia-viewer-wrap">
       <div class="flex items-center justify-between full-width">
         <q-badge 
@@ -69,6 +70,7 @@
           class="items-center q-mb-sm q-pb-xs" 
         />
         <q-icon
+          @click="emit('except', index)"
           name="bi-x-circle" 
           size="xs"
           class="media-trash"
@@ -76,7 +78,6 @@
       </div>
       <tiptabEditor v-model="item.text" :height="100" />
     </div>
-
   </div>
 </template>
 
@@ -85,7 +86,7 @@ import AudioPlayer from '../common/AudioPlayer.vue';
 
 const props = defineProps({
   // 화면에 표시될 미디어 타입 정보
-  midiaType: {
+  mediaType: {
     type: Object,
     required: true
   },
@@ -93,17 +94,20 @@ const props = defineProps({
   isExample: {
     type: Boolean,
     default: () => false
+  },
+  // 순서
+  index: {
+    type: Number,
+    required: true
   }
 });
 
-const item = defineModel();
+const emit = defineEmits(['except']);
 
+const item = defineModel();
+// 미디어 파일 input
 const fileInput = ref(null);
 
-
-const exceptMidiaItem = () => {
-
-}
 
 // 파일 형식 검사
 const validFile = (e) => {
@@ -112,7 +116,7 @@ const validFile = (e) => {
   const file = e.target.files[0];
 
   // 등록 가능한 확장자, 파일 크기 정보
-  const { exts, maxSize } = props.midiaType;
+  const { exts, maxSize } = props.mediaType;
 
   // 등록가능한 확장자인지 확인
   if ($validFileExt(file, exts)) {
@@ -145,7 +149,7 @@ const resetFileInfo = () => {
 }
 // 미디어 타입 정보 반환
 const getMidiTypeInfo = () => {
-  const { type, maxSize } = props.midiaType
+  const { type, maxSize } = props.mediaType
   return {
     label: type.charAt(0).toUpperCase() + type.slice(1),
     maxSize: $formatToFileSize(maxSize),

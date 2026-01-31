@@ -210,36 +210,48 @@
         <q-card-section class="q-pb-none">
           <p class="text-subtitle2 q-mb-sm before-line">자료제시</p>
           <!-- button -->
-          <MidiaTypeAddButton 
+          <MediaTypeAddButton 
             @add="form.presentation.push($event)" 
-            :midiaItems="form.presentation"
-            :midiaType
-            :type="['image', 'audio', 'video', 'text']"
+            :mediaItems="form.presentation.filter(m => m.useFlag == 'Y')"
+            :mediaType
+            :type="['image', 'audio', 'video', 'text']" keyName="headScriptCode"
           />
           <!-- preview -->
-          <MidiaItem 
-            v-for="(item, i) of form.presentation" :key="i"
+          <MediaItem 
+            @except="exceptMediaItem($event, 'presentation', 'headScriptCode')"
+            v-for="(item, i) of form.presentation.filter(m => m.useFlag == 'Y')" :key="i"
             v-model="form.presentation[i]"
-            :midiaType="midiaType.find(m => m.type == item.midiaType)"
-            :isExample="false"
+            :mediaType="mediaType.find(m => m.type == item.mediaType)"
+            :isExample="false" :index="i"
           />
         </q-card-section>
 
         <q-card-section>
           <p class="text-subtitle2 q-mb-sm before-line">답가지</p>
+          <!-- button -->
+          <MediaTypeAddButton 
+            @add="form.answer.push($event)"
+            :mediaItems="form.answer.filter(m => m.useFlag == 'Y')"
+            :mediaType
+            :type="['text', 'image', 'video']" keyName="exampleCode"
+          />
+          <MediaItem 
+            @except="exceptMediaItem($event, 'answer', 'exampleCode')"
+            v-for="(item, i) of form.answer.filter(m => m.useFlag == 'Y')" :key="i"
+            v-model="form.answer[i]"
+            :mediaType="mediaType.find(m => m.type == item.mediaType)"
+            :isExample="false" :index="i"
+          />
         </q-card-section>
       </template>
     </q-card>
 
-    <ImageGen v-model="isGen" />
-    <q-btn @click="isGen = true" label="333"></q-btn>
+    <!-- <ImageGen v-model="isGen" />
+    <q-btn @click="isGen = true" label="333"></q-btn> -->
   </q-page>
 </template>
 
 <script setup>
-import ImageGen from 'src/components/common/ImageGen.vue';
-
-
 const form = ref({
   questionType: 1,
   questionCode: null,
@@ -263,12 +275,27 @@ const form = ref({
   reference: '',       // 참고문헌
   headerText: '',      // 머리글
   question: '',        // 문항줄기
-  presentation: []     // 자료제시
+  presentation: [],    // 자료제시
+  answer: [
+    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
+    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
+    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
+    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
+    { exampleCode: null, mediaType: 'text', text: '', useFlag: 'Y' },
+  ],          // 답가지
 });
 
 const keyword = ref('');
 
-const isGen = ref(false);
+// const isGen = ref(false);
+
+const exceptMediaItem = (index, attr, key) => {
+  const hasKey = !!form.value[attr][index][key];
+
+  if (!hasKey)
+    form.value[attr] = form.value[attr].filter((_, i) => i != index);
+  else form.value[attr][index].useFlag = 'N';
+}
 
 // 키워드 등록
 const addKeyword = () => {
@@ -289,7 +316,7 @@ const questionTypeList = [
   { value: 3, label: '주관식' },
   { value: 4, label: '말하기' },
 ];
-const midiaType = [
+const mediaType = [
   { type: 'image', icon: 'bi-images', exts: ['.jpg', '.jpeg', '.png', '.gif'], maxSize: 10 * 1024 * 1024 },
   { type: 'audio', icon: 'bi-volume-up', exts: ['.mp3', '.wav'], maxSize: 10 * 1024 * 1024 },
   { type: 'video', icon: 'bi-camera-video', exts: ['.mp4', '.webm'], maxSize: 20 * 1024 * 1024  },
